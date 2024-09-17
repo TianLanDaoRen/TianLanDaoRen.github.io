@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-cn" class="scroll-smooth">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="browsermode" content="application">
+    <meta name="full-screen" content="yes" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="x5-page-mode" content="app" />
+    <meta name="360-fullscreen" content="true" />
+    <meta charset="UTF-8">
+    <title>十二宫神掌 --- 自动排盘工具</title>
+    <link rel="icon" href="assets/images/icon.jpg" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/font-awesome.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+</head>
+
+<body>
+    <!-- 这是背景 -->
+    <div class="bg"></div>
+    <!-- 这是一个Navbar -->
+    <div class="navbar bg-primary shadow-xl">
+        <div class="navbar-start">
+            <a class="btn btn-ghost btn-circle text-primary-content" href="/index.html">
+                <div class="tooltip tooltip-right" data-tip="主页">
+                    <i class="fa-solid fa-house fa-fw"></i>
+                </div>
+            </a>
+        </div>
+        <div class="navbar-center">
+            <a class="btn btn-ghost text-xl text-primary-content">十二宫神掌</a>
+        </div>
+        <div class="navbar-end">
+        </div>
+    </div>
+    <!-- 这是主内容块 -->
+    <div class="flex flex-col lg:flex-row text-sm lg:text-base justify-center content-center items-center m-5">
+        <!-- 这是新建排盘 -->
+        <div class="card bg-base-100 shadow-xl w-full lg:w-5/6 m-10">
+            <div class="card-body">
+                <h1 class="card-title">事主信息</h1>
+                <!-- 性别 -->
+                <div class="grid grid-rows-2 form-control">
+                    <div class="label">
+                        <label class="label font-bold">性别</label>
+                        <span class="gender-alt label-text-alt text-error"></span>
+                    </div>
+                    <select class="gender select select-bordered" name="gender">
+                        <option disabled selected>请选择</option>
+                        <option>男</option>
+                        <option>女</option>
+                    </select>
+                </div>
+                <!-- 生辰八字 -->
+                <div class="grid grid-rows-2 form-control">
+                    <div class="label">
+                        <label class="label font-bold">生辰</label>
+                        <span class="birthdatetime-alt label-text-alt text-warning">非必填项，求问与<i>事主强相关的事情</i>时使用</span>
+                    </div>
+                    <input class="birthdatetime input input-bordered text-xs text-balance truncate overflow-hidden"
+                        type="datetime-local" name="birthdatetime">
+                </div>
+                <!-- 用神 -->
+                <div class="grid grid-rows-2 form-control">
+                    <div class="label">
+                        <label class="label font-bold">用神</label>
+                        <span class="yongShen-alt label-text-alt text-error"></span>
+                    </div>
+                    <select class="yongShen select select-bordered" name="yongShen">
+                        <option disabled selected>请选择</option>
+                        <!-- '兄弟宫', '夫妻宫', '子女宫', '财帛宫', '疾厄宫', '迁移宫', '奴仆宫', '官禄宫', '田宅宫', '福德宫', '父母宫' -->
+                        <option>兄弟宫</option>
+                        <option>夫妻宫</option>
+                        <option>子女宫</option>
+                        <option>财帛宫</option>
+                        <option>疾厄宫</option>
+                        <option>迁移宫</option>
+                        <option>奴仆宫</option>
+                        <option>官禄宫</option>
+                        <option>田宅宫</option>
+                        <option>福德宫</option>
+                        <option>父母宫</option>
+                    </select>
+                    <div class="label">
+                        <span class="yongShen-desc label-text-alt text-info text-base lg:text-lg"></span>
+                    </div>
+                </div>
+                <!-- 问事类型 -->
+                <div class="grid grid-rows-2 form-control">
+                    <div class="label">
+                        <label class="label font-bold">问事类型</label>
+                        <span class="disaster-alt label-text-alt text-error"></span>
+                    </div>
+                    <select class="disaster select select-bordered" name="disaster">
+                        <option disabled selected>请选择</option>
+                        <option>一般事情</option>
+                        <option>病灾</option>
+                    </select>
+                </div>
+                <!-- 问事日时 -->
+                <div class="grid grid-rows-2 form-control">
+                    <div class="label">
+                        <label class="label font-bold">问事日时</label>
+                        <span class="datetime-alt label-text-alt text-error"></span>
+                    </div>
+                    <input class="datetime input input-bordered text-xs text-balance truncate overflow-hidden"
+                        type="datetime-local" name="datetime">
+                </div>
+                <!-- 分割线 -->
+                <div class="divider"></div>
+                <!-- 开始排盘 -->
+                <div class="card-actions justify-center">
+                    <button class="calculate btn btn-primary">开始排盘</button>
+                </div>
+            </div>
+        </div>
+        <div class="result-divider divider lg:divider-horizontal hidden">
+            <p class="result-divider-text">排盘结果</p>
+        </div>
+        <!-- 这是排盘结果 -->
+        <div class="result w-full lg:w-5/6 m-10 hidden">
+            <div role="tablist" class="tabs tabs-lifted text-balance">
+                <input type="radio" name="zodiac_tab" role="tab" class="tab" aria-label="本宫" checked="true" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                    <div class="zodiac_tab_1">
+                    </div>
+                </div>
+                <input type="radio" name="zodiac_tab" role="tab" class="tab" aria-label="对宫" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                    <div class="zodiac_tab_2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 这是页脚 -->
+    <div class="justify-center items-center content-center">
+        <footer class="footer footer-center bg-secondary text-secondary-content">
+            <aside>
+                <p>
+                    <a class="font-bold text-lg text-info" href="https://github.com/TianLanDaoRen"
+                        target="_blank">天岚道人</a>
+                    <br />
+                    不羡尘寰随逝水，且邀明月共徜徉。
+                    <br />
+                    Copyright © 2024 - All right reserved
+                </p>
+            </aside>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,64 @@
+/* scrollbar */
+*::-webkit-scrollbar {
+    display: none;
+}
+
+/* Track */
+*::-webkit-scrollbar-track {
+    display: none;
+}
+
+/*Handle*/
+*::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+@font-face {
+    font-family: 'PuHuiTi';
+    src: url('../assets/fonts/Alibaba_PuHuiTi_2.0_55_Regular_55_Regular.ttf') format('truetype');
+    font-weight: normal;
+}
+
+html {
+    background-size: 100% 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body {
+    /* Font */
+    font-family:
+        'PuHuiTi',
+        ui-sans-serif,
+        system-ui,
+        sans-serif,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji";
+}
+
+footer {
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+.result-divider-text {
+    writing-mode: horizontal-tb;
+    /* 水平文字从上到下 */
+    text-orientation: upright;
+    /* 文字正立 */
+}
+
+@media only screen and (min-width: 1024px) {
+    .result-divider-text {
+        writing-mode: vertical-rl;
+        /* 竖排文字从右向左 */
+        text-orientation: upright;
+        /* 文字正立 */
+    }
+}
