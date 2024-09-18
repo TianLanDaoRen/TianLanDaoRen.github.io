@@ -42,9 +42,9 @@
         </div>
     </div>
     <!-- 这是主内容块 -->
-    <div class="flex flex-col lg:flex-row text-sm lg:text-base justify-center content-center items-center m-5">
+    <div class="flex flex-col lg:flex-row text-sm lg:text-base justify-center content-center items-center">
         <!-- 这是新建排盘 -->
-        <div class="card bg-base-100 shadow-xl w-full lg:w-5/6 m-10">
+        <div class="card bg-base-100 shadow-xl w-full lg:w-5/6 m-5 mb-24">
             <div class="card-body">
                 <h1 class="card-title">事主信息</h1>
                 <!-- 性别 -->
@@ -122,20 +122,21 @@
                 </div>
             </div>
         </div>
-        <div class="result-divider divider lg:divider-horizontal hidden">
+        <div class="result-divider divider lg:divider-horizontal p-2 hidden">
             <p class="result-divider-text">排盘结果</p>
         </div>
         <!-- 这是排盘结果 -->
-        <div class="result w-full lg:w-5/6 m-10 hidden">
-            <div role="tablist" class="tabs tabs-lifted text-balance">
-                <input type="radio" name="zodiac_tab" role="tab" class="tab" aria-label="本宫" checked="true" />
-                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                    <div class="zodiac_tab_1">
+        <div class="result w-full lg:w-5/6 mb-24 hidden">
+            <div role="tablist" class="tabs tabs-lifted font-bold p-2">
+                <input type="radio" name="zodiac_tab" role="tab" class="tab text-xs lg:text-lg" aria-label="本宫"
+                    checked="true" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
+                    <div class="zodiac_tab_1 text-sm p-5">
                     </div>
                 </div>
-                <input type="radio" name="zodiac_tab" role="tab" class="tab" aria-label="对宫" />
-                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                    <div class="zodiac_tab_2">
+                <input type="radio" name="zodiac_tab" role="tab" class="tab text-xs lg:text-lg" aria-label="对宫" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
+                    <div class="zodiac_tab_2 text-sm p-5">
                     </div>
                 </div>
             </div>
@@ -145,7 +146,7 @@
     <div class="justify-center items-center content-center">
         <footer class="footer footer-center bg-secondary text-secondary-content">
             <aside>
-                <p>
+                <p class="text-base">
                     <a class="font-bold text-lg text-info" href="https://github.com/TianLanDaoRen"
                         target="_blank">天岚道人</a>
                     <br />
