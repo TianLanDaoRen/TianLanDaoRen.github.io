@@ -12,13 +12,13 @@
     <meta name="x5-page-mode" content="app" />
     <meta name="360-fullscreen" content="true" />
     <meta charset="UTF-8">
-    <title>十二宫神掌 --- 自动排盘工具</title>
-    <link rel="icon" href="assets/images/icon.jpg" />
+    <title class="title"></title>
+    <link rel="icon" href="assets/images/icon.png" />
     <link rel="stylesheet" href="css/main.css" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/daisyui.css" />
+    <script src="js/tailwindcss.js"></script>
     <script src="js/font-awesome.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunar-javascript/1.6.12/lunar.min.js"></script>
+    <script src="js/lunar.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
 </head>
@@ -36,9 +36,20 @@
             </a>
         </div>
         <div class="navbar-center">
-            <a class="btn btn-ghost text-xl text-primary-content">十二宫神掌</a>
+            <a class="navbar-title btn btn-ghost text-xl text-primary-content"></a>
         </div>
         <div class="navbar-end">
+            <ul class="menu menu-horizontal px-1">
+                <li>
+                    <details>
+                        <summary><i class="fa-solid fa-language fa-fw fa-2xl"></i></summary>
+                        <ul class="bg-secondary rounded p-2 z-10">
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</a></button>
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</a></button>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
         </div>
     </div>
     <!-- 这是主内容块 -->
@@ -46,24 +57,24 @@
         <!-- 这是新建排盘 -->
         <div class="card bg-base-100 shadow-xl w-full lg:w-5/6 m-5 mb-24">
             <div class="card-body">
-                <h1 class="card-title">事主信息</h1>
+                <h1 class="card-title"></h1>
                 <!-- 性别 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="label font-bold">性别</label>
+                        <label class="gender-label label font-bold"></label>
                         <span class="gender-alt label-text-alt text-error"></span>
                     </div>
                     <select class="gender select select-bordered" name="gender">
-                        <option disabled selected>请选择</option>
-                        <option>男</option>
-                        <option>女</option>
+                        <option class="plase-select" disabled selected></option>
+                        <option class="male"></option>
+                        <option class="female"></option>
                     </select>
                 </div>
                 <!-- 生辰八字 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="label font-bold">生辰</label>
-                        <span class="birthdatetime-alt label-text-alt text-warning">非必填项，求问与<i>事主强相关的事情</i>时使用</span>
+                        <label class="birthdatetime-label label font-bold"></label>
+                        <span class="birthdatetime-alt label-text-alt text-warning"></span>
                     </div>
                     <input class="birthdatetime input input-bordered text-xs text-balance truncate overflow-hidden"
                         type="datetime-local" name="birthdatetime">
@@ -71,23 +82,11 @@
                 <!-- 用神 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="label font-bold">用神</label>
+                        <label class="yongShen-label label font-bold"></label>
                         <span class="yongShen-alt label-text-alt text-error"></span>
                     </div>
                     <select class="yongShen select select-bordered" name="yongShen">
-                        <option disabled selected>请选择</option>
-                        <!-- '兄弟宫', '夫妻宫', '子女宫', '财帛宫', '疾厄宫', '迁移宫', '奴仆宫', '官禄宫', '田宅宫', '福德宫', '父母宫' -->
-                        <option>兄弟宫</option>
-                        <option>夫妻宫</option>
-                        <option>子女宫</option>
-                        <option>财帛宫</option>
-                        <option>疾厄宫</option>
-                        <option>迁移宫</option>
-                        <option>奴仆宫</option>
-                        <option>官禄宫</option>
-                        <option>田宅宫</option>
-                        <option>福德宫</option>
-                        <option>父母宫</option>
+                        <option class="plase-select" disabled selected></option>
                     </select>
                     <div class="label">
                         <span class="yongShen-desc label-text-alt text-info text-base lg:text-lg"></span>
@@ -96,19 +95,19 @@
                 <!-- 问事类型 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="label font-bold">问事类型</label>
+                        <label class="disaster-label label font-bold"></label>
                         <span class="disaster-alt label-text-alt text-error"></span>
                     </div>
                     <select class="disaster select select-bordered" name="disaster">
-                        <option disabled selected>请选择</option>
-                        <option>一般事情</option>
-                        <option>病灾</option>
+                        <option class="plase-select" disabled selected></option>
+                        <option class="general"></option>
+                        <option class="illness"></option>
                     </select>
                 </div>
                 <!-- 问事日时 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="label font-bold">问事日时</label>
+                        <label class="datetime-label label font-bold"></label>
                         <span class="datetime-alt label-text-alt text-error"></span>
                     </div>
                     <input class="datetime input input-bordered text-xs text-balance truncate overflow-hidden"
@@ -118,23 +117,24 @@
                 <div class="divider"></div>
                 <!-- 开始排盘 -->
                 <div class="card-actions justify-center">
-                    <button class="calculate btn btn-primary">开始排盘</button>
+                    <button class="calculate btn btn-primary"></button>
                 </div>
             </div>
         </div>
         <div class="result-divider divider lg:divider-horizontal p-2 hidden">
-            <p class="result-divider-text">排盘结果</p>
+            <p class="result-divider-text"></p>
         </div>
         <!-- 这是排盘结果 -->
         <div class="result w-full lg:w-5/6 mb-24 hidden">
             <div role="tablist" class="tabs tabs-lifted font-bold p-2">
-                <input type="radio" name="zodiac_tab" role="tab" class="tab text-xs lg:text-lg" aria-label="本宫"
+                <input type="radio" name="zodiac_tab" role="tab" class="tab text-xs lg:text-sm" aria-label="Key Insight"
                     checked="true" />
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
                     <div class="zodiac_tab_1 text-sm p-5">
                     </div>
                 </div>
-                <input type="radio" name="zodiac_tab" role="tab" class="tab text-xs lg:text-lg" aria-label="对宫" />
+                <input type="radio" name="zodiac_tab" role="tab" class="tab text-xs lg:text-sm"
+                    aria-label="Additional Insight" />
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
                     <div class="zodiac_tab_2 text-sm p-5">
                     </div>
@@ -147,12 +147,10 @@
         <footer class="footer footer-center bg-secondary text-secondary-content">
             <aside>
                 <p class="text-base">
-                    <a class="font-bold text-lg text-info" href="https://github.com/TianLanDaoRen"
-                        target="_blank">天岚道人</a>
+                    <a class="developer font-bold text-lg text-info" href="https://github.com/TianLanDaoRen"
+                        target="_blank"></a>
                     <br />
-                    不羡尘寰随逝水，且邀明月共徜徉。
-                    <br />
-                    Copyright © 2024 - All right reserved
+                    <a class="motto text-xs md:text-sm"></a>
                 </p>
             </aside>
         </footer>
