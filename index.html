@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" class="scroll-smooth">
+<html lang="zh-cn" class="scroll-smooth" data-theme="pastel">
 
 <head>
     <meta name="viewport"
@@ -12,10 +12,11 @@
     <meta name="x5-page-mode" content="app" />
     <meta name="360-fullscreen" content="true" />
     <meta charset="UTF-8">
-    <title class="title"></title>
+    <title class="translation">十二宫神掌 --- 自动排盘工具</title>
     <link rel="icon" href="assets/images/icon.png" />
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/daisyui.css" />
+    <script src="js/marked.min.js"></script>
     <script src="js/tailwindcss.js"></script>
     <script src="js/font-awesome.js"></script>
     <script src="js/lunar.js"></script>
@@ -36,13 +37,13 @@
             </a>
         </div>
         <div class="navbar-center">
-            <a class="navbar-title btn btn-ghost text-xl text-primary-content"></a>
+            <a class="translation btn btn-ghost text-base lg:text-lg text-primary-content">十二宫神掌</a>
         </div>
         <div class="navbar-end">
             <ul class="menu menu-horizontal px-1">
                 <li>
                     <details>
-                        <summary><i class="fa-solid fa-language fa-fw fa-2xl"></i></summary>
+                        <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
                         <ul class="bg-secondary rounded p-2 z-10">
                             <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</a></button>
                             <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</a></button>
@@ -57,36 +58,37 @@
         <!-- 这是新建排盘 -->
         <div class="card bg-base-100 shadow-xl w-full lg:w-5/6 m-5 mb-24">
             <div class="card-body">
-                <h1 class="card-title"></h1>
+                <h1 class="translation card-title">事主信息</h1>
                 <!-- 性别 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="gender-label label font-bold"></label>
+                        <label class="translation label font-bold">性别</label>
                         <span class="gender-alt label-text-alt text-error"></span>
                     </div>
                     <select class="gender select select-bordered" name="gender">
-                        <option class="plase-select" disabled selected></option>
-                        <option class="male"></option>
-                        <option class="female"></option>
+                        <option class="translation" disabled selected>请选择</option>
+                        <option class="translation">男</option>
+                        <option class="translation">女</option>
                     </select>
                 </div>
                 <!-- 生辰八字 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="birthdatetime-label label font-bold"></label>
-                        <span class="birthdatetime-alt label-text-alt text-warning"></span>
+                        <label class="translation label font-bold">生辰</label>
+                        <span
+                            class="translation birthdatetime-alt label-text-alt text-warning">非必填项，求问与事主强相关的事情时使用</span>
                     </div>
-                    <input class="birthdatetime input input-bordered text-xs text-balance truncate overflow-hidden"
+                    <input class="birthdatetime input input-bordered truncate overflow-hidden w-full"
                         type="datetime-local" name="birthdatetime">
                 </div>
                 <!-- 用神 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="yongShen-label label font-bold"></label>
+                        <label class="translation label font-bold">用神</label>
                         <span class="yongShen-alt label-text-alt text-error"></span>
                     </div>
                     <select class="yongShen select select-bordered" name="yongShen">
-                        <option class="plase-select" disabled selected></option>
+                        <option class="translation" disabled selected>请选择</option>
                     </select>
                     <div class="label">
                         <span class="yongShen-desc label-text-alt text-info text-base lg:text-lg"></span>
@@ -95,38 +97,49 @@
                 <!-- 问事类型 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="disaster-label label font-bold"></label>
+                        <label class="translation label font-bold">问事类型</label>
                         <span class="disaster-alt label-text-alt text-error"></span>
                     </div>
                     <select class="disaster select select-bordered" name="disaster">
-                        <option class="plase-select" disabled selected></option>
-                        <option class="general"></option>
-                        <option class="illness"></option>
+                        <option class="translation" disabled selected>请选择</option>
+                        <option class="translation">一般事情</option>
+                        <option class="translation">病灾</option>
                     </select>
                 </div>
                 <!-- 问事日时 -->
                 <div class="grid grid-rows-2 form-control">
                     <div class="label">
-                        <label class="datetime-label label font-bold"></label>
+                        <label class="translation label font-bold">问事日时</label>
                         <span class="datetime-alt label-text-alt text-error"></span>
                     </div>
-                    <input class="datetime input input-bordered text-xs text-balance truncate overflow-hidden"
-                        type="datetime-local" name="datetime">
+                    <input class="datetime input input-bordered truncate overflow-hidden w-full" type="datetime-local"
+                        name="datetime">
+                </div>
+                <!-- 询问事宜 -->
+                <div class="grid grid-rows-2 form-control">
+                    <div class="label">
+                        <label class="translation label font-bold">询问事宜</label>
+                        <span class="question-alt label-text-alt text-error"></span>
+                    </div>
+                    <textarea class="question textarea textarea-bordered truncate overflow-hidden w-full"
+                        name="question" placeholder="Describe your inquiry in detail..."></textarea>
                 </div>
                 <!-- 分割线 -->
                 <div class="divider"></div>
                 <!-- 开始排盘 -->
                 <div class="card-actions justify-center">
-                    <button class="calculate btn btn-primary"></button>
+                    <button class="translation calculate btn btn-primary">开始排盘</button>
                 </div>
             </div>
         </div>
+        <!-- 加载动画 -->
         <div class="result-divider divider lg:divider-horizontal p-2 hidden">
-            <p class="result-divider-text"></p>
+            <p class="translation result-divider-text">排盘结果</p>
+            <span class="loading loading-dots loading-lg hidden"></span>
         </div>
         <!-- 这是排盘结果 -->
         <div class="result w-full lg:w-5/6 mb-24 hidden">
-            <div role="tablist" class="tabs tabs-lifted font-bold p-2">
+            <div role="tablist" class="tabs tabs-lifted p-2">
                 <input type="radio" name="zodiac_tab" role="tab" class="tab text-xs lg:text-sm" aria-label="Key Insight"
                     checked="true" />
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
@@ -147,10 +160,10 @@
         <footer class="footer footer-center bg-secondary text-secondary-content">
             <aside>
                 <p class="text-base">
-                    <a class="developer font-bold text-lg text-info" href="https://github.com/TianLanDaoRen"
-                        target="_blank"></a>
+                    <a class="translation font-bold text-lg text-info" href="https://github.com/TianLanDaoRen"
+                        target="_blank">天岚道人</a>
                     <br />
-                    <a class="motto text-xs md:text-sm"></a>
+                    <a class="translation text-xs md:text-sm">不羡尘寰随逝水，且邀明月共徜徉。</a>
                 </p>
             </aside>
         </footer>
