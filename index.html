@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-cn" class="scroll-smooth" data-theme="pastel">
+<html lang="zh-cn" class="scroll-smooth" data-theme="autumn">
 
 <head>
     <meta name="viewport"
@@ -28,23 +28,23 @@
     <!-- 这是背景 -->
     <div class="bg"></div>
     <!-- 这是一个Navbar -->
-    <div class="navbar bg-primary shadow-xl">
+    <div class="navbar bg-neutral text-neutral-content shadow-xl">
         <div class="navbar-start">
-            <a class="btn btn-ghost btn-circle text-primary-content" href="/index.html">
-                <div class="tooltip tooltip-right" data-tip="主页">
+            <a class="btn btn-ghost btn-circle" href="/index.html">
+                <div class="tooltip tooltip-right" data-tip="HOME">
                     <i class="fa-solid fa-house fa-fw"></i>
                 </div>
             </a>
         </div>
         <div class="navbar-center">
-            <a class="translation btn btn-ghost text-base lg:text-lg text-primary-content">十二宫神掌</a>
+            <a class="translation btn btn-ghost text-base lg:text-lg">十二宫神掌</a>
         </div>
         <div class="navbar-end">
             <ul class="menu menu-horizontal px-1">
                 <li>
                     <details>
                         <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
-                        <ul class="bg-secondary rounded p-2 z-10">
+                        <ul class="bg-primary text-primary-content rounded p-2 z-10">
                             <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</a></button>
                             <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</a></button>
                         </ul>
@@ -56,7 +56,7 @@
     <!-- 这是主内容块 -->
     <div class="flex flex-col lg:flex-row text-sm lg:text-base justify-center content-center items-center">
         <!-- 这是新建排盘 -->
-        <div class="card bg-base-100 shadow-xl w-full lg:w-5/6 m-5 mb-24">
+        <div class="card bg-base-100 text-base-content shadow-xl w-full lg:w-5/6 m-5 mb-24">
             <div class="card-body">
                 <h1 class="translation card-title">事主信息</h1>
                 <!-- 性别 -->
@@ -91,7 +91,7 @@
                         <option class="translation" disabled selected>请选择</option>
                     </select>
                     <div class="label">
-                        <span class="yongShen-desc label-text-alt text-info text-base lg:text-lg"></span>
+                        <span class="yongShen-desc label-text-alt text-info lg:text-lg"></span>
                     </div>
                 </div>
                 <!-- 问事类型 -->
@@ -128,7 +128,7 @@
                 <div class="divider"></div>
                 <!-- 开始排盘 -->
                 <div class="card-actions justify-center">
-                    <button class="translation calculate btn btn-primary">开始排盘</button>
+                    <button class="translation calculate btn btn-secondary w-full">开始排盘</button>
                 </div>
             </div>
         </div>
@@ -157,10 +157,10 @@
     </div>
     <!-- 这是页脚 -->
     <div class="justify-center items-center content-center">
-        <footer class="footer footer-center bg-secondary text-secondary-content">
+        <footer class="footer footer-center bg-neutral text-neutral-content">
             <aside>
                 <p class="text-base">
-                    <a class="translation font-bold text-lg text-info" href="https://github.com/TianLanDaoRen"
+                    <a class="translation font-bold text-lg" href="https://github.com/TianLanDaoRen"
                         target="_blank">天岚道人</a>
                     <br />
                     <a class="translation text-xs md:text-sm">不羡尘寰随逝水，且邀明月共徜徉。</a>
