@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-cn" class="scroll-smooth" data-theme="light">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <title>卦灵AI - 八字排盘</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/bazi.js"></script>
+</head>
+
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <div class="navbar bg-base-100 bg-opacity-80 backdrop-blur shadow-lg">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl">卦灵AI</a>
+        </div>
+        <div class="navbar-center">
+            <a class="btn btn-ghost heading-font text-2xl">八字排盘</a>
+        </div>
+        <div class="navbar-end">
+            <ul class="menu menu-horizontal px-1">
+                <li>
+                    <details>
+                        <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
+                        <ul class="bg-base-100 rounded p-2 z-10">
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</button></li>
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</button>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container mx-auto px-4 py-8 pb-28">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 左侧表单 -->
+            <div class="lg:w-1/2">
+                <div class="card shadow-xl">
+                    <div class="card-body">
+                        <h2 class="heading-font text-2xl mb-6">八字排盘 <p class="text-xs text-font">排盘由 问真八字 提供</p>
+                        </h2>
+
+                        <!-- 性别选择 -->
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text text-font">性别</span>
+                                <span class="gender-alt label-text-alt text-error"></span>
+                            </label>
+                            <div class="tabs tabs-lifted">
+                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="男"
+                                    value="1" checked />
+                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="女"
+                                    value="0" />
+                            </div>
+                        </div>
+
+                        <!-- 出生日期 -->
+                        <div class="form-control w-full mb-4">
+                            <label class="label">
+                                <span class="label-text text-font">出生日期（真太阳时、早晚子时、公历）</span>
+                                <span class="birth-alt label-text-alt text-error"></span>
+                            </label>
+                            <input type="text" name="birth" class="input input-bordered text-font"
+                                placeholder="例如：1990-01-01 12:00" />
+                        </div>
+
+                        <!-- 排盘按钮 -->
+                        <button class="btn btn-primary w-full text-lg calculate">开始排盘</button>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 加载动画 -->
+            <div class="result-divider divider lg:divider-horizontal p-2 hidden">
+                <p class="result-divider-text">排盘结果</p>
+                <span class="loading loading-dots loading-lg hidden"></span>
+            </div>
+
+            <!-- 卦象结果 -->
+            <div class="lg:w-1/2">
+                <div class="result hidden">
+                    <div class="card shadow-xl">
+                        <div class="card-body">
+                            <h2 class="heading-font text-2xl mb-6">排盘结果</h2>
+
+                            <!-- 问事详情，排盘后，将收集的信息汇总到这里。是个daisyui的code类型，附带一个复制按钮。 -->
+                            <div class="mockup-code w-full text-font">
+                                <pre><code class="code-content text-font"></code></pre>
+                                <button class="btn btn-ghost code-copy-btn">复制</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded">
+        <div>
+            <p class="text-font">
+                <span class="heading-font text-xl">卦灵AI</span><br />
+                <span class="footer-motto text-xl">融古通今，智解天机</span><br />
+                <a class="text-sm" href="https://github.com/TianLanDaoRen" target="_blank">@云笥散人</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>

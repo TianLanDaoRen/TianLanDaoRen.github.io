@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-cn" class="scroll-smooth" data-theme="light">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <title>卦灵AI - 十二宫神掌</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/libs/marked.min.js"></script>
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="js/libs/lunar.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/palace.js"></script>
+</head>
+
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <div class="navbar bg-base-100 bg-opacity-80 backdrop-blur shadow-lg">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl">卦灵AI</a>
+        </div>
+        <div class="navbar-center">
+            <a class="btn btn-ghost heading-font text-2xl">十二宫神掌</a>
+        </div>
+        <div class="navbar-end">
+            <ul class="menu menu-horizontal px-1">
+                <li>
+                    <details>
+                        <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
+                        <ul class="bg-base-100 rounded p-2 z-10">
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</button></li>
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</button>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container mx-auto px-4 py-8 pb-28">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 输入表单 -->
+            <div class="lg:w-1/2">
+                <div class="card shadow-xl">
+                    <div class="card-body">
+                        <h2 class="translation heading-font text-2xl mb-6">事主信息</h2>
+
+                        <!-- 性别 -->
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="translation form-label">性别</span>
+                                <span class="gender-alt label-text-alt text-error"></span>
+                            </label>
+                            <select class="gender select select-bordered text-font" name="gender">
+                                <option class="translation" disabled selected>请选择</option>
+                                <option class="translation">男</option>
+                                <option class="translation">女</option>
+                            </select>
+                        </div>
+
+                        <!-- 生辰八字 -->
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="translation form-label">生辰</span>
+                                <span
+                                    class="translation birthdatetime-alt label-text-alt text-warning text-font">非必填项，求问与事主强相关的事情时使用</span>
+                            </label>
+                            <input class="birthdatetime input input-bordered text-font" type="datetime-local"
+                                name="birthdatetime">
+                        </div>
+
+                        <!-- 用神 -->
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="translation form-label">用神</span>
+                                <span class="yongShen-alt label-text-alt text-error"></span>
+                            </label>
+                            <select class="yongShen select select-bordered text-font" name="yongShen">
+                                <option class="translation" disabled selected>请选择</option>
+                            </select>
+                            <label class="label">
+                                <span class="yongShen-desc label-text-alt text-info text-font"></span>
+                            </label>
+                        </div>
+
+                        <!-- 问事类型 -->
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="translation form-label">问事类型</span>
+                                <span class="disaster-alt label-text-alt text-error"></span>
+                            </label>
+                            <select class="disaster select select-bordered text-font" name="disaster">
+                                <option class="translation" disabled selected>请选择</option>
+                                <option class="translation">一般事情</option>
+                                <option class="translation">病灾</option>
+                            </select>
+                        </div>
+
+                        <!-- 问事日时 -->
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="translation form-label">问事日时</span>
+                                <span class="datetime-alt label-text-alt text-error"></span>
+                            </label>
+                            <input class="datetime input input-bordered text-font" type="datetime-local"
+                                name="datetime">
+                        </div>
+
+                        <!-- 问事详情 -->
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="translation form-label">问事详情</span>
+                                <span class="question-alt label-text-alt text-error"></span>
+                            </label>
+                            <textarea class="question textarea textarea-bordered h-24 text-font" name="question"
+                                placeholder="请详细描述您的问题..."></textarea>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <div class="card-actions">
+                            <button class="translation calculate btn btn-primary w-full text-lg">开始排盘</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 加载动画 -->
+            <div class="result-divider divider lg:divider-horizontal p-2 hidden">
+                <p class="translation result-divider-text">排盘结果</p>
+                <span class="loading loading-dots loading-lg hidden"></span>
+            </div>
+
+            <!-- 结果显示 -->
+            <div class="lg:w-1/2">
+                <div class="result hidden">
+                    <div class="card shadow-xl">
+                        <div class="card-body">
+                            <h2 class="translation heading-font text-2xl mb-6">排盘结果</h2>
+                            <div role="tablist" class="tabs tabs-lifted">
+                                <input type="radio" name="zodiac_tab" role="tab" class="tab heading-font text-sm"
+                                    aria-label="Main" checked="true" />
+                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                                    <div class="zodiac_tab_1 text-font text-sm"></div>
+                                </div>
+
+                                <input type="radio" name="zodiac_tab" role="tab" class="tab heading-font text-sm"
+                                    aria-label="Addit" />
+                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                                    <div class="zodiac_tab_2 text-font text-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded">
+        <div>
+            <p class="text-font">
+                <span class="heading-font text-xl">卦灵AI</span><br />
+                <span class="footer-motto text-xl">融古通今，智解天机</span><br />
+                <a class="text-sm" href="https://github.com/TianLanDaoRen" target="_blank">@云笥散人</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>

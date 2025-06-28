@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-cn" class="scroll-smooth" data-theme="light">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <title>卦灵AI - 梅花易数</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
+    <script src="js/libs/marked.min.js"></script>
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="js/libs/lunar.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/plum.js"></script>
+    <script src="js/plum_add.js"></script>
+</head>
+
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <div class="navbar bg-base-100 bg-opacity-80 backdrop-blur shadow-lg">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl">卦灵AI</a>
+        </div>
+        <div class="navbar-center">
+            <a class="btn btn-ghost heading-font text-2xl">梅花易数</a>
+        </div>
+        <div class="navbar-end">
+            <ul class="menu menu-horizontal px-1">
+                <li>
+                    <details>
+                        <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
+                        <ul class="bg-base-100 rounded p-2 z-10">
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</button></li>
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</button>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container mx-auto px-4 py-8 pb-28">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- 起卦方式选择 -->
+            <div class="lg:w-1/2">
+                <div class="card shadow-xl">
+                    <div class="card-body">
+                        <h2 class="heading-font text-2xl mb-6">梅花起卦</h2>
+
+                        <!-- 性别选择 -->
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text text-font">性别</span>
+                                <span class="gender-alt label-text-alt text-error"></span>
+                            </label>
+                            <div class="tabs tabs-lifted">
+                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="男"
+                                    value="男" checked />
+                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="女"
+                                    value="女" />
+                            </div>
+                        </div>
+
+                        <!-- 求问事项 -->
+                        <div class="form-control w-full mb-4">
+                            <label class="label">
+                                <span class="label-text text-font">求问事项</span>
+                                <span class="question-alt label-text-alt text-error"></span>
+                            </label>
+                            <textarea id="question" class="textarea textarea-bordered text-font h-24"
+                                placeholder="请详细描述您想求问的事项..." required></textarea>
+                        </div>
+
+                        <!-- 起卦方式选择 -->
+                        <div class="form-control mb-4">
+                            <label class="label">
+                                <span class="label-text text-font">选择起卦方式</span>
+                                <span class="method-alt label-text-alt text-error"></span>
+                            </label>
+                            <div class="join w-full justify-center">
+                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
+                                    aria-label="时间起卦" value="time" checked />
+                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
+                                    aria-label="汉字起卦" value="text" />
+                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
+                                    aria-label="手动指定" value="manual" />
+                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
+                                    aria-label="使用编号" value="code" />
+                            </div>
+                        </div>
+
+                        <!-- 时间起卦内容 -->
+                        <div id="time-panel" class="method-panel mb-4">
+                            <div class="card bg-base-100 shadow-lg">
+                                <div class="card-body space-y-4">
+                                    <div class="form-control w-full">
+                                        <label class="label">
+                                            <span class="label-text text-font">选择时间</span>
+                                            <span class="datetime-alt label-text-alt text-error"></span>
+                                        </label>
+                                        <input type="datetime-local" id="plumDatetime"
+                                            class="input input-bordered join-item" required />
+                                    </div>
+                                    <div class="alert alert-warning shadow-lg">
+                                        <i class="fa-solid fa-clock fa-xs"></i>
+                                        <div class="text-font">
+                                            <p>当前时间：<span id="currentTime" class="font-bold"></span></p>
+                                            <p>农历：<span id="lunarTime" class="font-bold"></span></p>
+                                            <p>干支：<span id="gzTime" class="font-bold"></span></p>
+                                            <p class="text-sm opacity-75">时间起卦法自动根据时间演算，准确度较高</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 文字起卦内容 -->
+                        <div id="text-panel" class="method-panel mb-4 hidden">
+                            <div class="card bg-base-100 shadow-lg">
+                                <div class="card-body space-y-4">
+                                    <div class="form-control w-full">
+                                        <label class="label">
+                                            <span class="label-text text-font">输入汉字</span>
+                                            <span class="text-alt label-text-alt text-error"></span>
+                                        </label>
+                                        <input type="text" id="textInput" class="input input-bordered text-font w-full"
+                                            placeholder="请输入若干灵感汉字..." />
+                                    </div>
+                                    <div class="alert shadow-lg">
+                                        <i class="fa-solid fa-info-circle fa-xs"></i>
+                                        <div class="text-font">
+                                            <p>汉字起卦法将根据输入汉字自动演算</p>
+                                            <p class="text-sm opacity-75">排除杂念，在心中默念求问事项，灵感自现</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 手动指定内容 -->
+                        <div id="manual-panel" class="method-panel mb-4 hidden">
+                            <div class="card bg-base-100 shadow-lg">
+                                <div class="card-body space-y-4">
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text text-font">上卦</span>
+                                                <span class="upper-trigram-alt label-text-alt text-error"></span>
+                                            </label>
+                                            <select id="upperTrigram" class="select select-bordered text-font">
+                                                <option value="111">乾 ☰ (天)</option>
+                                                <option value="000">坤 ☷ (地)</option>
+                                                <option value="010">坎 ☵ (水)</option>
+                                                <option value="101">离 ☲ (火)</option>
+                                                <option value="001">艮 ☶ (山)</option>
+                                                <option value="110">兑 ☱ (泽)</option>
+                                                <option value="011">巽 ☴ (风)</option>
+                                                <option value="100">震 ☳ (雷)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text text-font">下卦</span>
+                                                <span class="lower-trigram-alt label-text-alt text-error"></span>
+                                            </label>
+                                            <select id="lowerTrigram" class="select select-bordered text-font">
+                                                <option value="111">乾 ☰ (天)</option>
+                                                <option value="000">坤 ☷ (地)</option>
+                                                <option value="010">坎 ☵ (水)</option>
+                                                <option value="101">离 ☲ (火)</option>
+                                                <option value="001">艮 ☶ (山)</option>
+                                                <option value="110">兑 ☱ (泽)</option>
+                                                <option value="011">巽 ☴ (风)</option>
+                                                <option value="100">震 ☳ (雷)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-control">
+                                            <label class="label">
+                                                <span class="label-text text-font">动爻</span>
+                                                <span class="changing-line-alt label-text-alt text-error"></span>
+                                            </label>
+                                            <div class="grid grid-cols-3 gap-2">
+                                                <label class="label cursor-pointer justify-start gap-2">
+                                                    <input type="radio" name="changing_line"
+                                                        class="radio checked:bg-red-700" value="6" required />
+                                                    <span class="label-text text-font">上爻</span>
+                                                </label>
+                                                <label class="label cursor-pointer justify-start gap-2">
+                                                    <input type="radio" name="changing_line"
+                                                        class="radio checked:bg-red-700" value="5" required />
+                                                    <span class="label-text text-font">五爻</span>
+                                                </label>
+                                                <label class="label cursor-pointer justify-start gap-2">
+                                                    <input type="radio" name="changing_line"
+                                                        class="radio checked:bg-red-700" value="4" required />
+                                                    <span class="label-text text-font">四爻</span>
+                                                </label>
+                                                <label class="label cursor-pointer justify-start gap-2">
+                                                    <input type="radio" name="changing_line"
+                                                        class="radio checked:bg-red-700" value="3" required />
+                                                    <span class="label-text text-font">三爻</span>
+                                                </label>
+                                                <label class="label cursor-pointer justify-start gap-2">
+                                                    <input type="radio" name="changing_line"
+                                                        class="radio checked:bg-red-700" value="2" required />
+                                                    <span class="label-text text-font">二爻</span>
+                                                </label>
+                                                <label class="label cursor-pointer justify-start gap-2">
+                                                    <input type="radio" name="changing_line"
+                                                        class="radio checked:bg-red-700" value="1" required />
+                                                    <span class="label-text text-font">初爻</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="alert shadow-lg">
+                                        <i class="fa-solid fa-info-circle fa-xs"></i>
+                                        <div class="text-font">
+                                            <p>手动指定卦象时，可选择动爻来表示变化</p>
+                                            <p class="text-sm opacity-75">此法只建议卦师使用</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 编号起卦内容 -->
+                        <div id="code-panel" class="method-panel mb-4 hidden">
+                            <div class="card bg-base-100 shadow-lg">
+                                <div class="card-body space-y-4">
+                                    <div class="form-control w-full">
+                                        <label class="label">
+                                            <span class="label-text text-font">输入编号</span>
+                                            <span class="code-alt label-text-alt text-error"></span>
+                                        </label>
+                                        <input type="text" id="codeInput" class="input input-bordered text-font w-full"
+                                            placeholder="请输入“吉吉卜”中起得的编号..." />
+                                    </div>
+                                    <div class="alert shadow-lg">
+                                        <i class="fa-solid fa-info-circle fa-xs"></i>
+                                        <div class="text-font">
+                                            <p>该方法需配合小米手环9/10，并安装“吉吉卜”快应用</p>
+                                            <p class="text-sm opacity-75 text-info"><a
+                                                    href="https://wwcz.lanzout.com/irR1R2zriq2b"
+                                                    target="_blank">点击这里下载吉吉卜</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 起卦按钮 -->
+                        <button class="btn btn-primary w-full text-lg calculate">开始起卦</button>
+
+                        <!-- 问事详情，起卦后，将收集的信息汇总到这里。是个daisyui的code类型，附带一个复制按钮。 -->
+                        <div class="mockup-code w-full text-font hidden">
+                            <pre><code class="code-content text-font"></code></pre>
+                            <button class="btn btn-ghost code-copy-btn">复制</button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 加载动画 -->
+            <div class="result-divider divider lg:divider-horizontal p-2 hidden">
+                <p class="result-divider-text">起卦结果</p>
+                <span class="loading loading-dots loading-lg hidden"></span>
+            </div>
+
+            <!-- 卦象结果 -->
+            <div class="lg:w-1/2">
+                <div class="result hidden">
+                    <div class="card shadow-xl">
+                        <div class="card-body">
+                            <h2 class="heading-font text-2xl mb-6">卦象解析</h2>
+
+                            <!-- 本卦与变卦展示 -->
+                            <div class="grid grid-cols-3 gap-8 mb-6">
+                                <div class="text-center">
+                                    <h3 class="heading-font text-xl mb-4">本卦</h3>
+                                    <div class="hexagram original-hexagram">
+                                        <!-- 六爻将由 JS 动态生成 -->
+                                    </div>
+                                    <p class="mt-4 text-sm text-font original-name"></p>
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="heading-font text-xl mb-4">互卦</h3>
+                                    <div class="hexagram inter-hexagram">
+                                        <!-- 六爻将由 JS 动态生成 -->
+                                    </div>
+                                    <p class="mt-4 text-sm text-font inter-name"></p>
+                                </div>
+                                <div class="text-center">
+                                    <h3 class="heading-font text-xl mb-4">变卦</h3>
+                                    <div class="hexagram changed-hexagram">
+                                        <!-- 六爻将由 JS 动态生成 -->
+                                    </div>
+                                    <p class="mt-4 text-sm text-font changed-name"></p>
+                                </div>
+                            </div>
+
+                            <!-- 卦辞解析 -->
+                            <div role="tablist" class="tabs tabs-lifted">
+                                <input type="radio" name="divination_tab" role="tab" class="tab heading-font"
+                                    aria-label="易经" checked="true" />
+                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                                    <div class="yi-interpretation text-font"></div>
+                                </div>
+
+                                <input type="radio" name="divination_tab" role="tab" class="tab heading-font"
+                                    aria-label="卦灵" />
+                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                                    <div class="ai-interpretation text-font"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded">
+        <div>
+            <p class="text-font">
+                <span class="heading-font text-xl">卦灵AI</span><br />
+                <span class="footer-motto text-xl">融古通今，智解天机</span><br />
+                <a class="text-sm" href="https://github.com/TianLanDaoRen" target="_blank">@云笥散人</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>

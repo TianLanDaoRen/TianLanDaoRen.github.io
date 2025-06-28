@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-cn" class="scroll-smooth" data-theme="light">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <title>卦灵AI - 智能易学研究</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+</head>
+
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <div class="navbar bg-base-100 bg-opacity-80 backdrop-blur shadow-lg">
+        <div class="navbar-start">
+            <a class="btn btn-ghost heading-font text-2xl">卦灵AI</a>
+        </div>
+        <div class="navbar-end">
+            <ul class="menu menu-horizontal px-1">
+                <li>
+                    <details>
+                        <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
+                        <ul class="bg-base-100 rounded p-2 z-10">
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</button></li>
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</button>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container mx-auto px-4 py-12">
+        <div class="text-center mb-16">
+            <h1 class="translation shading-font heading-font text-5xl mb-4">卦灵AI</h1>
+            <p class="translation shading-font text-xl text-gray-700 text-font">AI 赋能的智能易学平台</p>
+            <p class="translation shading-font text-gray-500 text-font italic mt-2">融合传统易学与人工智能，提供深度的命理解析</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto pb-24">
+            <!-- 十二宫神掌卡片 -->
+            <a href="palace.html" class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                <figure class="px-6 pt-6">
+                    <img src="assets/images/palace-icon.png" alt="十二宫神掌" class="w-32 h-32 object-cover rounded-xl" />
+                </figure>
+                <div class="card-body items-center text-center">
+                    <h2 class="translation heading-font text-2xl">十二宫神掌</h2>
+                    <p class="translation text-gray-600 text-font">深度解析生命轨迹，智能推演人生玄机</p>
+                </div>
+            </a>
+
+            <!-- 梅花易数卡片 -->
+            <a href="plum-blossom.html"
+                class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                <figure class="px-6 pt-6">
+                    <img src="assets/images/plum-icon.png" alt="梅花易数" class="w-32 h-32 object-cover rounded-xl" />
+                </figure>
+                <div class="card-body items-center text-center">
+                    <h2 class="translation heading-font text-2xl">梅花易数</h2>
+                    <p class="translation text-gray-600 text-font">智能演算卦象，精准预测未来</p>
+                </div>
+            </a>
+
+            <!-- 八字排盘卡片 -->
+            <a href="bazi-paipan.html"
+                class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                <figure class="px-6 pt-6">
+                    <img src="assets/images/bazi-icon.png" alt="八字排盘" class="w-32 h-32 object-cover rounded-xl" />
+                </figure>
+                <div class="card-body items-center text-center">
+                    <h2 class="translation heading-font text-2xl">八字排盘</h2>
+                    <p class="translation text-gray-600 text-font">子平八字排盘，洞悉命理天机</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded">
+        <div>
+            <p class="text-font">
+                <span class="heading-font text-xl">卦灵AI</span><br />
+                <span class="footer-motto text-xl">融古通今，智解天机</span><br />
+                <a class="text-sm" href="https://github.com/TianLanDaoRen" target="_blank">@云笥散人</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>
