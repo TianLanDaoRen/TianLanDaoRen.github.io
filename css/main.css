@@ -312,3 +312,28 @@ footer {
 .text-info {
     color: hsl(185, 39%, 45%);
 }
+
+/* New Tab Styles */
+.tabs-lifted .tab-active {
+    background-color: hsl(39, 45%, 97%);
+    border-color: hsl(39, 41%, 85%);
+    border-bottom-color: transparent;
+}
+
+.join .btn-active {
+    background-color: hsl(342, 51%, 37%);
+    color: white;
+    border-color: hsl(342, 51%, 37%);
+}
+
+.join .btn-outline {
+    background-color: transparent;
+    color: hsl(342, 51%, 37%);
+    border-color: hsl(342, 51%, 37%);
+}
+
+.join .btn-outline:hover {
+    background-color: hsl(342, 51%, 37%);
+    color: white;
+    border-color: hsl(342, 51%, 37%);
+}

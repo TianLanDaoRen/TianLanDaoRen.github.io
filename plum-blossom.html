@@ -59,12 +59,12 @@
                                 <span class="label-text text-font">性别</span>
                                 <span class="gender-alt label-text-alt text-error"></span>
                             </label>
-                            <div class="tabs tabs-lifted">
-                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="男"
-                                    value="男" checked />
-                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="女"
-                                    value="女" />
+                            <div class="join w-full gender-group">
+                                <button class="join-item btn btn-primary flex-1 gender-btn btn-active"
+                                    data-value="男">男</button>
+                                <button class="join-item btn btn-outline flex-1 gender-btn" data-value="女">女</button>
                             </div>
+                            <input type="hidden" name="gender" value="男">
                         </div>
 
                         <!-- 求问事项 -->
@@ -83,16 +83,14 @@
                                 <span class="label-text text-font">选择起卦方式</span>
                                 <span class="method-alt label-text-alt text-error"></span>
                             </label>
-                            <div class="join w-full justify-center">
-                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
-                                    aria-label="时间起卦" value="time" checked />
-                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
-                                    aria-label="汉字起卦" value="text" />
-                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
-                                    aria-label="手动指定" value="manual" />
-                                <input type="radio" name="method_tab" class="join-item btn btn-primary"
-                                    aria-label="使用编号" value="code" />
+                            <div class="join w-full justify-center method-group">
+                                <button class="join-item btn btn-primary method-btn btn-active"
+                                    data-value="time">时间起卦</button>
+                                <button class="join-item btn btn-outline method-btn" data-value="text">汉字起卦</button>
+                                <button class="join-item btn btn-outline method-btn" data-value="manual">手动指定</button>
+                                <button class="join-item btn btn-outline method-btn" data-value="code">使用编号</button>
                             </div>
+                            <input type="hidden" name="method" value="time">
                         </div>
 
                         <!-- 时间起卦内容 -->
@@ -309,23 +307,26 @@
                             </div>
 
                             <!-- 卦辞解析 -->
-                            <div role="tablist" class="tabs tabs-lifted">
-                                <input type="radio" name="divination_tab" role="tab" class="tab heading-font"
-                                    aria-label="易经" checked="true" />
-                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                                    <div class="yi-interpretation text-font"></div>
-                                </div>
+                            <div class="join result-tabs-group grid grid-cols-2 mb-0">
+                                <button class="join-item btn btn-primary btn-active result-tab-btn"
+                                    data-target="panel-yi">易经</button>
+                                <button class="join-item btn btn-outline result-tab-btn"
+                                    data-target="panel-ai">卦灵</button>
+                            </div>
 
-                                <input type="radio" name="divination_tab" role="tab" class="tab heading-font"
-                                    aria-label="卦灵" />
-                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                                    <!-- 右上角添加复制按钮，悬浮时提示文字 -->
-                                    <button class="btn btn-ghost btn-sm absolute top-4 right-4 markdown-copy-btn"
-                                        title="复制卦灵解析 as Markdown">
-                                        <i class="fa-regular fa-copy fa-fw"></i>
-                                    </button>
-                                    <div class="ai-interpretation text-font"></div>
-                                </div>
+                            <div id="panel-yi"
+                                class="bg-base-100 border border-base-300 rounded-b-box rounded-tr-box p-6">
+                                <div class="yi-interpretation text-font"></div>
+                            </div>
+
+                            <div id="panel-ai"
+                                class="hidden bg-base-100 border border-base-300 rounded-b-box rounded-tr-box p-6 relative">
+                                <!-- 右上角添加复制按钮，悬浮时提示文字 -->
+                                <button class="btn btn-ghost btn-sm absolute top-4 right-4 markdown-copy-btn"
+                                    title="复制卦灵解析 as Markdown">
+                                    <i class="fa-regular fa-copy fa-fw"></i>
+                                </button>
+                                <div class="ai-interpretation text-font"></div>
                             </div>
                         </div>
                     </div>

@@ -57,11 +57,12 @@
                                 <span class="translation form-label">性别</span>
                                 <span class="gender-alt label-text-alt text-error"></span>
                             </label>
-                            <select class="gender select select-bordered text-font" name="gender">
-                                <option class="translation" disabled selected>请选择</option>
-                                <option class="translation">男</option>
-                                <option class="translation">女</option>
-                            </select>
+                            <div class="join w-full gender-group">
+                                <button class="join-item btn btn-primary flex-1 gender-btn btn-active"
+                                    data-value="男">男</button>
+                                <button class="join-item btn btn-outline flex-1 gender-btn" data-value="女">女</button>
+                            </div>
+                            <input type="hidden" class="gender" name="gender" value="男">
                         </div>
 
                         <!-- 生辰八字 -->
@@ -143,18 +144,19 @@
                     <div class="card shadow-xl">
                         <div class="card-body">
                             <h2 class="translation heading-font text-2xl mb-6">排盘结果</h2>
-                            <div role="tablist" class="tabs tabs-lifted">
-                                <input type="radio" name="zodiac_tab" role="tab" class="tab heading-font text-sm"
-                                    aria-label="Main" checked="true" />
-                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                                    <div class="zodiac_tab_1 text-font text-sm"></div>
-                                </div>
-
-                                <input type="radio" name="zodiac_tab" role="tab" class="tab heading-font text-sm"
-                                    aria-label="Addit" />
-                                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                                    <div class="zodiac_tab_2 text-font text-sm"></div>
-                                </div>
+                            <div class="join w-full result-tabs-group mb-4">
+                                <button class="join-item btn btn-primary flex-1 result-tab-btn btn-active"
+                                    data-target="panel-main">本宫</button>
+                                <button class="join-item btn btn-outline flex-1 result-tab-btn"
+                                    data-target="panel-addit">变宫</button>
+                            </div>
+                            <div id="panel-main"
+                                class="bg-base-100 border border-base-300 rounded-b-box rounded-tr-box p-6">
+                                <div class="zodiac_tab_1 text-font text-sm"></div>
+                            </div>
+                            <div id="panel-addit"
+                                class="hidden bg-base-100 border border-base-300 rounded-b-box rounded-tr-box p-6">
+                                <div class="zodiac_tab_2 text-font text-sm"></div>
                             </div>
                         </div>
                     </div>
