@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
     <script src="js/libs/marked.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="js/libs/font-awesome.js"></script>
     <script src="js/libs/lunar.js"></script>
     <script src="js/utils.js"></script>
@@ -326,11 +327,87 @@
                                     title="复制卦灵解析 as Markdown">
                                     <i class="fa-regular fa-copy fa-fw"></i>
                                 </button>
+                                <button class="btn btn-ghost btn-sm absolute top-4 right-14 image-export-btn"
+                                    title="保存为图片">
+                                    <i class="fa-regular fa-image fa-fw"></i>
+                                </button>
                                 <div class="ai-interpretation text-font"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出图片容器 (隐藏) -->
+    <!-- 动态适配：移动端宽 600px (scale=3 -> 1800px)，桌面端宽 1080px (scale=2 -> 2160px) -->
+    <div id="export-container" class="fixed top-0 -z-50 bg-white p-8 text-gray-800 w-[600px] md:w-[1080px]"
+        style="left: -9999px;">
+        <div class="export-content space-y-6">
+            <!-- 头部 -->
+            <div class="text-center border-b-2 border-gray-300 pb-6">
+                <h1 class="heading-font text-4xl md:text-5xl mb-2 text-gray-900">梅花易数</h1>
+                <p class="text-lg md:text-xl text-gray-500">卦灵AI · 智能推演</p>
+            </div>
+
+            <!-- 基本信息 -->
+            <div class="grid grid-cols-2 gap-4 md:gap-6 text-lg md:text-xl bg-gray-100 p-6 rounded-xl text-gray-700">
+                <div><span class="font-bold">求测人：</span><span class="export-gender"></span></div>
+                <div><span class="font-bold">起卦方式：</span><span class="export-method"></span></div>
+                <div class="col-span-2"><span class="font-bold">起卦时间：</span><span class="export-time"></span></div>
+                <div class="col-span-2"><span class="font-bold">求问事项：</span><span class="export-question"></span></div>
+            </div>
+
+            <!-- 卦象展示 -->
+            <div class="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <h2 class="heading-font text-2xl md:text-3xl mb-6 text-center text-gray-900">卦象推演</h2>
+                    <div class="grid grid-cols-3 gap-4 md:gap-8">
+                        <div class="text-center">
+                            <h3 class="heading-font text-xl md:text-2xl mb-4 text-gray-800">本卦</h3>
+                            <div
+                                class="hexagram export-original-hexagram scale-125 md:scale-150 origin-top text-gray-900">
+                            </div>
+                            <p class="mt-12 md:mt-16 text-lg md:text-xl font-bold export-original-name text-gray-800">
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="heading-font text-xl md:text-2xl mb-4 text-gray-800">互卦</h3>
+                            <div class="hexagram export-inter-hexagram scale-125 md:scale-150 origin-top text-gray-900">
+                            </div>
+                            <p class="mt-12 md:mt-16 text-lg md:text-xl font-bold export-inter-name text-gray-800"></p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="heading-font text-xl md:text-2xl mb-4 text-gray-800">变卦</h3>
+                            <div
+                                class="hexagram export-changed-hexagram scale-125 md:scale-150 origin-top text-gray-900">
+                            </div>
+                            <p class="mt-12 md:mt-16 text-lg md:text-xl font-bold export-changed-name text-gray-800">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI 解析 -->
+            <div class="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <h2 class="heading-font text-2xl md:text-3xl mb-4 text-center text-gray-900">大师解卦</h2>
+                    <div class="export-ai-content text-lg md:text-xl leading-relaxed text-justify text-gray-800"></div>
+                </div>
+            </div>
+
+            <!-- 底部 -->
+            <div class="text-center pt-6 border-t-2 border-gray-300">
+                <div class="flex justify-center items-center gap-4">
+                    <img src="assets/images/icon.png" class="w-12 h-12 md:w-16 md:h-16 rounded-lg shadow-md">
+                    <div class="text-left">
+                        <p class="heading-font text-xl md:text-2xl text-gray-900">卦灵AI</p>
+                        <p class="text-gray-500 text-sm md:text-base">融古通今 · 智解天机</p>
+                    </div>
+                </div>
+                <p class="mt-4 text-gray-400 text-xs md:text-sm">注：AI预测仅供娱乐参考，请相信科学，理性对待。</p>
             </div>
         </div>
     </div>
@@ -341,7 +418,7 @@
             <p class="text-font">
                 <span class="heading-font text-xl">卦灵AI</span><br />
                 <span class="footer-motto text-xl">融古通今，智解天机</span><br />
-                <a class="text-sm" href="https://github.com/TianLanDaoRen" target="_blank">@云笥散人</a>
+                <a class="text-sm" href="https://yunsisanren.top" target="_blank">@云笥散人</a>
             </p>
         </div>
     </footer>
