@@ -8,7 +8,7 @@
     <title>卦灵AI - 梅花易数</title>
     <link rel="icon" href="assets/images/icon.png" />
     <link rel="stylesheet" href="css/main.css" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
     <script src="js/libs/marked.min.js"></script>
@@ -22,9 +22,9 @@
 
 <body class="min-h-screen">
     <!-- 导航栏 -->
-    <div class="navbar bg-base-100 bg-opacity-80 backdrop-blur shadow-lg">
+    <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
         <div class="navbar-start">
-            <a href="index.html" class="btn btn-ghost heading-font text-2xl">卦灵AI</a>
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl text-[#9e1c26]">卦灵AI</a>
         </div>
         <div class="navbar-center">
             <a class="btn btn-ghost heading-font text-2xl">梅花易数</a>
@@ -52,7 +52,7 @@
             <div class="lg:w-1/2">
                 <div class="card shadow-xl">
                     <div class="card-body">
-                        <h2 class="heading-font text-2xl mb-6">梅花起卦</h2>
+                        <h2 class="heading-font text-2xl mb-4 text-[#9e1c26] border-l-4 border-[#9e1c26] pl-3">梅花起卦</h2>
 
                         <!-- 性别选择 -->
                         <div class="form-control mb-4">
@@ -342,13 +342,12 @@
 
     <!-- 导出图片容器 (隐藏) -->
     <!-- 动态适配：移动端宽 600px (scale=3 -> 1800px)，桌面端宽 1080px (scale=2 -> 2160px) -->
-    <div id="export-container" class="fixed top-0 -z-50 bg-white p-8 text-gray-800 w-[600px] md:w-[1080px]"
-        style="left: -9999px;">
-        <div class="export-content space-y-6">
+    <div id="export-container" class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[1080px] z-[-1]">
+        <div class="export-content space-y-10">
             <!-- 头部 -->
-            <div class="text-center border-b-2 border-gray-300 pb-6">
-                <h1 class="heading-font text-4xl md:text-5xl mb-2 text-gray-900">梅花易数</h1>
-                <p class="text-lg md:text-xl text-gray-500">卦灵AI · 智能推演</p>
+            <div class="text-center border-b-2 border-[#d4af37] pb-8 relative">
+                <h1 class="heading-font text-6xl mb-4 text-[#9e1c26] tracking-wider">梅花易数</h1>
+                <p class="text-2xl text-gray-500 font-serif tracking-widest">卦灵AI · 智能推演</p>
             </div>
 
             <!-- 基本信息 -->
@@ -406,7 +405,7 @@
             <!-- 底部 -->
             <div class="text-center pt-6 border-t-2 border-gray-300">
                 <div class="flex justify-center items-center gap-4">
-                    <img src="assets/images/icon.png" class="w-12 h-12 md:w-16 md:h-16 rounded-lg shadow-md">
+                    <img src="assets/images/plum-icon.png" class="w-12 h-12 md:w-16 md:h-16 rounded-lg shadow-md">
                     <div class="text-left">
                         <p class="heading-font text-xl md:text-2xl text-gray-900">卦灵AI</p>
                         <p class="text-gray-500 text-sm md:text-base">融古通今 · 智解天机</p>

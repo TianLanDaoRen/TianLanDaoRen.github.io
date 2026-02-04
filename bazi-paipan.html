@@ -8,7 +8,7 @@
     <title>卦灵AI - 八字排盘</title>
     <link rel="icon" href="assets/images/icon.png" />
     <link rel="stylesheet" href="css/main.css" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/libs/font-awesome.js"></script>
     <script src="js/utils.js"></script>
@@ -17,9 +17,9 @@
 
 <body class="min-h-screen">
     <!-- 导航栏 -->
-    <div class="navbar bg-base-100 bg-opacity-80 backdrop-blur shadow-lg">
+    <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
         <div class="navbar-start">
-            <a href="index.html" class="btn btn-ghost heading-font text-2xl">卦灵AI</a>
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl text-[#9e1c26]">卦灵AI</a>
         </div>
         <div class="navbar-center">
             <a class="btn btn-ghost heading-font text-2xl">八字排盘</a>
@@ -47,7 +47,8 @@
             <div class="lg:w-1/2">
                 <div class="card shadow-xl">
                     <div class="card-body">
-                        <h2 class="heading-font text-2xl mb-6">八字排盘 <p class="text-xs text-font">排盘由 问真八字 提供</p>
+                        <h2 class="heading-font text-2xl mb-4 text-[#9e1c26] border-l-4 border-[#9e1c26] pl-3">八字排盘 <p
+                                class="text-xs text-font">排盘由 问真八字 提供</p>
                         </h2>
 
                         <!-- 性别选择 -->
@@ -56,12 +57,12 @@
                                 <span class="label-text text-font">性别</span>
                                 <span class="gender-alt label-text-alt text-error"></span>
                             </label>
-                            <div class="tabs tabs-lifted">
-                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="男"
-                                    value="1" checked />
-                                <input type="radio" name="gender_tab" role="tab" class="tab font-bold" aria-label="女"
-                                    value="0" />
+                            <div class="join w-full gender-group">
+                                <button class="join-item btn btn-primary flex-1 gender-btn btn-active"
+                                    data-value=1>男</button>
+                                <button class="join-item btn btn-outline flex-1 gender-btn" data-value=0>女</button>
                             </div>
+                            <input type="hidden" name="gender" value="男">
                         </div>
 
                         <!-- 出生日期 -->

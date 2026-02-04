@@ -17,7 +17,7 @@
         clearErrors();
 
         // 检查性别选择
-        const gender = document.querySelector('input[name="gender_tab"]:checked');
+        const gender = document.querySelector('.gender-group .btn-active');
         if (!gender) {
             document.querySelector('.gender-alt').textContent = '请选择性别';
             isValid = false;
@@ -39,7 +39,7 @@
     // 收集表单数据
     function collectFormData() {
         const data = {
-            gender: document.querySelector('input[name="gender_tab"]:checked').value,
+            gender: document.querySelector('.gender-group .btn-active').getAttribute('data-value'),
             birth: document.querySelector('input[name="birth"]').value.trim(),
         };
 
@@ -209,6 +209,23 @@
                 setTimeout(() => {
                     elements.codeCopyBtn.textContent = '复制';
                 }, 2000);
+            });
+        });
+        // 绑定性别选择事件
+        document.querySelectorAll('.gender-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                // 移除所有激活状态
+                document.querySelectorAll('.gender-btn').forEach(b => {
+                    b.classList.remove('btn-active', 'btn-primary');
+                    b.classList.add('btn-outline');
+                });
+                // 激活当前按钮
+                const target = e.target;
+                target.classList.add('btn-active', 'btn-primary');
+                target.classList.remove('btn-outline');
+
+                // 更新隐藏域
+                document.querySelector('input[name="gender"]').value = target.getAttribute('data-value');
             });
         });
     });

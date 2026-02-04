@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-cn" class="scroll-smooth" data-theme="light">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <title>卦灵AI - 伯叩三才盘</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
+    <script src="js/libs/marked.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="js/libs/lunar.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/bokou.js"></script>
+    <style>
+        /* --- 强制横向步骤条 --- */
+        .step {
+            display: grid;
+            grid-template-rows: 40px 1fr;
+            grid-template-columns: 1fr;
+            min-height: 4rem;
+            place-items: center;
+            text-align: center;
+            color: #9e1c26;
+        }
+
+        /* --- 卦爻样式 (完全复刻梅花易数) --- */
+        /* 替换原有的 .hexagram-container 样式 */
+        .hexagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 160px;
+            /* 增加高度，确保不拥挤 */
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* 导出容器内的 Hexagram 容器特殊处理 */
+        #export-container .hexagram-container {
+            height: 200px;
+        }
+
+        /* 专门针对导出时的爻线尺寸进行硬编码，防止缩放失效 */
+        #export-container .hexagram-line {
+            width: 120px !important;
+            /* 爻线加宽 */
+            height: 18px !important;
+            /* 爻线加厚 */
+            margin: 6px 0 !important;
+            /* 间距加大 */
+            border-radius: 3px !important;
+        }
+
+        /* 导出时的阴爻断开宽度 */
+        #export-container .hexagram-line.yin {
+            background: linear-gradient(to right, #2c2c2c 42%, transparent 42%, transparent 58%, #2c2c2c 58%) !important;
+        }
+
+        /* 导出时的动爻颜色 */
+        #export-container .hexagram-line.changing {
+            background-color: #9e1c26 !important;
+        }
+
+        #export-container .hexagram-line.yin.changing {
+            background: linear-gradient(to right, #9e1c26 42%, transparent 42%, transparent 58%, #9e1c26 58%) !important;
+        }
+
+        /* 确保 hexagram 本身居中 */
+        .hexagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hexagram-line {
+            width: 80px;
+            height: 12px;
+            margin: 4px 0;
+            background-color: #2c2c2c;
+            /* 墨色 */
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hexagram-line.yin {
+            /* 阴爻中间断开 */
+            background: linear-gradient(to right, #2c2c2c 42%, transparent 42%, transparent 58%, #2c2c2c 58%);
+        }
+
+        /* 动爻变红 */
+        .hexagram-line.changing {
+            background-color: #9e1c26 !important;
+        }
+
+        .hexagram-line.yin.changing {
+            background: linear-gradient(to right, #9e1c26 42%, transparent 42%, transparent 58%, #9e1c26 58%) !important;
+        }
+
+        /* 移除多余的圆点 */
+        .hexagram-line.changing::after {
+            display: none;
+        }
+
+        /* --- 自定义组件样式 --- */
+        .card {
+            border: 1px solid #e6ded5;
+            background-color: #fffbf5;
+        }
+
+        .badge-tian {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+        }
+
+        .badge-ren {
+            background-color: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ffe0b2;
+        }
+
+        .badge-di {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .btn-gugong {
+            background-color: #9e1c26;
+            border-color: #9e1c26;
+            color: white;
+        }
+
+        .btn-gugong:hover {
+            background-color: #7a151d;
+            border-color: #7a151d;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl text-[#9e1c26]">卦灵AI</a>
+        </div>
+        <div class="navbar-center"><a class="btn btn-ghost heading-font text-2xl">伯叩三才盘</a>
+        </div>
+        <div class="navbar-end">
+            <ul class="menu menu-horizontal px-1">
+                <li>
+                    <details>
+                        <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
+                        <ul class="bg-base-100 rounded p-2 z-10">
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</button></li>
+                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</button>
+                            </li>
+                        </ul>
+                    </details>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="container mx-auto px-4 py-8 pb-28 max-w-7xl">
+        <div class="flex flex-col lg:flex-row gap-8">
+
+            <!-- 左侧：伯叩起卦交互区 -->
+            <div class="lg:w-5/12">
+                <div class="card shadow-md">
+                    <div class="card-body p-5 md:p-6">
+                        <h2 class="heading-font text-2xl mb-4 text-[#9e1c26] border-l-4 border-[#9e1c26] pl-3">伯叩演数</h2>
+
+                        <!-- 输入区 -->
+                        <div class="space-y-4 mb-6">
+                            <!-- 性别 -->
+                            <div class="form-control">
+                                <label class="label pt-0 pb-1">
+                                    <span class="label-text font-bold text-gray-600">求测人性别</span>
+                                </label>
+                                <div class="join w-full gender-group grid grid-cols-2">
+                                    <button class="join-item btn btn-sm btn-gugong gender-btn btn-active"
+                                        data-value="男">男</button>
+                                    <button
+                                        class="join-item btn btn-sm btn-outline gender-btn hover:bg-[#fff3e0] hover:text-[#9e1c26] hover:border-[#9e1c26]"
+                                        data-value="女">女</button>
+                                </div>
+                                <input type="hidden" id="genderInput" name="gender" value="男">
+                            </div>
+
+                            <!-- 事项 -->
+                            <div class="form-control w-full">
+                                <label class="label pt-0 pb-1">
+                                    <span class="label-text font-bold text-gray-600">叩问事项</span>
+                                </label>
+                                <textarea id="question"
+                                    class="textarea textarea-bordered h-24 text-base focus:border-[#9e1c26] focus:ring-1 focus:ring-[#9e1c26] bg-white leading-relaxed"
+                                    placeholder="请诚心默念您的问题，例如：近期事业发展趋势如何？" required></textarea>
+                            </div>
+                        </div>
+
+                        <!-- 伯叩 Canvas 交互区 -->
+                        <!-- 背景色改为深色木纹质感，移除边框 -->
+                        <div class="relative w-full h-[360px] md:h-[420px] bg-[#2a2a2a] rounded-lg overflow-hidden shadow-inner select-none touch-none group"
+                            id="canvas-container"
+                            style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMmEyYTJhIi8+CjxwYXRoIGQ9Ik0wIDBMNCA0Wk00IDBMMCA0WiIHN0cm9rZT0iIzMyMzIzMiIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==');">
+
+                            <canvas id="bokouCanvas" class="w-full h-full cursor-pointer block"></canvas>
+
+                            <!-- 状态提示层：去除模糊，纯透明，文字清晰 -->
+                            <div id="game-overlay"
+                                class="absolute inset-0 flex flex-col justify-center items-center pointer-events-none transition-opacity duration-300 z-10">
+                                <div class="text-center">
+                                    <h3 id="phase-title"
+                                        class="text-3xl font-bold text-[#e0ae28] drop-shadow-md mb-3 heading-font tracking-widest"
+                                        style="text-shadow: 0 2px 4px rgba(252, 45, 45, 0.8);">伯叩起卦</h3>
+                                    <div class="inline-block px-4 py-1 bg-black/60 rounded-full border border-white/20">
+                                        <p id="phase-desc" class="text-sm font-bold text-white">点击下方按钮开始</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 重置按钮 -->
+                            <div class="absolute top-3 right-3 z-20">
+                                <button id="resetBtn"
+                                    class="btn btn-circle btn-sm bg-white/10 hover:bg-white/30 text-white border-none tooltip tooltip-left"
+                                    data-tip="重置牌局">
+                                    <i class="fa-solid fa-rotate-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 进度条 (红黄配色) -->
+                        <ul class="steps w-full mt-6 text-xs font-medium">
+                            <li class="step" id="step-tian">天卦</li>
+                            <li class="step" id="step-ren">人卦</li>
+                            <li class="step" id="step-di">地卦</li>
+                        </ul>
+
+                        <!-- 开始按钮 -->
+                        <button id="actionBtn" class="btn btn-gugong btn-block mt-6 text-lg shadow-md transition-all">
+                            <i class="fa-solid fa-yin-yang mr-2 animate-spin-slow"></i> 开始洗牌 (叩问天机)
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：卦象结果区 -->
+            <div class="lg:w-7/12">
+
+                <!-- 1. 空状态 -->
+                <div id="empty-state"
+                    class="h-full flex flex-col justify-center items-center text-gray-400 min-h-[400px] border-2 border-dashed border-[#dcdcdc] rounded-xl bg-white/50">
+                    <div class="w-20 h-20 bg-[#f3f0e9] rounded-full flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-compass fa-2x text-[#cbbba0]"></i>
+                    </div>
+                    <p class="text-lg tracking-wide">暂无卦象，请先起卦</p>
+                </div>
+
+                <!-- 2. 加载动画 -->
+                <div id="loading-state" class="hidden h-full flex flex-col justify-center items-center min-h-[400px]">
+                    <div class="flex flex-col items-center gap-4">
+                        <span class="loading loading-dots loading-lg text-[#9e1c26] scale-150"></span>
+                        <p class="text-sm text-gray-500 font-medium tracking-wide">宗师正在推演五千万种可能性...</p>
+                    </div>
+                </div>
+
+                <!-- 3. 结果面板 -->
+                <div class="result hidden">
+                    <div class="card shadow-md">
+                        <div class="card-body p-6">
+                            <!-- 标题栏 -->
+                            <div class="flex justify-between items-center mb-8 border-b border-[#e6ded5] pb-4">
+                                <div>
+                                    <h2 class="heading-font text-2xl text-[#333]">伯叩三才盘</h2>
+                                    <p class="text-xs text-gray-500 mt-1">象数归真 · 趋势断法</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button
+                                        class="btn btn-ghost btn-sm btn-circle image-export-btn tooltip tooltip-bottom"
+                                        data-tip="保存图片">
+                                        <i class="fa-regular fa-image fa-lg text-gray-600"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 三才卦象展示 (Grid) -->
+                            <div class="grid grid-cols-3 gap-2 md:gap-6 mb-8">
+                                <!-- 天卦 -->
+                                <div class="flex flex-col items-center">
+                                    <div class="badge badge-tian mb-3 px-3 py-3 font-bold shadow-sm">天卦</div>
+                                    <div
+                                        class="hexagram-container w-full bg-white rounded-lg border border-[#eee] shadow-sm">
+                                        <div
+                                            class="hexagram tian-hexagram origin-center transform scale-90 flex flex-col items-center">
+                                        </div>
+                                    </div>
+                                    <p class="font-bold text-lg tian-name text-[#333] mt-2 text-center"></p>
+                                    <p class="text-xs text-gray-500 tian-yao-info mt-1 font-mono"></p>
+                                </div>
+                                <!-- 人卦 -->
+                                <div class="flex flex-col items-center">
+                                    <div class="badge badge-ren mb-3 px-3 py-3 font-bold shadow-sm">人卦</div>
+                                    <div
+                                        class="hexagram-container w-full bg-white rounded-lg border border-[#eee] shadow-sm">
+                                        <div
+                                            class="hexagram ren-hexagram origin-center transform scale-90 flex flex-col items-center">
+                                        </div>
+                                    </div>
+                                    <p class="font-bold text-lg ren-name text-[#333] mt-2 text-center"></p>
+                                    <p class="text-xs text-gray-500 ren-yao-info mt-1 font-mono"></p>
+                                </div>
+                                <!-- 地卦 -->
+                                <div class="flex flex-col items-center">
+                                    <div class="badge badge-di mb-3 px-3 py-3 font-bold shadow-sm">地卦</div>
+                                    <div
+                                        class="hexagram-container w-full bg-white rounded-lg border border-[#eee] shadow-sm">
+                                        <div
+                                            class="hexagram di-hexagram origin-center transform scale-90 flex flex-col items-center">
+                                        </div>
+                                    </div>
+                                    <p class="font-bold text-lg di-name text--[#333] mt-2 text-center"></p>
+                                    <p class="text-xs text-gray-500 di-yao-info mt-1 font-mono"></p>
+                                </div>
+                            </div>
+
+                            <!-- 趋势图谱 -->
+                            <div class="alert bg-[#f9f9f9] border border-[#eee] shadow-sm mb-6 rounded-lg">
+                                <i class="fa-solid fa-chart-line text-[#9e1c26] text-xl"></i>
+                                <div class="flex flex-col md:flex-row md:gap-4 w-full">
+                                    <span
+                                        class="font-bold text-sm md:text-base text-gray-700 whitespace-nowrap">爻位趋势：</span>
+                                    <span id="trend-text"
+                                        class="text-sm md:text-base text-[#333] font-bold">计算中...</span>
+                                </div>
+                            </div>
+
+                            <!-- AI 解析面板 (纯净版) -->
+                            <div class="relative">
+                                <div class="absolute -top-3 left-4 bg-[#fffbf5] px-2 text-sm font-bold text-[#9e1c26]">
+                                    大师智解
+                                </div>
+                                <div id="panel-ai"
+                                    class="bg-white border border-[#e6ded5] rounded-lg p-6 min-h-[200px]">
+                                    <button
+                                        class="btn btn-ghost btn-xs absolute top-2 right-2 markdown-copy-btn text-gray-400 hover:text-[#9e1c26] z-10"
+                                        title="复制内容">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
+                                    <div
+                                        class="ai-interpretation text-font leading-relaxed text-justify text-base space-y-4">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导出图片容器 (深度优化布局) -->
+    <div id="export-container" class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[1000px] z-[-1]">
+        <div class="export-content" style="display: flex; flex-direction: column; gap: 30px;">
+
+            <!-- 头部 -->
+            <div class="text-center border-b-2 border-[#d4af37] pb-8 relative">
+                <h1 class="heading-font text-6xl mb-4 text-[#9e1c26] tracking-wider">伯叩三才盘</h1>
+                <p class="text-2xl text-gray-500 font-serif tracking-widest">卦灵AI · 智能推演</p>
+            </div>
+
+            <!-- 信息网格 -->
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: white; padding: 30px; border-radius: 20px; border: 1px solid #e6ded5;">
+                <div style="font-size: 24px;"><b style="color: #9e1c26;">求测人：</b><span class="export-gender"></span>
+                </div>
+                <div style="font-size: 24px;"><b style="color: #9e1c26;">方式：</b>伯叩扑克演数</div>
+                <div style="font-size: 24px; grid-column: span 2;"><b style="color: #9e1c26;">时间：</b><span
+                        class="export-time"></span></div>
+                <div
+                    style="font-size: 24px; grid-column: span 2; border-top: 1px dashed #e6ded5; pt-20px; margin-top: 10px; padding-top: 15px;">
+                    <b style="color: #9e1c26;">叩问：</b><span class="export-question" style="font-style: italic;"></span>
+                </div>
+            </div>
+
+            <!-- 三才定局核心区 -->
+            <div
+                style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <h2
+                    style="text-align: center; font-size: 32px; color: #333; margin-bottom: 40px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;">
+                    三才定局</h2>
+
+                <div style="display: flex; justify-content: space-around; align-items: flex-start;">
+                    <!-- 天卦 -->
+                    <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
+                        <div
+                            style="background: #e3f2fd; color: #1565c0; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #bbdefb;">
+                            天卦 · 用</div>
+                        <div class="export-tian-hexagram"
+                            style="height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p class="export-tian-name"
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                            <p class="export-tian-yao-info" style="font-size: 18px; color: #888; margin-top: 5px;"></p>
+                        </div>
+                    </div>
+
+                    <!-- 人卦 -->
+                    <div
+                        style="width: 280px; display: flex; flex-direction: column; align-items: center; border-left: 1px dashed #eee; border-right: 1px dashed #eee;">
+                        <div
+                            style="background: #fff3e0; color: #ef6c00; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #ffe0b2;">
+                            人卦 · 体</div>
+                        <div class="export-ren-hexagram"
+                            style="height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p class="export-ren-name"
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                            <p class="export-ren-yao-info" style="font-size: 18px; color: #888; margin-top: 5px;"></p>
+                        </div>
+                    </div>
+
+                    <!-- 地卦 -->
+                    <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
+                        <div
+                            style="background: #e8f5e9; color: #2e7d32; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #c8e6c9;">
+                            地卦 · 应</div>
+                        <div class="export-di-hexagram"
+                            style="height: 180px; display: flex; flex-direction: column; justify-content: center;">
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p class="export-di-name"
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                            <p class="export-di-yao-info" style="font-size: 18px; color: #888; margin-top: 5px;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 趋势条 -->
+                <div
+                    style="margin-top: 50px; padding: 20px; background: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 15px; text-align: center;">
+                    <p class="export-trend" style="font-size: 24px; color: #666; margin: 0; font-weight: bold;"></p>
+                </div>
+            </div>
+
+            <!-- 大师批断 -->
+            <div
+                style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 45px; position: relative;">
+                <div
+                    style="position: absolute; top: -18px; left: 40px; background: #9e1c26; color: white; padding: 5px 20px; border-radius: 5px; font-size: 20px; font-weight: bold;">
+                    大师批断</div>
+                <div class="export-ai-content"
+                    style="font-size: 26px; line-height: 2.2; text-align: justify; color: #333;">
+                </div>
+            </div>
+
+            <!-- 尾部 -->
+            <div class="text-center pt-6 border-t-2 border-gray-300">
+                <div class="flex justify-center items-center gap-4">
+                    <img src="assets/images/bokou-icon.png" class="w-12 h-12 md:w-16 md:h-16 rounded-lg shadow-md">
+                    <div class="text-left">
+                        <p class="heading-font text-xl md:text-2xl text-gray-900">卦灵AI</p>
+                        <p class="text-gray-500 text-sm md:text-base">融古通今 · 智解天机</p>
+                    </div>
+                </div>
+                <p class="mt-4 text-gray-400 text-xs md:text-sm">注：AI预测仅供娱乐参考，请相信科学，理性对待。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded">
+        <div>
+            <p class="text-font">
+                <span class="heading-font text-xl">卦灵AI</span><br />
+                <span class="footer-motto text-xl">融古通今，智解天机</span><br />
+                <a class="text-sm" href="https://yunsisanren.top" target="_blank">@云笥散人</a>
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>
