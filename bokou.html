@@ -79,35 +79,6 @@
             align-items: center;
         }
 
-        .hexagram-line {
-            width: 80px;
-            height: 12px;
-            margin: 4px 0;
-            background-color: #2c2c2c;
-            /* 墨色 */
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .hexagram-line.yin {
-            /* 阴爻中间断开 */
-            background: linear-gradient(to right, #2c2c2c 42%, transparent 42%, transparent 58%, #2c2c2c 58%);
-        }
-
-        /* 动爻变红 */
-        .hexagram-line.changing {
-            background-color: #9e1c26 !important;
-        }
-
-        .hexagram-line.yin.changing {
-            background: linear-gradient(to right, #9e1c26 42%, transparent 42%, transparent 58%, #9e1c26 58%) !important;
-        }
-
-        /* 移除多余的圆点 */
-        .hexagram-line.changing::after {
-            display: none;
-        }
-
         /* --- 自定义组件样式 --- */
         .card {
             border: 1px solid #e6ded5;
@@ -141,6 +112,97 @@
         .btn-gugong:hover {
             background-color: #7a151d;
             border-color: #7a151d;
+        }
+
+        /* 空卡槽样式 */
+        .card-slot {
+            aspect-ratio: 2/3;
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background-color: #fafafa;
+            transition: all 0.2s;
+            font-size: 24px;
+            color: #ddd;
+        }
+
+        .card-slot:hover {
+            border-color: #9e1c26;
+            background-color: #fff0f0;
+            color: #9e1c26;
+        }
+
+        /* 已选中的卡槽 */
+        .card-slot.filled {
+            border: 1px solid #ddd;
+            border-style: solid;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: black;
+        }
+
+        .card-slot.filled.red {
+            color: #dc2626;
+        }
+
+        .card-slot.filled.black {
+            color: black;
+        }
+
+        .card-slot.filled.joker-red {
+            color: #dc2626;
+            border: 1px solid #dc2626;
+            background: #fff5f5;
+        }
+
+        .card-slot.filled.joker-black {
+            color: black;
+            border: 1px solid black;
+            background: #f5f5f5;
+        }
+
+        /* 弹窗内的卡牌选项 */
+        .picker-card {
+            width: 100%;
+            aspect-ratio: 2/3;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-family: serif;
+            font-weight: bold;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.1s;
+        }
+
+        .picker-card:active {
+            transform: scale(0.95);
+        }
+
+        .picker-card.red {
+            color: #dc2626;
+        }
+
+        .picker-card.black {
+            color: black;
+        }
+
+        .picker-card.joker {
+            font-size: 10px;
+        }
+
+        /* 花色Tab激活态 */
+        .suit-tab.active {
+            background-color: #eee;
+            border-bottom: 2px solid #9e1c26;
+            border-radius: 0;
         }
     </style>
 </head>
@@ -207,49 +269,97 @@
                             </div>
                         </div>
 
-                        <!-- 伯叩 Canvas 交互区 -->
-                        <!-- 背景色改为深色木纹质感，移除边框 -->
-                        <div class="relative w-full h-[360px] md:h-[420px] bg-[#2a2a2a] rounded-lg overflow-hidden shadow-inner select-none touch-none group"
-                            id="canvas-container"
-                            style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMmEyYTJhIi8+CjxwYXRoIGQ9Ik0wIDBMNCA0Wk00IDBMMCA0WiIHN0cm9rZT0iIzMyMzIzMiIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==');">
+                        <!-- 修改：起卦方式 (复用性别选择的样式) -->
+                        <div class="form-control mb-6">
+                            <label class="label pt-0 pb-1">
+                                <span class="label-text font-bold text-gray-600">起卦方式</span>
+                            </label>
+                            <div class="join w-full method-group grid grid-cols-2">
+                                <button class="join-item btn btn-sm btn-gugong method-btn btn-active"
+                                    data-value="auto">自动演数</button>
+                                <button
+                                    class="join-item btn btn-sm btn-outline method-btn hover:bg-[#fff3e0] hover:text-[#9e1c26] hover:border-[#9e1c26]"
+                                    data-value="manual">手动指定</button>
+                            </div>
+                            <!-- 隐藏域存储当前模式 -->
+                            <input type="hidden" id="methodInput" value="auto">
+                        </div>
 
-                            <canvas id="bokouCanvas" class="w-full h-full cursor-pointer block"></canvas>
+                        <!-- 面板容器 -->
+                        <div id="panel-auto">
+                            <!-- 背景色改为深色木纹质感，移除边框 -->
+                            <div class="relative w-full h-[360px] md:h-[420px] bg-[#2a2a2a] rounded-lg overflow-hidden shadow-inner select-none touch-none group"
+                                id="canvas-container"
+                                style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMmEyYTJhIi8+CjxwYXRoIGQ9Ik0wIDBMNCA0Wk00IDBMMCA0WiIHN0cm9rZT0iIzMyMzIzMiIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==');">
 
-                            <!-- 状态提示层：去除模糊，纯透明，文字清晰 -->
-                            <div id="game-overlay"
-                                class="absolute inset-0 flex flex-col justify-center items-center pointer-events-none transition-opacity duration-300 z-10">
-                                <div class="text-center">
-                                    <h3 id="phase-title"
-                                        class="text-3xl font-bold text-[#e0ae28] drop-shadow-md mb-3 heading-font tracking-widest"
-                                        style="text-shadow: 0 2px 4px rgba(252, 45, 45, 0.8);">伯叩起卦</h3>
-                                    <div class="inline-block px-4 py-1 bg-black/60 rounded-full border border-white/20">
-                                        <p id="phase-desc" class="text-sm font-bold text-white">点击下方按钮开始</p>
+                                <canvas id="bokouCanvas" class="w-full h-full cursor-pointer block"></canvas>
+
+                                <!-- 状态提示层：去除模糊，纯透明，文字清晰 -->
+                                <div id="game-overlay"
+                                    class="absolute inset-0 flex flex-col justify-center items-center pointer-events-none transition-opacity duration-300 z-10">
+                                    <div class="text-center">
+                                        <h3 id="phase-title"
+                                            class="text-3xl font-bold text-[#e0ae28] drop-shadow-md mb-3 heading-font tracking-widest"
+                                            style="text-shadow: 0 2px 4px rgba(252, 45, 45, 0.8);">伯叩起卦</h3>
+                                        <div
+                                            class="inline-block px-4 py-1 bg-black/60 rounded-full border border-white/20">
+                                            <p id="phase-desc" class="text-sm font-bold text-white">点击下方按钮开始</p>
+                                        </div>
                                     </div>
+                                </div>
+
+                                <!-- 重置按钮 -->
+                                <div class="absolute top-3 right-3 z-20">
+                                    <button id="resetBtn"
+                                        class="btn btn-circle btn-sm bg-white/10 hover:bg-white/30 text-white border-none tooltip tooltip-left"
+                                        data-tip="重置牌局">
+                                        <i class="fa-solid fa-rotate-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- 进度条 (红黄配色) -->
+                            <ul class="steps w-full mt-6 text-xs font-medium">
+                                <li class="step" id="step-tian">天卦</li>
+                                <li class="step" id="step-ren">人卦</li>
+                                <li class="step" id="step-di">地卦</li>
+                            </ul>
+                            <!-- 开始按钮 -->
+                            <button id="actionBtn"
+                                class="btn btn-gugong btn-block mt-6 text-lg shadow-md transition-all">
+                                <i class="fa-solid fa-yin-yang mr-2 animate-spin-slow"></i> 开始洗牌 (叩问天机)
+                            </button>
+                        </div>
+
+                        <!-- 修改：手动输入面板 -->
+                        <div id="panel-manual" class="hidden">
+                            <div class="space-y-4 mb-6">
+                                <!-- 天卦卡槽 -->
+                                <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                                    <h3 class="text-xs font-bold text-gray-500 mb-2 flex items-center"><span
+                                            class="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>天卦 (3张)</h3>
+                                    <div class="grid grid-cols-3 gap-3" id="slot-container-tian">
+                                        <!-- JS 动态生成卡槽 -->
+                                    </div>
+                                </div>
+                                <!-- 人卦卡槽 -->
+                                <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                                    <h3 class="text-xs font-bold text-gray-500 mb-2 flex items-center"><span
+                                            class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>人卦 (3张)</h3>
+                                    <div class="grid grid-cols-3 gap-3" id="slot-container-ren"></div>
+                                </div>
+                                <!-- 地卦卡槽 -->
+                                <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+                                    <h3 class="text-xs font-bold text-gray-500 mb-2 flex items-center"><span
+                                            class="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>地卦 (3张)</h3>
+                                    <div class="grid grid-cols-3 gap-3" id="slot-container-di"></div>
                                 </div>
                             </div>
 
-                            <!-- 重置按钮 -->
-                            <div class="absolute top-3 right-3 z-20">
-                                <button id="resetBtn"
-                                    class="btn btn-circle btn-sm bg-white/10 hover:bg-white/30 text-white border-none tooltip tooltip-left"
-                                    data-tip="重置牌局">
-                                    <i class="fa-solid fa-rotate-right"></i>
-                                </button>
-                            </div>
+                            <button id="manualActionBtn"
+                                class="btn btn-gugong btn-block text-lg shadow-md transition-all">
+                                <i class="fa-solid fa-check mr-2"></i> 确认起卦
+                            </button>
                         </div>
-
-                        <!-- 进度条 (红黄配色) -->
-                        <ul class="steps w-full mt-6 text-xs font-medium">
-                            <li class="step" id="step-tian">天卦</li>
-                            <li class="step" id="step-ren">人卦</li>
-                            <li class="step" id="step-di">地卦</li>
-                        </ul>
-
-                        <!-- 开始按钮 -->
-                        <button id="actionBtn" class="btn btn-gugong btn-block mt-6 text-lg shadow-md transition-all">
-                            <i class="fa-solid fa-yin-yang mr-2 animate-spin-slow"></i> 开始洗牌 (叩问天机)
-                        </button>
-
                     </div>
                 </div>
             </div>
@@ -368,10 +478,44 @@
         </div>
     </div>
 
-    <!-- 导出图片容器 (深度优化布局) -->
-    <div id="export-container" class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[1000px] z-[-1]">
-        <div class="export-content" style="display: flex; flex-direction: column; gap: 30px;">
+    <!-- 新增：选牌弹窗 (Modal) -->
+    <dialog id="card_selector_modal" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box bg-[#fffbf5] p-0 overflow-hidden max-w-sm border-2 border-[#d4af37]">
+            <!-- 弹窗头部 -->
+            <div class="bg-[#9e1c26] text-[#d4af37] p-3 flex justify-between items-center">
+                <h3 class="font-bold text-lg heading-font">请选择扑克牌</h3>
+                <form method="dialog">
+                    <button class="btn btn-sm btn-circle btn-ghost text-[#d4af37] hover:bg-black/20">✕</button>
+                </form>
+            </div>
 
+            <!-- 花色切换栏 -->
+            <div class="flex justify-around border-b border-[#e6ded5] bg-white p-2" id="suit-tabs">
+                <button class="btn btn-ghost btn-sm text-xl suit-tab active" data-suit="spade" title="黑桃">♠</button>
+                <button class="btn btn-ghost btn-sm text-xl text-red-600 suit-tab" data-suit="heart"
+                    title="红桃">♥</button>
+                <button class="btn btn-ghost btn-sm text-xl suit-tab" data-suit="club" title="梅花">♣</button>
+                <button class="btn btn-ghost btn-sm text-xl text-red-600 suit-tab" data-suit="diamond"
+                    title="方片">♦</button>
+            </div>
+
+            <!-- 卡牌网格 (3行5列) -->
+            <div class="p-4 bg-[#f8f5f2] min-h-[300px]">
+                <div class="grid grid-cols-5 gap-2 place-items-center" id="card-grid">
+                    <!-- JS 动态渲染扑克牌 -->
+                </div>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <!-- 导出图片容器 (深度优化布局) -->
+    <!-- 动态适配：移动端宽 680px (scale=3 -> 2040px)，桌面端宽 1920px (scale=2 -> 3840px) -->
+    <div id="export-container"
+        class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[680px] lg:w-[1920px] z-[-1]">
+        <div class="export-content" style="display: flex; flex-direction: column; gap: 30px;">
             <!-- 头部 -->
             <div class="text-center border-b-2 border-[#d4af37] pb-8 relative">
                 <h1 class="heading-font text-6xl mb-4 text-[#9e1c26] tracking-wider">伯叩三才盘</h1>
@@ -404,7 +548,7 @@
                     <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
                         <div
                             style="background: #e3f2fd; color: #1565c0; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #bbdefb;">
-                            天卦 · 用</div>
+                            天卦</div>
                         <div class="export-tian-hexagram"
                             style="height: 180px; display: flex; flex-direction: column; justify-content: center;">
                         </div>
@@ -420,7 +564,7 @@
                         style="width: 280px; display: flex; flex-direction: column; align-items: center; border-left: 1px dashed #eee; border-right: 1px dashed #eee;">
                         <div
                             style="background: #fff3e0; color: #ef6c00; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #ffe0b2;">
-                            人卦 · 体</div>
+                            人卦</div>
                         <div class="export-ren-hexagram"
                             style="height: 180px; display: flex; flex-direction: column; justify-content: center;">
                         </div>
@@ -435,7 +579,7 @@
                     <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
                         <div
                             style="background: #e8f5e9; color: #2e7d32; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #c8e6c9;">
-                            地卦 · 应</div>
+                            地卦</div>
                         <div class="export-di-hexagram"
                             style="height: 180px; display: flex; flex-direction: column; justify-content: center;">
                         </div>
@@ -466,7 +610,7 @@
             </div>
 
             <!-- 尾部 -->
-            <div class="text-center pt-6 border-t-2 border-gray-300">
+            <div class="text-center pt-6 border-t-2 border-[#d4af37]">
                 <div class="flex justify-center items-center gap-4">
                     <img src="assets/images/bokou-icon.png" class="w-12 h-12 md:w-16 md:h-16 rounded-lg shadow-md">
                     <div class="text-left">
