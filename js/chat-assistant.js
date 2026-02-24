@@ -8,6 +8,7 @@ class GuaLingChat {
         this.storageKey = 'gualing_chat_session';
         this.dom = {};
         this.isLoading = false;
+        this.logo = config.logo || 'assets/images/icon.png';
 
         // 当DOM加载完毕后初始化UI绑定
         if (document.readyState === 'loading') {
@@ -158,7 +159,7 @@ class GuaLingChat {
         const alignClass = isModel ? 'chat-start' : 'chat-end';
         const bubbleColor = isModel ? 'bg-white border border-[#e6ded5] text-gray-800' : 'bg-[#9e1c26] text-white';
         const avatarStr = isModel
-            ? `<div class="w-8 rounded-full border border-[#d4af37]"><img src="assets/images/bokou-icon.png" /></div>`
+            ? `<div class="w-8 rounded-full border border-[#d4af37]"><img src="${this.logo}" /></div>`
             : `<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center text-center justify-center text-gray-500"><i class="fa-solid fa-user fa-fw"></i></div>`;
 
         // 将Markdown解析为HTML (依赖marked.js)
@@ -181,7 +182,7 @@ class GuaLingChat {
             loadingDiv.id = 'chat-loading';
             loadingDiv.className = 'chat chat-start animate-fade-in-up';
             loadingDiv.innerHTML = `
-                <div class="chat-image avatar"><div class="w-8 rounded-full border border-[#d4af37]"><img src="assets/images/bokou-icon.png" /></div></div>
+                <div class="chat-image avatar"><div class="w-8 rounded-full border border-[#d4af37]"><img src="${this.logo}" /></div></div>
                 <div class="chat-bubble bg-white border border-[#e6ded5]"><span class="loading loading-dots loading-sm text-[#9e1c26]"></span></div>
             `;
             this.dom.messages.appendChild(loadingDiv);
