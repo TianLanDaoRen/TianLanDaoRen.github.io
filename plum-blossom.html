@@ -289,14 +289,18 @@
                 </div>
             </div>
 
-            <!-- 加载动画 -->
-            <div class="result-divider divider lg:divider-horizontal p-2 hidden">
-                <p class="result-divider-text">起卦结果</p>
-                <span class="loading loading-dots loading-lg hidden"></span>
-            </div>
-
             <!-- 卦象结果 -->
             <div class="lg:w-1/2">
+                <!-- 1. 空状态 (未起卦时显示) -->
+                <div id="empty-state"
+                    class="h-full flex flex-col justify-center items-center text-gray-400 min-h-[400px] border-2 border-dashed border-[#dcdcdc] rounded-xl bg-white/50">
+                    <div class="w-20 h-20 bg-[#f3f0e9] rounded-full flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-compass fa-2x text-[#cbbba0]"></i>
+                    </div>
+                    <p class="text-lg tracking-wide">暂无卦象，请先起卦</p>
+                </div>
+
+                <!-- 2. 结果面板 (起卦后显示) -->
                 <div class="result hidden">
                     <div class="card shadow-xl">
                         <div class="card-body">
@@ -472,7 +476,7 @@
             <i class="fa-solid fa-feather-pointed fa-xl"></i>
         </button>
         <!-- 呼吸灯红点 -->
-        <span class="absolute top-0 right-0 flex h-3 w-3">
+        <span class="chat-notification-dot absolute top-0 right-0 flex h-3 w-3">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
         </span>
