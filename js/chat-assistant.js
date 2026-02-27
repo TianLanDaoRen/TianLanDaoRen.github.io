@@ -99,7 +99,7 @@ class GuaLingChat {
         this.dom.fab.classList.remove('hidden');
         this.dom.messages.innerHTML = '';
 
-        this.renderMessage('model', "卦象已定，事主若有具体疑惑，可在此继续追问。");
+        this.renderMessage('model', "感谢使用卦灵AI！居士若有具体疑惑，可在此提问。");
         this.updateRedDot(true); // 首轮结果出来后，唤醒红点提示
         this.dispatchExportEvent(session.history);
     }
@@ -111,7 +111,7 @@ class GuaLingChat {
             try {
                 const session = JSON.parse(data);
                 this.dom.messages.innerHTML = '';
-                this.renderMessage('model', "卦象已定，事主若有具体疑惑，可在此继续追问。");
+                this.renderMessage('model', "感谢使用卦灵AI！居士若有具体疑惑，可在此提问。");
                 for (let i = 2; i < session.history.length; i++) {
                     const msg = session.history[i];
                     this.renderMessage(msg.role, msg.parts[0].text);

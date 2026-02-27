@@ -12,7 +12,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/libs/font-awesome.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/libs/marked.min.js"></script>
     <script src="js/main.js"></script>
+    <!-- 新增：导览模块与动画 -->
+    <script src="js/chat-assistant.js"></script>
+    <style>
+        /* 聊天气泡浮现动画 */
+        .animate-fade-in-up {
+            animation: fadeInUp 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 
 <body class="min-h-screen">
@@ -95,7 +116,7 @@
     </div>
 
     <!-- 页脚 -->
-    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded">
+    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded z-[90]">
         <div>
             <p class="text-font">
                 <span class="heading-font text-xl">卦灵AI</span><br />
@@ -104,6 +125,48 @@
             </p>
         </div>
     </footer>
+
+    <!-- 新增：首页客服导览悬浮窗模块 -->
+    <!-- 1. 悬浮按钮 -->
+    <div id="chat-fab" class="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-[100] hidden">
+        <button
+            class="btn btn-circle btn-lg bg-[#9e1c26] text-[#d4af37] border-2 border-[#d4af37] shadow-xl hover:bg-[#7a151d] transition-transform hover:scale-110">
+            <i class="fa-solid fa-feather-pointed fa-xl"></i>
+        </button>
+        <!-- 呼吸灯红点 -->
+        <span class="chat-notification-dot absolute top-0 right-0 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+        </span>
+    </div>
+
+    <!-- 2. 聊天面板 -->
+    <!-- 2. 聊天面板 (动态高度版) -->
+    <div id="chat-panel"
+        class="fixed bottom-24 right-4 lg:right-10 w-[92vw] lg:w-96 min-h-[350px] max-h-[70vh] bg-[#fffbf5] border-2 border-[#d4af37] rounded-2xl shadow-2xl flex flex-col z-[100] hidden origin-bottom-right transition-all duration-300">
+        <!-- Header -->
+        <div class="bg-[#9e1c26] text-[#d4af37] p-3 rounded-t-xl flex justify-between items-center shadow-sm">
+            <span class="font-bold heading-font tracking-wider"><i
+                    class="fa-solid fa-compass animate-spin-slow mr-2"></i>卦灵导览</span>
+            <button id="chat-close-btn" class="btn btn-sm btn-circle btn-ghost text-[#d4af37] hover:bg-black/20"><i
+                    class="fa-solid fa-xmark"></i></button>
+        </div>
+        <!-- Body -->
+        <div id="chat-messages"
+            class="flex-1 overflow-y-auto p-4 space-y-2 bg-[url('assets/images/noise.png')] bg-repeat"
+            style="scroll-behavior: smooth;">
+            <!-- JS 动态注入气泡 -->
+        </div>
+        <!-- Input Area -->
+        <div class="p-3 bg-white border-t border-[#e6ded5] rounded-b-xl flex gap-2 items-center">
+            <input type="text" id="chat-input" placeholder="请输入您的问题..."
+                class="input input-bordered input-sm flex-1 focus:border-[#9e1c26] focus:outline-none bg-[#f9f9f9]"
+                autocomplete="off" />
+            <button id="chat-send-btn"
+                class="btn btn-sm bg-[#9e1c26] hover:bg-[#7a151d] text-white border-none shadow-sm"><i
+                    class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
 </body>
 
 </html>
