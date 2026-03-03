@@ -173,9 +173,6 @@ class GuaLingChat {
                     ],
                     tools: [
                         {
-                            urlContext: {}
-                        },
-                        {
                             googleSearch: {}
                         },
                     ],
