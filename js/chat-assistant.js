@@ -4,7 +4,7 @@
  */
 class GuaLingChat {
     constructor(config = {}) {
-        this.apiUrl = config.apiUrl || 'https://yunsisanren.top/v1beta/models/gemini-3-flash-preview:generateContent';
+        this.apiUrl = config.apiUrl || 'https://yunsisanren.top/v1beta/models/gemini-3.1-flash-lite-preview:generateContent';
         this.storageKey = 'gualing_chat_session';
         this.dom = {};
         this.isLoading = false;
@@ -14,6 +14,13 @@ class GuaLingChat {
         this.streamUrl = this.apiUrl.includes(':generateContent')
             ? this.apiUrl.replace(':generateContent', ':streamGenerateContent?alt=sse')
             : this.apiUrl;
+
+        // 获取 API 根域名，用于后续探测状态和发邮件
+        try {
+            this.apiOrigin = new URL(this.apiUrl).origin;
+        } catch {
+            this.apiOrigin = window.location.origin;
+        }
 
         // 当DOM加载完毕后初始化UI绑定
         if (document.readyState === 'loading') {
@@ -154,28 +161,12 @@ class GuaLingChat {
                         },
                     },
                     safetySettings: [
-                        {
-                            category: "HARM_CATEGORY_HARASSMENT",
-                            threshold: "BLOCK_NONE"
-                        },
-                        {
-                            category: "HARM_CATEGORY_HATE_SPEECH",
-                            threshold: "BLOCK_NONE"
-                        },
-                        {
-                            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                            threshold: "BLOCK_NONE"
-                        },
-                        {
-                            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-                            threshold: "BLOCK_NONE"
-                        },
+                        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
                     ],
-                    tools: [
-                        {
-                            googleSearch: {}
-                        },
-                    ],
+                    tools: [{ googleSearch: {} }],
                 })
             });
 
@@ -233,13 +224,15 @@ class GuaLingChat {
             // 触发导出事件
             this.dispatchExportEvent(session.history);
 
-            // 触发红点 (只有在面板关闭时才会真显示)
+            // 触发红点
             this.updateRedDot(true);
 
         } catch (error) {
             console.error(error);
             this.setLoading(false);
-            this.renderMessage('model', "天机阻滞，网络似有不畅，请稍后再问。");
+
+            // 【修改点】发生错误时，渲染带有节点状态检测和管理员通知功能的卡片
+            this.renderErrorCard();
             session.history.pop();
         }
     }
@@ -264,6 +257,102 @@ class GuaLingChat {
         this.dom.messages.appendChild(chatDiv);
         this.scrollToBottom();
     }
+
+    // =================================================================
+    // ⬇️ 新增：错误卡片及网络诊断模块 ⬇️
+    // =================================================================
+    renderErrorCard() {
+        const uniqueId = Date.now();
+        const statusContainerId = `status-container-${uniqueId}`;
+        const notifyBtnId = `notify-btn-${uniqueId}`;
+
+        const htmlContent = `
+            <div class="p-3 border border-red-200 bg-red-50 rounded-lg text-sm text-gray-700 mt-1 mb-1 shadow-sm w-full font-sans">
+                <div class="flex items-center text-red-600 font-bold mb-2 text-base">
+                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    天机阻滞，连接失败
+                </div>
+                
+                <p class="mb-3 text-xs leading-relaxed text-gray-600">无法连接至云端执行节点。<br/>👉 <strong class="text-gray-800">请先检查您的本地网络（Wi-Fi/数据）是否正常。</strong>若您的网络通畅，则可能是服务器节点异常。</p>
+                
+                <div id="${statusContainerId}" class="bg-white p-2 rounded border border-red-100 text-xs mb-3 text-gray-500 flex items-center justify-center min-h-[50px] shadow-inner transition-all duration-300">
+                    <span class="loading loading-spinner loading-xs text-red-400 mr-2"></span> 正在探测集群状态...
+                </div>
+                
+                <button id="${notifyBtnId}" class="w-full py-2 px-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-xs font-semibold rounded shadow transition-colors flex items-center justify-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    确认自身网络正常，通知管理员
+                </button>
+            </div>
+        `;
+
+        const chatDiv = document.createElement('div');
+        chatDiv.className = `chat chat-start animate-fade-in-up w-full`;
+        // 使用透明背景的气泡，让内部的卡片自己撑起样式
+        chatDiv.innerHTML = `
+            <div class="chat-image avatar">
+                <div class="w-8 rounded-full border border-[#d4af37]"><img src="${this.logo}" /></div>
+            </div>
+            <div class="chat-bubble bg-transparent p-0 shadow-none w-full max-w-[280px]">${htmlContent}</div>
+        `;
+        this.dom.messages.appendChild(chatDiv);
+        this.scrollToBottom();
+
+        // 触发状态探测和绑定按钮事件
+        this.fetchAndRenderStatus(statusContainerId);
+        this.bindNotifyEvent(notifyBtnId);
+    }
+
+    async fetchAndRenderStatus(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        try {
+            const res = await fetch(`${this.apiOrigin}/v1beta/sys/status`, { method: 'POST', timeout: 5000 });
+            if (!res.ok) throw new Error('Status fetch failed');
+            const data = await res.json();
+
+            const nodeColor = data.totalNodes > 0 ? 'text-green-600' : 'text-red-600 font-bold';
+
+            container.innerHTML = `
+                <div class="w-full text-left">
+                    <div class="flex justify-between mb-1"><span class="text-gray-500">网关服务:</span> <span class="text-green-600">运行中 <i class="fa-solid fa-check-circle"></i></span></div>
+                    <div class="flex justify-between mb-1"><span class="text-gray-500">存活节点:</span> <span class="${nodeColor}">${data.totalNodes} 个</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">排队任务:</span> <span class="text-orange-500">${data.totalPendingTasks} 个</span></div>
+                </div>
+            `;
+        } catch (err) {
+            container.innerHTML = `<div class="text-red-500 flex items-center justify-center"><i class="fa-solid fa-circle-xmark mr-1"></i> 获取网关状态失败 (网关可能离线或您的网络断开)</div>`;
+        }
+    }
+
+    bindNotifyEvent(btnId) {
+        const btn = document.getElementById(btnId);
+        if (!btn) return;
+
+        btn.addEventListener('click', async () => {
+            btn.innerHTML = `<span class="loading loading-spinner loading-xs mr-1"></span> 发送中...`;
+            btn.disabled = true;
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            try {
+                const res = await fetch(`${this.apiOrigin}/v1beta/sys/notify_admin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: '【前端故障上报】用户在前端网页遇到了网络阻滞错误，已确认自身网络正常，请求管理员检查后端集群节点健康状态。' })
+                });
+
+                if (!res.ok) throw new Error('Notify failed');
+
+                btn.className = "w-full py-2 px-3 bg-green-600 text-white text-xs font-semibold rounded shadow flex items-center justify-center cursor-default transition-colors";
+                btn.innerHTML = `<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 已成功发信给管理员`;
+            } catch (err) {
+                btn.className = "w-full py-2 px-3 bg-gray-500 text-white text-xs font-semibold rounded shadow flex items-center justify-center cursor-default transition-colors";
+                btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 通知发送失败 (网关完全失联)`;
+            }
+        });
+    }
+    // =================================================================
 
     // 为流式输出创建一个空的AI气泡，并返回内部的文本容器节点
     createEmptyAiBubble() {
