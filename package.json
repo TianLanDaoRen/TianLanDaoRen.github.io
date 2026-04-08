@@ -1,0 +1,25 @@
+{
+  "name": "gualingai",
+  "version": "1.0.0",
+  "description": "GualingAI 是一个专注于人工智能与传统易学融合的研究项目，致力于探索 AI 技术在易学领域的创新应用与智能化解决方案。本项目仅用于学术研究，禁止任何形式的二次修改和商业使用。",
+  "main": "gemini-relay.js",
+  "scripts": {
+    "build": "node build-obfuscate.js",
+    "rollback": "node rollback.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TianLanDaoRen/TianLanDaoRen.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TianLanDaoRen/TianLanDaoRen.github.io/issues"
+  },
+  "homepage": "https://github.com/TianLanDaoRen/TianLanDaoRen.github.io#readme",
+  "devDependencies": {
+    "javascript-obfuscator": "^5.4.1"
+  }
+}

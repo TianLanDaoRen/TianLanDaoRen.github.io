@@ -1,0 +1,8 @@
+.gitmessage
+*_ori.js
+*/*.bin
+test.json
+.DS_Store
+gemini*.js
+node_modules/
+backup/

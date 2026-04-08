@@ -227,6 +227,9 @@ class GuaLingChat {
             // 触发红点
             this.updateRedDot(true);
 
+            if (aiReply.trim() === '') {
+                throw new Error("AI 返回内容为空");
+            }
         } catch (error) {
             console.error(error);
             this.setLoading(false);
