@@ -100,6 +100,7 @@
     }
 
     async function baziPaipan(formData) {
+        const ApiBaseUrl = 'https://bzapi2.iwzbz.com/getbasebz7.php';
         const url = `${ApiBaseUrl}?d=${formData.birth}&s=${formData.gender}`;
         const response = await fetch(url);
         if (!response.ok) {
@@ -201,6 +202,7 @@
             codeContent: document.querySelector('.code-content'),
             codeCopyBtn: document.querySelector('.code-copy-btn'),
         };
+
         // 绑定排盘按钮事件
         elements.calculateBtn.addEventListener('click', handleCalculate);
         elements.codeCopyBtn.addEventListener('click', () => {
@@ -211,6 +213,7 @@
                 }, 2000);
             });
         });
+
         // 绑定性别选择事件
         document.querySelectorAll('.gender-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -228,6 +231,24 @@
                 document.querySelector('input[name="gender"]').value = target.getAttribute('data-value');
             });
         });
+
+        // ======= 下面为新增部分：自动选择按钮为用户性别 =======
+        try {
+            const userInfoStr = localStorage.getItem('user_info');
+            if (userInfoStr) {
+                const userInfo = JSON.parse(userInfoStr);
+                if (userInfo.gender) {
+                    // 找到对应性别的按钮并触发点击
+                    let value = userInfo.gender === '男' ? 1 : 0;
+                    const targetBtn = document.querySelector(`.gender-btn[data-value="${value}"]`);
+                    if (targetBtn) {
+                        targetBtn.click();
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('读取用户信息失败:', e);
+        }
     });
 
     // 返回公共接口

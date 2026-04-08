@@ -55,14 +55,16 @@
 
                         <!-- 性别 -->
                         <div class="form-control">
-                            <label class="label">
-                                <span class="translation form-label">性别</span>
+                            <label class="label pt-0 pb-1">
+                                <span class="translation label-text font-bold text-gray-600">性别</span>
                                 <span class="gender-alt label-text-alt text-error"></span>
                             </label>
-                            <div class="join w-full gender-group">
-                                <button class="join-item btn btn-primary flex-1 gender-btn btn-active"
+                            <div class="join w-full gender-group grid grid-cols-2">
+                                <button class="translation join-item btn btn-sm btn-gugong gender-btn btn-active"
                                     data-value="男">男</button>
-                                <button class="join-item btn btn-outline flex-1 gender-btn" data-value="女">女</button>
+                                <button
+                                    class="translation join-item btn btn-sm btn-outline gender-btn hover:bg-[#fff3e0] hover:text-[#9e1c26] hover:border-[#9e1c26]"
+                                    data-value="女">女</button>
                             </div>
                             <input type="hidden" class="gender" name="gender" value="男">
                         </div>
@@ -147,7 +149,7 @@
                         <div class="card-body">
                             <h2 class="translation heading-font text-2xl mb-6">排盘结果</h2>
                             <div class="join w-full result-tabs-group mb-4">
-                                <button class="join-item btn btn-primary flex-1 result-tab-btn btn-active"
+                                <button class="join-item btn btn-gugong flex-1 result-tab-btn btn-active"
                                     data-target="panel-main">本宫</button>
                                 <button class="join-item btn btn-outline flex-1 result-tab-btn"
                                     data-target="panel-addit">变宫</button>

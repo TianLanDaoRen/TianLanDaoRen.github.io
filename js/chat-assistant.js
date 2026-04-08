@@ -211,7 +211,6 @@ class GuaLingChat {
                                 }
                             }
                         } catch (e) {
-                            console.warn("解析 SSE 块出错:", e);
                         }
                     }
                 }
@@ -231,7 +230,6 @@ class GuaLingChat {
                 throw new Error("AI 返回内容为空");
             }
         } catch (error) {
-            console.error(error);
             this.setLoading(false);
 
             // 【修改点】发生错误时，渲染带有节点状态检测和管理员通知功能的卡片
