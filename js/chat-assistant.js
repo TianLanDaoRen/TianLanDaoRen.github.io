@@ -106,7 +106,7 @@ class GuaLingChat {
         this.dom.fab.classList.remove('hidden');
         this.dom.messages.innerHTML = '';
 
-        this.renderMessage('model', "感谢使用卦灵AI！居士若有具体疑惑，可在此提问。</br>若您觉得卦灵AI对您有帮助，您可以\n**[☕ 点击此处随喜打赏 / 赞助恩师云笥散人](https://yunsisanren.top/donate.png)**");
+        this.renderMessage('model', "感谢使用卦灵AI！居士若有具体疑惑，可在此提问。</br>若您觉得卦灵AI对您有帮助，您可以\n**[☕ 点击此处随喜打赏 / 赞助恩师云笥散人](https://yunsisanren.top/donate.png)**\n**[🎁 点击此处：验证 Steam 免费领取《石楠小馆：一斗浮生》激活码](https://gualing.top/cdkey.html)**");
         this.updateRedDot(true); // 首轮结果出来后，唤醒红点提示
         this.dispatchExportEvent(session.history);
     }
@@ -118,7 +118,7 @@ class GuaLingChat {
             try {
                 const session = JSON.parse(data);
                 this.dom.messages.innerHTML = '';
-                this.renderMessage('model', "感谢使用卦灵AI！居士若有具体疑惑，可在此提问。</br>若您觉得卦灵AI对您有帮助，您可以\n**[☕ 点击此处随喜打赏 / 赞助恩师云笥散人](https://yunsisanren.top/donate.png)**");
+                this.renderMessage('model', "感谢使用卦灵AI！居士若有具体疑惑，可在此提问。</br>若您觉得卦灵AI对您有帮助，您可以\n**[☕ 点击此处随喜打赏 / 赞助恩师云笥散人](https://yunsisanren.top/donate.png)**\n**[🎁 点击此处：验证 Steam 免费领取《石楠小馆：一斗浮生》激活码](https://gualing.top/cdkey.html)**");
                 for (let i = 2; i < session.history.length; i++) {
                     const msg = session.history[i];
                     this.renderMessage(msg.role, msg.parts[0].text);
