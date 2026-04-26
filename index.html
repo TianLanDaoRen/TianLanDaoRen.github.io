@@ -36,6 +36,55 @@
     </style>
 </head>
 
+<!-- 首页发Key引流弹窗 -->
+<dialog id="cdkey_promo_modal" class="modal modal-bottom sm:modal-middle z-[999]">
+    <!-- 弹窗主体，使用你的卡片风格和背景渐变 -->
+    <div class="modal-box bg-base-100 border-2 border-[#e6ded5] shadow-2xl relative"
+        style="background-image: linear-gradient(to bottom right, hsl(39, 45%, 97%), hsl(39, 45%, 93%));">
+
+        <h3 class="font-bold text-2xl heading-font text-[#9e1c26] mb-4 text-center">
+            <i class="fa-solid fa-gift mr-2"></i>云笥散人·专属福利
+        </h3>
+
+        <p class="py-4 text-font text-lg text-gray-700 text-center leading-relaxed">
+            福生无量天尊。贫道闲暇之余独力开发之独立游戏现已上架 Steam。<br>
+            相逢即是缘，凡至本站之居士，皆可免费抽取 <strong class="text-[#9e1c26]">Steam 激活码</strong> 一枚！<br>
+            <span class="text-sm text-gray-500 mt-2 block">（每位居士限领一枚，防刷机制已开启）</span>
+        </p>
+
+        <div class="modal-action justify-center gap-4 mt-6">
+            <!-- 关闭按钮，使用你的 btn-ghost 风格 -->
+            <form method="dialog">
+                <button class="btn btn-ghost text-font text-lg">我知道了</button>
+            </form>
+            <!-- 前往领取按钮，使用你的 btn-primary 风格 -->
+            <a href="cdkey.html"
+                class="btn btn-primary text-font text-lg border-none shadow-md hover:scale-105 transition-transform">
+                前往领取 <i class="fa-solid fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+    <!-- 点击弹窗外部也可关闭 -->
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+<!-- 弹窗触发脚本 -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 每次访问 index.html 自动弹出 (如果嫌太烦人，后续可以教你用 sessionStorage 改为仅弹一次)
+        const modal = document.getElementById('cdkey_promo_modal');
+        // 1. 检查本地记忆：是否已领过 Key，或者是否点击过“我知道了”
+        const hasKey = localStorage.getItem('gualing_cdkey');
+        if (modal && !hasKey) {
+            setTimeout(() => {
+                modal.showModal();
+            }, 500); // 延迟半秒弹出，体验更好
+        }
+    });
+</script>
+
 <body class="min-h-screen">
     <!-- 导航栏 -->
     <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
