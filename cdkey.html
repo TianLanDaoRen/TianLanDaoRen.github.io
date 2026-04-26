@@ -7,17 +7,28 @@
     <meta charset="UTF-8">
     <!-- 1. 彻底关闭或放宽 Trusted Types 校验 -->
     <title>领取激活码 - 卦灵AI</title>
+    <!-- 1. 放在最前面的防封锁补丁：解决 Trusted Types 报错 -->
+    <script>
+        (function () {
+            if (window.trustedTypes && window.trustedTypes.createPolicy) {
+                if (!window.trustedTypes.defaultPolicy) {
+                    const passThrough = (s) => s;
+                    window.trustedTypes.createPolicy('default', {
+                        createHTML: passThrough,
+                        createScriptURL: passThrough,
+                        createScript: passThrough,
+                    });
+                }
+            }
+        })();
+    </script>
     <link rel="icon" href="assets/images/icon.png" />
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="preconnect" href="https://challenges.cloudflare.com" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/libs/font-awesome.js"></script>
-    <!-- cdkey.html 中原有的 <head> 标签内补充引入你的 js -->
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
-    <!-- 使用 type="module" 有利于 Vite 识别和深度混淆 -->
-    <script type="module" src="js/cdkey.js"></script>
-
-    <!-- Cloudflare Turnstile 脚本 -->
+    <!-- 2. Cloudflare Turnstile 改为显式渲染模式 -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
@@ -98,6 +109,9 @@
             </p>
         </div>
     </footer>
+
+    <!-- 使用 type="module" 有利于 Vite 识别和深度混淆 -->
+    <script type="module" src="js/cdkey.js"></script>
 </body>
 
 </html>
