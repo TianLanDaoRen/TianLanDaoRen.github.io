@@ -5,9 +5,8 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta charset="UTF-8">
-    <!-- 1. 彻底关闭或放宽 Trusted Types 校验 -->
     <title>领取激活码 - 卦灵AI</title>
-    <!-- 1. 放在最前面的防封锁补丁：解决 Trusted Types 报错 -->
+    <!-- 防封锁补丁：解决 Trusted Types 报错 -->
     <script>
         (function () {
             if (window.trustedTypes && window.trustedTypes.createPolicy) {
@@ -28,12 +27,12 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/libs/font-awesome.js"></script>
-    <!-- 2. Cloudflare Turnstile 改为显式渲染模式 -->
+    <!-- Cloudflare Turnstile 改为显式渲染模式 -->
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body class="min-h-screen flex flex-col">
-    <!-- 导航栏 (保持统一) -->
+    <!-- 导航栏 -->
     <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
         <div class="navbar-start">
             <a href="index.html" class="btn btn-ghost heading-font text-2xl text-[#9e1c26]">
@@ -42,54 +41,60 @@
         </div>
     </div>
 
-    <!-- 主要内容区 -->
-    <div class="container mx-auto px-4 py-16 flex-1 flex justify-center items-center">
+    <!-- 2. 修改主要内容区：
+             - 移除 py-16 (因为它会把内容往下推)
+             - flex-1 占据所有剩余空间
+             - 增加 pb-[10vh] 实现“视觉居中” (稍微往上提一点)
+        -->
+    <main class="flex-1 flex items-center justify-center px-4 pb-[15vh] md:pb-0">
 
-        <div class="card w-full max-w-lg bg-base-100 shadow-2xl p-8 border-2 border-[#e6ded5]">
-            <div class="text-center mb-8">
-                <h1 class="heading-font text-4xl mb-4 text-[#9e1c26]">结缘赠礼</h1>
-                <p class="text-font text-gray-600 text-lg">验证 Steam 账号，领取游戏激活码</p>
+        <!-- 针对移动端优化了 p-6 (原先 p-8 对小屏有点挤) -->
+        <div class="card w-full max-w-lg bg-base-100 shadow-2xl p-6 md:p-8 border-2 border-[#e6ded5]">
+            <div class="text-center mb-6 md:mb-8">
+                <h1 class="heading-font text-3xl md:text-4xl mb-4 text-[#9e1c26]">结缘赠礼</h1>
+                <p class="text-font text-gray-600 text-base md:text-lg">验证 Steam 账号，领取游戏激活码</p>
                 <div class="divider before:bg-[#e6ded5] after:bg-[#e6ded5]"></div>
             </div>
 
-            <!-- 状态机：这里将通过 JS 控制显示哪一个区块 -->
-            <!-- 状态机：区块 0：倒计时区 (未到时间时显示) -->
-            <div id="step-countdown" class="hidden flex flex-col items-center gap-6">
-                <p class="text-[#9e1c26] classic-font text-xl text-center">
+            <!-- 状态机：区块 0：倒计时区 -->
+            <div id="step-countdown" class="hidden flex flex-col items-center gap-6 w-full">
+                <p class="text-[#9e1c26] classic-font text-lg md:text-xl text-center">
                     《石楠小馆：一斗浮生》<br>
-                    <span class="text-gray-500 text-sm mt-1 inline-block">将于 2026年5月5日 09:00 开启结缘分发</span>
+                    <span class="text-gray-500 text-xs md:text-sm mt-1 inline-block">将于 2026年5月5日 09:00 开启结缘分发</span>
                 </p>
 
-                <!-- DaisyUI 炫酷倒计时组件，结合了你的中性色系 -->
-                <div class="grid grid-flow-col gap-4 text-center auto-cols-max">
+                <!-- 【核心修复区】：改用 flex 居中容器，杜绝拉伸失真 -->
+                <div class="flex justify-center items-center gap-3 sm:gap-4 w-full">
+
+                    <!-- 注意：span.countdown 和它内部的 span 必须紧贴在同一行，消灭幽灵换行节点！ -->
                     <div
-                        class="flex flex-col p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
-                        <span class="countdown font-mono text-5xl">
-                            <span id="cd-days" style="--value:0;"></span>
-                        </span>
-                        <span class="text-sm classic-font mt-1">日</span>
+                        class="flex-1 max-w-[4.5rem] sm:max-w-[5.5rem] flex flex-col items-center justify-center p-2 sm:p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
+                        <span class="countdown font-mono text-3xl sm:text-4xl"><span id="cd-days"
+                                style="--value:0;"></span></span>
+                        <span class="text-xs sm:text-sm classic-font mt-1">日</span>
                     </div>
+
                     <div
-                        class="flex flex-col p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
-                        <span class="countdown font-mono text-5xl">
-                            <span id="cd-hours" style="--value:0;"></span>
-                        </span>
-                        <span class="text-sm classic-font mt-1">时</span>
+                        class="flex-1 max-w-[4.5rem] sm:max-w-[5.5rem] flex flex-col items-center justify-center p-2 sm:p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
+                        <span class="countdown font-mono text-3xl sm:text-4xl"><span id="cd-hours"
+                                style="--value:0;"></span></span>
+                        <span class="text-xs sm:text-sm classic-font mt-1">时</span>
                     </div>
+
                     <div
-                        class="flex flex-col p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
-                        <span class="countdown font-mono text-5xl">
-                            <span id="cd-mins" style="--value:0;"></span>
-                        </span>
-                        <span class="text-sm classic-font mt-1">分</span>
+                        class="flex-1 max-w-[4.5rem] sm:max-w-[5.5rem] flex flex-col items-center justify-center p-2 sm:p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
+                        <span class="countdown font-mono text-3xl sm:text-4xl"><span id="cd-mins"
+                                style="--value:0;"></span></span>
+                        <span class="text-xs sm:text-sm classic-font mt-1">分</span>
                     </div>
+
                     <div
-                        class="flex flex-col p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
-                        <span class="countdown font-mono text-5xl">
-                            <span id="cd-secs" style="--value:0;"></span>
-                        </span>
-                        <span class="text-sm classic-font mt-1">秒</span>
+                        class="flex-1 max-w-[4.5rem] sm:max-w-[5.5rem] flex flex-col items-center justify-center p-2 sm:p-3 bg-[#fffbf5] border border-[#e6ded5] rounded-box text-[#9e1c26] shadow-sm">
+                        <span class="countdown font-mono text-3xl sm:text-4xl"><span id="cd-secs"
+                                style="--value:0;"></span></span>
+                        <span class="text-xs sm:text-sm classic-font mt-1">秒</span>
                     </div>
+
                 </div>
 
                 <p class="text-sm text-gray-500 classic-font animate-pulse mt-2">
@@ -99,23 +104,22 @@
 
             <!-- 区块 1：人机验证与 Steam 登录 -->
             <div id="step-auth" class="flex flex-col items-center gap-6">
-
-                <!-- Turnstile 容器 (请在 data-sitekey 中填入之后申请的 Key) -->
+                <!-- Turnstile 容器 -->
                 <div class="cf-turnstile" data-sitekey="0x4AAAAAADDhFTIqoZVk_a7b" data-theme="light"></div>
 
-                <p class="text-sm text-gray-500 text-font">
+                <p class="text-sm text-gray-500 text-font text-center">
                     * 需使用 Steam 授权登录以防止批量倒卖<br>
                     * 本站无法获取您的密码，仅核验身份唯一性
                 </p>
 
                 <!-- Steam 官方绿色风格登录按钮 -->
-                <button id="btn-steam-login" class="btn w-full text-lg shadow-lg"
+                <button id="btn-steam-login" class="btn w-full text-base md:text-lg shadow-lg"
                     style="background-color: #171a21; color: white; border: none;">
                     <i class="fa-brands fa-steam fa-xl mr-2"></i> 使用 Steam 登录领取
                 </button>
             </div>
 
-            <!-- 区块 2：领取成功展示区 (默认隐藏) -->
+            <!-- 区块 2：领取成功展示区 -->
             <div id="step-success" class="hidden flex flex-col items-center gap-4">
                 <div
                     class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-2 shadow-inner">
@@ -127,7 +131,8 @@
                 <!-- 激活码展示框 -->
                 <div
                     class="w-full bg-gray-100 p-4 rounded-xl text-center border-2 border-dashed border-gray-300 relative group">
-                    <span id="cdkey-display" class="font-mono text-xl font-bold tracking-widest text-[#9e1c26]">
+                    <span id="cdkey-display"
+                        class="font-mono text-lg md:text-xl font-bold tracking-widest text-[#9e1c26] break-all">
                         AAAAA-BBBBB-CCCCC
                     </span>
                     <!-- 悬浮复制提示 -->
@@ -139,7 +144,7 @@
                 </div>
             </div>
 
-            <!-- 区块 3：发钥完毕/抢空展示区 (默认隐藏) -->
+            <!-- 区块 3：发钥完毕/抢空展示区 -->
             <div id="step-empty" class="hidden flex flex-col items-center gap-4 py-6">
                 <div
                     class="w-20 h-20 rounded-full bg-gray-100 border-2 border-[#e6ded5] flex items-center justify-center text-gray-400 mb-2 shadow-inner">
@@ -157,21 +162,20 @@
             </div>
 
         </div>
-    </div>
-
-    <!-- 页脚 (保持统一) -->
-    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded mt-auto">
-        <div>
-            <p class="text-font">
-                <span class="heading-font text-xl">卦灵AI</span><br />
-                <span class="footer-motto text-xl">融古通今，智解天机</span><br />
-                <a class="text-sm" href="https://yunsisanren.top" target="_blank">@云笥散人</a>
-            </p>
         </div>
-    </footer>
 
-    <!-- 使用 type="module" 有利于 Vite 识别和深度混淆 -->
-    <script type="module" src="js/cdkey.js"></script>
+        <!-- 页脚 -->
+        <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded mt-auto pb-6">
+            <div>
+                <p class="text-font">
+                    <span class="heading-font text-xl">卦灵AI</span><br />
+                    <span class="footer-motto text-xl">融古通今，智解天机</span><br />
+                    <a class="text-sm" href="https://yunsisanren.top" target="_blank">@云笥散人</a>
+                </p>
+            </div>
+        </footer>
+
+        <script type="module" src="js/cdkey.js"></script>
 </body>
 
 </html>

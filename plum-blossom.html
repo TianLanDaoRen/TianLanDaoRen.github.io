@@ -104,12 +104,15 @@
                                 <span class="label-text text-font">选择起卦方式</span>
                                 <span class="method-alt label-text-alt text-error"></span>
                             </label>
-                            <div class="join w-full justify-center method-group">
-                                <button class="join-item btn btn-primary method-btn btn-active"
+                            <div class="join w-full justify-center method-group flex">
+                                <button class="join-item flex-1 btn btn-primary method-btn btn-active"
                                     data-value="time">时间起卦</button>
-                                <button class="join-item btn btn-outline method-btn" data-value="text">汉字起卦</button>
-                                <button class="join-item btn btn-outline method-btn" data-value="manual">手动指定</button>
-                                <button class="join-item btn btn-outline method-btn" data-value="code">使用编号</button>
+                                <button class="join-item flex-1 btn btn-outline method-btn"
+                                    data-value="text">汉字起卦</button>
+                                <button class="join-item flex-1 btn btn-outline method-btn"
+                                    data-value="manual">手动指定</button>
+                                <button class="join-item flex-1 btn btn-outline method-btn"
+                                    data-value="code">使用编号</button>
                             </div>
                             <input type="hidden" name="method" value="time">
                         </div>
