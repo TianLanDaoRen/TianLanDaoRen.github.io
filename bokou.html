@@ -235,18 +235,16 @@
         <div class="navbar-center"><a class="btn btn-ghost heading-font text-2xl">伯叩三才盘</a>
         </div>
         <div class="navbar-end">
-            <ul class="menu menu-horizontal px-1">
-                <li>
-                    <details>
-                        <summary><i class="fa-solid fa-language fa-fw fa-xl"></i></summary>
-                        <ul class="bg-base-100 rounded p-2 z-10">
-                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('zh-CN');">中文</button></li>
-                            <li><button class="btn btn-ghost" onclick="utils.setLanguage('en-US');">English</button>
-                            </li>
-                        </ul>
-                    </details>
-                </li>
-            </ul>
+            <div class="flex items-center gap-2">
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" class="btn btn-ghost"><i class="fa-solid fa-language fa-lg"></i></label>
+                    <ul tabindex="0"
+                        class="dropdown-content z-[100] menu p-2 shadow bg-base-100 rounded-box w-32 border border-[#e6ded5]">
+                        <li><a onclick="utils.setLanguage('zh-CN')">中文</a></li>
+                        <li><a onclick="utils.setLanguage('en-US')">English</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
