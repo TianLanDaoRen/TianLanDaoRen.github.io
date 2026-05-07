@@ -1,4 +1,5 @@
 .gitmessage
+.history
 *_ori.js
 */*.bin
 test.json
