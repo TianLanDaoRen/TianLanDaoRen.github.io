@@ -51,18 +51,27 @@
                     <input type="text" id="username" placeholder="请输入字母或数字"
                         class="input input-bordered w-full focus:border-[#9e1c26] bg-[#fdfdfd]" autocomplete="off" />
                 </div>
-                <div>
+                <!-- 密码输入区 -->
+                <div class="relative">
                     <label class="label pt-0 pb-1"><span class="label-text font-bold text-gray-600">密码</span></label>
                     <input type="password" id="password" placeholder="请输入密码"
-                        class="input input-bordered w-full focus:border-[#9e1c26] bg-[#fdfdfd]"
+                        class="input input-bordered w-full pr-10 focus:border-[#9e1c26] bg-[#fdfdfd]"
                         autocomplete="new-password" />
+                    <span class="absolute right-3 top-[38px] cursor-pointer text-gray-400 hover:text-[#9e1c26]"
+                        onclick="togglePassword('password', this)">
+                        <i class="fa-solid fa-eye"></i>
+                    </span>
                 </div>
-                <!-- 原先的密码输入框下方添加 -->
-                <div id="confirm-password-container" class="hidden">
+                <!-- 确认密码输入区 (在注册模式下显示) -->
+                <div id="confirm-password-container" class="relative hidden">
                     <label class="label pt-0 pb-1"><span class="label-text font-bold text-gray-600">确认密码</span></label>
                     <input type="password" id="password-confirm" placeholder="请再次输入密码"
-                        class="input input-bordered w-full focus:border-[#9e1c26] bg-[#fdfdfd]"
+                        class="input input-bordered w-full pr-10 focus:border-[#9e1c26] bg-[#fdfdfd]"
                         autocomplete="new-password" />
+                    <span class="absolute right-3 top-[38px] cursor-pointer text-gray-400 hover:text-[#9e1c26]"
+                        onclick="togglePassword('password-confirm', this)">
+                        <i class="fa-solid fa-eye"></i>
+                    </span>
                 </div>
 
                 <!-- 仅注册时显示的 Turnstile -->
