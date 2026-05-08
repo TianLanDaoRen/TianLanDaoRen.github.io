@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/TianLanDaoRen/TianLanDaoRen.github.io#readme",
   "devDependencies": {
-    "javascript-obfuscator": "^5.4.1"
+    "javascript-obfuscator": "^5.4.2"
   }
 }

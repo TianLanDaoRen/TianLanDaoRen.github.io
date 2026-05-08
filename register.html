@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-cn" data-theme="light">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta charset="UTF-8">
+    <title>登录/注册 - 卦灵AI</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/libs/font-awesome.js"></script>
+
+    <!-- 引入安全组件 -->
+
+    <script src="js/gualing-crypto-api.js"></script>
+    <!-- Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-[#fffbf5]">
+    <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl text-[#9e1c26]">
+                <i class="fa-solid fa-arrow-left mr-1 text-sm"></i> 卦灵AI
+            </a>
+        </div>
+    </div>
+
+    <main class="flex-1 flex items-center justify-center px-4 py-8 pb-[15vh] md:pb-0">
+        <div class="w-full max-w-md bg-white shadow-2xl p-8 rounded-2xl border border-[#e6ded5]">
+
+            <div class="text-center mb-6">
+                <h1 class="heading-font text-3xl text-[#9e1c26] mb-2" id="auth-title">居士，请登录</h1>
+                <p class="text-sm text-gray-500 text-font">融古通今，智解天机</p>
+            </div>
+
+            <!-- 现代化的胶囊切换器 (取代傻逼 tab) -->
+            <div class="flex p-1 bg-gray-100 rounded-xl mb-8">
+                <button id="tab-login"
+                    class="flex-1 py-2 text-center text-base font-bold rounded-lg transition-all duration-300 bg-white text-[#9e1c26] shadow-sm">登
+                    录</button>
+                <button id="tab-reg"
+                    class="flex-1 py-2 text-center text-base font-bold rounded-lg transition-all duration-300 text-gray-500 hover:text-gray-700">注
+                    册</button>
+            </div>
+
+            <div class="form-control w-full space-y-5">
+                <div>
+                    <label class="label pt-0 pb-1"><span class="label-text font-bold text-gray-600">用户名</span></label>
+                    <input type="text" id="username" placeholder="请输入字母或数字"
+                        class="input input-bordered w-full focus:border-[#9e1c26] bg-[#fdfdfd]" autocomplete="off" />
+                </div>
+                <div>
+                    <label class="label pt-0 pb-1"><span class="label-text font-bold text-gray-600">密码</span></label>
+                    <input type="password" id="password" placeholder="请输入密码"
+                        class="input input-bordered w-full focus:border-[#9e1c26] bg-[#fdfdfd]"
+                        autocomplete="new-password" />
+                </div>
+                <!-- 原先的密码输入框下方添加 -->
+                <div id="confirm-password-container" class="hidden">
+                    <label class="label pt-0 pb-1"><span class="label-text font-bold text-gray-600">确认密码</span></label>
+                    <input type="password" id="password-confirm" placeholder="请再次输入密码"
+                        class="input input-bordered w-full focus:border-[#9e1c26] bg-[#fdfdfd]"
+                        autocomplete="new-password" />
+                </div>
+
+                <!-- 仅注册时显示的 Turnstile -->
+                <div id="turnstile-container" class="hidden flex justify-center pt-2">
+                    <!-- TODO: Cloudflare Turnstile 验证组件 -->
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAADDhFTIqoZVk_a7b" data-theme="light"></div>
+                </div>
+
+                <!-- 错误提示框 -->
+                <div id="auth-error"
+                    class="hidden bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100 flex items-center mt-2 animate-fade-in-up">
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                    <span id="auth-error-text">错误信息</span>
+                </div>
+
+                <button id="btn-submit"
+                    class="btn btn-primary w-full mt-4 text-lg tracking-widest border-none shadow-md hover:shadow-lg">
+                    登 录
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer footer-center bg-base-100 bg-opacity-80 text-base-content rounded z-[90]">
+        <div>
+            <p class="text-font">
+                <span class="heading-font text-xl">卦灵AI</span><br />
+                <span class="footer-motto text-xl">融古通今，智解天机</span><br />
+                <a class="text-sm" href="https://yunsisanren.top" target="_blank">@云笥散人</a>
+            </p>
+        </div>
+    </footer>
+    <script src="js/register.js"></script>
+</body>
+
+</html>
