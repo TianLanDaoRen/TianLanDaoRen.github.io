@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-cn" data-theme="light">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta charset="UTF-8">
+    <title>汲取魔力 - 卦灵AI</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
+    <script src="js/gualing-crypto-api.js"></script>
+    <script src="js/user-center.js"></script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-[#fffbf5]">
+    <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl text-[#9e1c26]">
+                <i class="fa-solid fa-arrow-left mr-1 text-sm"></i> 卦灵AI
+            </a>
+        </div>
+        <div class="navbar-end">
+            <!-- UserCenter 会自动渲染这里 -->
+        </div>
+    </div>
+
+    <main class="flex-1 flex items-center justify-center px-4 py-8 pb-32">
+        <div class="w-full max-w-lg bg-white shadow-2xl rounded-2xl border border-[#e6ded5] overflow-hidden">
+
+            <!-- 滑动轨道：宽度200%，左边100%是选择区，右边100%是支付区 -->
+            <div id="slider-track"
+                class="flex transition-transform duration-500 ease-in-out w-[200%] transform translate-x-0">
+
+                <!-- 【视图1】：选择套餐区 (占一半宽度) -->
+                <div class="w-1/2 p-6 md:p-8 flex flex-col h-full">
+                    <div class="text-center mb-6">
+                        <h1 class="heading-font text-3xl text-[#9e1c26] mb-2">汲取魔力</h1>
+                        <p class="text-sm text-gray-500 text-font">法力充盈，方能洞察天机</p>
+                    </div>
+
+                    <!-- 预设网格 (2行3列) -->
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <button
+                            class="preset-btn btn h-auto py-3 flex flex-col border-[#e6ded5] bg-gray-50 hover:bg-[#fff0f0] hover:border-[#9e1c26] text-[#9e1c26]"
+                            data-points="10">
+                            <span class="text-lg font-bold"><i class="fa-solid fa-bolt text-[#d4af37]"></i> 10</span>
+                        </button>
+                        <button
+                            class="preset-btn btn h-auto py-3 flex flex-col border-[#e6ded5] bg-gray-50 hover:bg-[#fff0f0] hover:border-[#9e1c26] text-[#9e1c26]"
+                            data-points="20">
+                            <span class="text-lg font-bold"><i class="fa-solid fa-bolt text-[#d4af37]"></i> 20</span>
+                        </button>
+                        <button
+                            class="preset-btn btn h-auto py-3 flex flex-col border-[#e6ded5] bg-gray-50 hover:bg-[#fff0f0] hover:border-[#9e1c26] text-[#9e1c26]"
+                            data-points="50">
+                            <span class="text-lg font-bold"><i class="fa-solid fa-bolt text-[#d4af37]"></i> 50</span>
+                        </button>
+                        <button
+                            class="preset-btn btn h-auto py-3 flex flex-col border-[#e6ded5] bg-gray-50 hover:bg-[#fff0f0] hover:border-[#9e1c26] text-[#9e1c26]"
+                            data-points="100">
+                            <span class="text-lg font-bold"><i class="fa-solid fa-bolt text-[#d4af37]"></i> 100</span>
+                        </button>
+                        <button
+                            class="preset-btn btn h-auto py-3 flex flex-col border-[#e6ded5] bg-gray-50 hover:bg-[#fff0f0] hover:border-[#9e1c26] text-[#9e1c26]"
+                            data-points="200">
+                            <span class="text-lg font-bold"><i class="fa-solid fa-bolt text-[#d4af37]"></i> 200</span>
+                        </button>
+                        <button
+                            class="preset-btn btn h-auto py-3 flex flex-col border-[#e6ded5] bg-gray-50 hover:bg-[#fff0f0] hover:border-[#9e1c26] text-[#9e1c26]"
+                            data-points="500">
+                            <span class="text-lg font-bold"><i class="fa-solid fa-bolt text-[#d4af37]"></i> 500</span>
+                        </button>
+                    </div>
+
+                    <div class="divider text-xs text-gray-400">或者您可以自定义获取的魔力值数量</div>
+
+                    <!-- 自定义输入框 -->
+                    <div class="form-control w-full mb-6 relative">
+                        <div class="relative">
+                            <span class="absolute left-4 top-[14px] text-gray-400"><i
+                                    class="fa-solid fa-bolt"></i></span>
+                            <input type="number" id="custom-points" placeholder="必须是10的正整数倍" step="10" min="10"
+                                class="input input-bordered w-full pl-10 focus:border-[#9e1c26] bg-[#fdfdfd] text-lg font-bold text-[#9e1c26]" />
+                        </div>
+                        <!-- 【新增】：精准的红色错误提示 -->
+                        <p id="custom-error" class="hidden text-xs text-red-500 mt-2 font-bold absolute -bottom-5"><i
+                                class="fa-solid fa-circle-exclamation mr-1"></i>魔力值必须是 10 的正整数倍</p>
+                    </div>
+
+                    <!-- 动态价格展示板 -->
+                    <div
+                        class="bg-red-50 border border-red-100 rounded-xl p-4 mb-6 flex justify-between items-center transition-all">
+                        <span class="text-sm font-bold text-gray-700">需奉纳：</span>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-[#9e1c26]" id="display-usd">USD $ 0.00</p>
+                            <p class="text-xs text-gray-500 mt-1">约合人民币 <span id="display-rmb">¥ 0.00</span></p>
+                        </div>
+                    </div>
+
+                    <button id="btn-next"
+                        class="btn btn-primary w-full text-lg tracking-widest border-none shadow-md mt-auto" disabled>
+                        <i class="fa-brands fa-paypal mr-1"></i> 前往支付结印
+                    </button>
+                </div>
+
+                <!-- 【视图2】：PayPal 支付区 (占另一半) -->
+                <div class="w-1/2 p-6 md:p-8 flex flex-col h-full">
+                    <div class="flex items-center mb-6">
+                        <button id="btn-back"
+                            class="btn btn-sm btn-circle btn-ghost text-gray-500 hover:bg-gray-100 mr-2"><i
+                                class="fa-solid fa-chevron-left"></i></button>
+                        <h2 class="heading-font text-xl text-gray-800 font-bold border-l-4 border-[#9e1c26] pl-2">收银法阵
+                        </h2>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-6 mb-8 text-center border border-gray-100 shadow-inner">
+                        <p class="text-sm text-gray-500 mb-2">即将注入魔力值</p>
+                        <p class="text-4xl font-bold text-[#d4af37] mb-2"><i class="fa-solid fa-bolt"></i> <span
+                                id="checkout-points">0</span></p>
+                        <p class="text-lg font-bold text-gray-800">总计: <span id="checkout-usd"
+                                class="text-[#9e1c26]"></span></p>
+                    </div>
+
+                    <div id="paypal-button-container" class="mt-auto relative min-h-[150px]">
+                        <!-- SDK 加载中占位 -->
+                        <div id="paypal-loader"
+                            class="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
+                            <span class="loading loading-spinner text-blue-500 mb-2"></span>
+                            <span class="text-xs text-gray-400">正在召唤 PayPal...</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+    <script src="js/recharge.js"></script>
+</body>
+
+</html>
