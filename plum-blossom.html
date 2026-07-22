@@ -291,10 +291,12 @@
                         <!-- 起卦按钮 -->
                         <button class="btn btn-primary w-full text-lg calculate">开始起卦</button>
 
-                        <!-- 问事详情，起卦后，将收集的信息汇总到这里。是个daisyui的code类型，附带一个复制按钮。 -->
-                        <div class="mockup-code w-full text-font hidden">
-                            <pre><code class="code-content text-font"></code></pre>
-                            <button class="btn btn-ghost code-copy-btn">复制</button>
+                        <!-- 问事详情代码汇总框：增加自动折行与相对定位，彻底防止手机端超出 -->
+                        <div
+                            class="mockup-code w-full max-w-full box-border text-font hidden relative overflow-x-auto my-4">
+                            <pre
+                                class="whitespace-pre-wrap break-words max-w-full p-4 pr-16"><code class="code-content text-font whitespace-pre-wrap break-words"></code></pre>
+                            <button class="btn btn-sm btn-ghost absolute top-2 right-2 code-copy-btn">复制</button>
                         </div>
 
 
@@ -377,83 +379,102 @@
         </div>
     </div>
 
-    <!-- 导出图片容器 (隐藏) -->
-    <!-- 动态适配：移动端宽 580px (scale=3 -> 1740px)，桌面端宽 1880px (scale=2 -> 3760px) -->
+    <!-- 导出图片容器 (1:1 深度对齐伯叩三才盘的高清画质、大字号与排版风格) -->
     <div id="export-container"
-        class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[580px] lg:w-[1880px] z-[-1]">
-        <div class="export-content space-y-10">
+        class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[680px] lg:w-[1920px] z-[-1]">
+        <div class="export-content" style="display: flex; flex-direction: column; gap: 30px;">
             <!-- 头部 -->
             <div class="text-center border-b-2 border-[#d4af37] pb-8 relative">
                 <h1 class="heading-font text-6xl mb-4 text-[#9e1c26] tracking-wider">梅花易数</h1>
                 <p class="text-2xl text-gray-500 font-serif tracking-widest">卦灵AI · 智能推演</p>
             </div>
 
-            <!-- 基本信息 -->
+            <!-- 基本信息网格 -->
             <div
                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: white; padding: 30px; border-radius: 20px; border: 1px solid #e6ded5;">
-                <div><span class="font-bold">求测人：</span><span class="export-gender"></span></div>
-                <div><span class="font-bold">起卦方式：</span><span class="export-method"></span></div>
-                <div class="col-span-2"><span class="font-bold">起卦时间：</span><span class="export-time"></span></div>
-                <div class="col-span-2"><span class="font-bold">求问事项：</span><span class="export-question"></span></div>
-            </div>
-
-            <!-- 卦象展示 -->
-            <div class="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
-                <div class="p-6 md:p-8">
-                    <h2 class="heading-font text-2xl md:text-3xl mb-6 text-center text-gray-900">卦象推演</h2>
-                    <div class="flex flex-nowrap justify-around items-start gap-2 md:gap-8">
-                        <div class="text-center flex-1 min-w-0">
-                            <h3 class="heading-font text-xl md:text-2xl mb-4 text-gray-800 whitespace-nowrap">本卦</h3>
-                            <div
-                                class="hexagram export-original-hexagram scale-90 md:scale-150 origin-top text-gray-900 mx-auto">
-                            </div>
-                            <p
-                                class="mt-10 md:mt-16 text-lg md:text-xl font-bold export-original-name text-gray-800 whitespace-nowrap">
-                            </p>
-                        </div>
-                        <div class="text-center flex-1 min-w-0">
-                            <h3 class="heading-font text-xl md:text-2xl mb-4 text-gray-800 whitespace-nowrap">互卦</h3>
-                            <div
-                                class="hexagram export-inter-hexagram scale-90 md:scale-150 origin-top text-gray-900 mx-auto">
-                            </div>
-                            <p
-                                class="mt-10 md:mt-16 text-lg md:text-xl font-bold export-inter-name text-gray-800 whitespace-nowrap">
-                            </p>
-                        </div>
-                        <div class="text-center flex-1 min-w-0">
-                            <h3 class="heading-font text-xl md:text-2xl mb-4 text-gray-800 whitespace-nowrap">变卦</h3>
-                            <div
-                                class="hexagram export-changed-hexagram scale-90 md:scale-150 origin-top text-gray-900 mx-auto">
-                            </div>
-                            <p
-                                class="mt-10 md:mt-16 text-lg md:text-xl font-bold export-changed-name text-gray-800 whitespace-nowrap">
-                            </p>
-                        </div>
-                    </div>
+                <div style="font-size: 24px;"><b style="color: #9e1c26;">求测人：</b><span class="export-gender"></span>
                 </div>
-            </div>
-
-            <!-- AI 解析 -->
-            <div class="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
-                <div class="p-6 md:p-8">
-                    <h2 class="heading-font text-2xl md:text-3xl mb-4 text-center text-gray-900">大师批断</h2>
-                    <div class="export-ai-content text-lg md:text-xl leading-relaxed text-justify text-gray-800"></div>
+                <div style="font-size: 24px;"><b style="color: #9e1c26;">起卦方式：</b><span class="export-method"></span>
                 </div>
-            </div>
-
-            <!-- 新增：导出图片中的追问记录 (默认隐藏) -->
-            <div id="export-chat-history" style="display: none;"
-                class="bg-[#fdfaf6] shadow-lg border-2 border-[#d4af37] rounded-xl overflow-hidden relative">
-                <!-- 顶部挂牌设计 -->
+                <div style="font-size: 24px; grid-column: span 2;"><b style="color: #9e1c26;">起卦时间：</b><span
+                        class="export-time"></span></div>
                 <div
-                    style="position: absolute; top: -2px; left: 40px; background: #d4af37; color: #fff; padding: 6px 20px; border-radius: 0 0 8px 8px; font-size: 20px; font-weight: bold;">
-                    卦灵解惑录
+                    style="font-size: 24px; grid-column: span 2; border-top: 1px dashed #e6ded5; margin-top: 10px; padding-top: 15px;">
+                    <b style="color: #9e1c26;">求问事项：</b><span class="export-question"
+                        style="font-style: italic;"></span>
                 </div>
-                <div class="p-6 md:p-8 pt-14 md:pt-16">
-                    <div class="export-chat-content text-lg md:text-xl leading-relaxed text-gray-800">
-                        <!-- JS 注入历史对话 -->
+            </div>
+
+            <!-- 卦象推演区 -->
+            <div
+                style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <h2
+                    style="text-align: center; font-size: 32px; color: #333; margin-bottom: 40px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;">
+                    卦象推演</h2>
+                <div style="display: flex; justify-content: space-around; align-items: flex-start;">
+                    <!-- 本卦 -->
+                    <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
+                        <div
+                            style="background: #e3f2fd; color: #1565c0; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #bbdefb;">
+                            本卦</div>
+                        <div class="hexagram export-original-hexagram"
+                            style="height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p class="export-original-name"
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                        </div>
+                    </div>
+
+                    <!-- 互卦 -->
+                    <div
+                        style="width: 280px; display: flex; flex-direction: column; align-items: center; border-left: 1px dashed #eee; border-right: 1px dashed #eee;">
+                        <div
+                            style="background: #fff3e0; color: #ef6c00; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #ffe0b2;">
+                            互卦</div>
+                        <div class="hexagram export-inter-hexagram"
+                            style="height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p class="export-inter-name"
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                        </div>
+                    </div>
+
+                    <!-- 变卦 -->
+                    <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
+                        <div
+                            style="background: #e8f5e9; color: #2e7d32; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #c8e6c9;">
+                            变卦</div>
+                        <div class="hexagram export-changed-hexagram"
+                            style="height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        </div>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <p class="export-changed-name"
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- 大师批断 -->
+            <div
+                style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 45px; position: relative;">
+                <div
+                    style="position: absolute; top: -18px; left: 40px; background: #9e1c26; color: white; padding: 5px 20px; border-radius: 5px; font-size: 20px; font-weight: bold;">
+                    大师批断</div>
+                <div class="export-ai-content"
+                    style="font-size: 26px; line-height: 2.2; text-align: justify; color: #333;">
+                </div>
+            </div>
+
+            <!-- 追问记录 -->
+            <div id="export-chat-history"
+                style="display: none; background: #fdfaf6; border-radius: 20px; border: 1px dashed #d4af37; padding: 45px; position: relative; margin-top: 30px;">
+                <div
+                    style="position: absolute; top: -18px; left: 40px; background: #d4af37; color: #fff; padding: 5px 20px; border-radius: 5px; font-size: 20px; font-weight: bold;">
+                    卦灵解惑录</div>
+                <div class="export-chat-content" style="font-size: 24px; line-height: 2.0; color: #444;"></div>
             </div>
 
             <!-- 底部 -->
