@@ -19,13 +19,11 @@
     <!-- 引入安全与全局组件 -->
 
     <script src="js/gualing-crypto-api.js"></script>
-    <!-- 必须放在 CryptoAPI 之后，业务逻辑之前 -->
     <script src="js/gualing-tts.js"></script>
     <script src="js/user-center.js"></script>
     <script src="js/bokou.js"></script>
     <script src="js/chat-assistant.js"></script>
     <style>
-        /* 聊天气泡浮现动画 */
         .animate-fade-in-up {
             animation: fadeInUp 0.3s ease-out forwards;
         }
@@ -54,41 +52,31 @@
             color: #9e1c26;
         }
 
-        /* --- 卦爻样式 (完全复刻梅花易数) --- */
-        /* 替换原有的 .hexagram-container 样式 */
         .hexagram-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 160px;
-            /* 增加高度，确保不拥挤 */
             width: 100%;
             margin-bottom: 10px;
         }
 
-        /* 导出容器内的 Hexagram 容器特殊处理 */
         #export-container .hexagram-container {
             height: 200px;
         }
 
-        /* 专门针对导出时的爻线尺寸进行硬编码，防止缩放失效 */
         #export-container .hexagram-line {
             width: 120px !important;
-            /* 爻线加宽 */
             height: 18px !important;
-            /* 爻线加厚 */
             margin: 6px 0 !important;
-            /* 间距加大 */
             border-radius: 3px !important;
         }
 
-        /* 导出时的阴爻断开宽度 */
         #export-container .hexagram-line.yin {
             background: linear-gradient(to right, #2c2c2c 42%, transparent 42%, transparent 58%, #2c2c2c 58%) !important;
         }
 
-        /* 导出时的动爻颜色 */
         #export-container .hexagram-line.changing {
             background-color: #9e1c26 !important;
         }
@@ -97,14 +85,12 @@
             background: linear-gradient(to right, #9e1c26 42%, transparent 42%, transparent 58%, #9e1c26 58%) !important;
         }
 
-        /* 确保 hexagram 本身居中 */
         .hexagram {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* --- 自定义组件样式 --- */
         .card {
             border: 1px solid #e6ded5;
             background-color: #fffbf5;
@@ -139,7 +125,6 @@
             border-color: #7a151d;
         }
 
-        /* 空卡槽样式 */
         .card-slot {
             aspect-ratio: 2/3;
             border: 2px dashed #ccc;
@@ -160,7 +145,6 @@
             color: #9e1c26;
         }
 
-        /* 已选中的卡槽 */
         .card-slot.filled {
             border: 1px solid #ddd;
             border-style: solid;
@@ -189,7 +173,6 @@
             background: #f5f5f5;
         }
 
-        /* 弹窗内的卡牌选项 */
         .picker-card {
             width: 100%;
             aspect-ratio: 2/3;
@@ -223,7 +206,6 @@
             font-size: 10px;
         }
 
-        /* 花色Tab激活态 */
         .suit-tab.active {
             background-color: #eee;
             border-bottom: 2px solid #9e1c26;
@@ -261,7 +243,7 @@
             <!-- 左侧：伯叩起卦交互区 -->
             <div class="lg:w-5/12">
                 <div class="card shadow-md">
-                    <div class="card-body p-5 md:p-6">
+                    <div class="card-body p-4 sm:p-6 overflow-hidden">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="heading-font text-2xl text-[#9e1c26] border-l-4 border-[#9e1c26] pl-3">伯叩演数</h2>
                             <button onclick="window.openHistoryModal('bokou')"
@@ -293,12 +275,12 @@
                                     <span class="label-text font-bold text-gray-600">叩问事项</span>
                                 </label>
                                 <textarea id="question"
-                                    class="textarea textarea-bordered h-24 text-base focus:border-[#9e1c26] focus:ring-1 focus:ring-[#9e1c26] bg-white leading-relaxed"
+                                    class="textarea textarea-bordered h-24 text-base focus:border-[#9e1c26] focus:ring-1 focus:ring-[#9e1c26] bg-white leading-relaxed w-full max-w-full box-border"
                                     placeholder="请诚心默念您的问题，例如：近期事业发展趋势如何？" required></textarea>
                             </div>
                         </div>
 
-                        <!-- 修改：起卦方式 (复用性别选择的样式) -->
+                        <!-- 起卦方式 -->
                         <div class="form-control mb-6">
                             <label class="label pt-0 pb-1">
                                 <span class="label-text font-bold text-gray-600">起卦方式</span>
@@ -310,19 +292,16 @@
                                     class="join-item btn btn-sm btn-outline method-btn hover:bg-[#fff3e0] hover:text-[#9e1c26] hover:border-[#9e1c26]"
                                     data-value="manual">手动指定</button>
                             </div>
-                            <!-- 隐藏域存储当前模式 -->
                             <input type="hidden" id="methodInput" value="auto">
                         </div>
 
                         <!-- 面板容器 -->
                         <div id="panel-auto">
-                            <!-- 背景色改为深色木纹质感，移除边框 -->
                             <div class="relative w-full h-[360px] md:h-[420px] bg-[#2a2a2a] rounded-lg overflow-hidden shadow-inner select-none group"
                                 id="canvas-container">
 
                                 <canvas id="bokouCanvas" class="w-full h-full cursor-pointer block"></canvas>
 
-                                <!-- 状态提示层：去除模糊，纯透明，文字清晰 -->
                                 <div id="game-overlay"
                                     class="absolute inset-0 flex flex-col justify-center items-center pointer-events-none transition-opacity duration-300 z-10">
                                     <div class="text-center">
@@ -336,7 +315,6 @@
                                     </div>
                                 </div>
 
-                                <!-- 重置按钮 -->
                                 <div class="absolute top-3 right-3 z-20">
                                     <button id="resetBtn"
                                         class="btn btn-circle btn-sm bg-white/10 hover:bg-white/30 text-white border-none tooltip tooltip-left"
@@ -345,29 +323,25 @@
                                     </button>
                                 </div>
                             </div>
-                            <!-- 进度条 (红黄配色) -->
                             <ul class="steps w-full mt-6 text-xs font-medium">
                                 <li class="step" id="step-tian">天卦</li>
                                 <li class="step" id="step-ren">人卦</li>
                                 <li class="step" id="step-di">地卦</li>
                             </ul>
-                            <!-- 开始按钮 -->
                             <button id="actionBtn"
                                 class="btn btn-gugong btn-block mt-6 text-lg shadow-md transition-all">
                                 <i class="fa-solid fa-yin-yang mr-2 animate-spin-slow"></i> 开始洗牌 (叩问天机)
                             </button>
                         </div>
 
-                        <!-- 修改：手动输入面板 -->
+                        <!-- 手动输入面板 -->
                         <div id="panel-manual" class="hidden">
                             <div class="space-y-4 mb-6">
                                 <!-- 天卦卡槽 -->
                                 <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
                                     <h3 class="text-xs font-bold text-gray-500 mb-2 flex items-center"><span
                                             class="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>天卦 (3张)</h3>
-                                    <div class="grid grid-cols-3 gap-3" id="slot-container-tian">
-                                        <!-- JS 动态生成卡槽 -->
-                                    </div>
+                                    <div class="grid grid-cols-3 gap-3" id="slot-container-tian"></div>
                                 </div>
                                 <!-- 人卦卡槽 -->
                                 <div class="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
@@ -475,7 +449,7 @@
                                 </div>
                             </div>
 
-                            <!-- AI 解析面板 (纯净版) -->
+                            <!-- AI 解析面板 -->
                             <div class="relative">
                                 <div class="absolute -top-3 left-4 bg-[#fffbf5] px-2 text-sm font-bold text-[#9e1c26]">
                                     大师智解
@@ -483,7 +457,7 @@
                                 <div id="panel-ai"
                                     class="bg-white border border-[#e6ded5] rounded-lg p-6 min-h-[200px]">
                                     <button
-                                        class="btn btn-ghost btn-xs btn-circle absolute top-2 right-10 image-export-btn tooltip tooltip-botto"
+                                        class="btn btn-ghost btn-xs btn-circle absolute top-2 right-10 image-export-btn tooltip tooltip-bottom"
                                         data-tip="保存为图片">
                                         <i class="fa-regular fa-image fa-lg fa-fw text-gray-600"></i>
                                     </button>
@@ -504,10 +478,9 @@
         </div>
     </div>
 
-    <!-- 新增：选牌弹窗 (Modal) -->
+    <!-- 选牌弹窗 (Modal) -->
     <dialog id="card_selector_modal" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box bg-[#fffbf5] p-0 overflow-hidden max-w-sm border-2 border-[#d4af37]">
-            <!-- 弹窗头部 -->
             <div class="bg-[#9e1c26] text-[#d4af37] p-3 flex justify-between items-center">
                 <h3 class="font-bold text-lg heading-font">请选择扑克牌</h3>
                 <form method="dialog">
@@ -515,7 +488,6 @@
                 </form>
             </div>
 
-            <!-- 花色切换栏 -->
             <div class="flex justify-around border-b border-[#e6ded5] bg-white p-2" id="suit-tabs">
                 <button class="btn btn-ghost btn-sm text-xl suit-tab active" data-suit="spade" title="黑桃">♠</button>
                 <button class="btn btn-ghost btn-sm text-xl text-red-600 suit-tab" data-suit="heart"
@@ -525,11 +497,8 @@
                     title="方片">♦</button>
             </div>
 
-            <!-- 卡牌网格 (3行5列) -->
             <div class="p-4 bg-[#f8f5f2] min-h-[300px]">
-                <div class="grid grid-cols-5 gap-2 place-items-center" id="card-grid">
-                    <!-- JS 动态渲染扑克牌 -->
-                </div>
+                <div class="grid grid-cols-5 gap-2 place-items-center" id="card-grid"></div>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">
@@ -537,18 +506,15 @@
         </form>
     </dialog>
 
-    <!-- 导出图片容器 (深度优化布局) -->
-    <!-- 动态适配：移动端宽 680px (scale=3 -> 2040px)，桌面端宽 1920px (scale=2 -> 3840px) -->
+    <!-- 导出图片容器 -->
     <div id="export-container"
         class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[680px] lg:w-[1920px] z-[-1]">
         <div class="export-content" style="display: flex; flex-direction: column; gap: 30px;">
-            <!-- 头部 -->
             <div class="text-center border-b-2 border-[#d4af37] pb-8 relative">
                 <h1 class="heading-font text-6xl mb-4 text-[#9e1c26] tracking-wider">伯叩三才盘</h1>
                 <p class="text-2xl text-gray-500 font-serif tracking-widest">卦灵AI · 智能推演</p>
             </div>
 
-            <!-- 信息网格 -->
             <div
                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: white; padding: 30px; border-radius: 20px; border: 1px solid #e6ded5;">
                 <div style="font-size: 24px;"><b style="color: #9e1c26;">求测人：</b><span class="export-gender"></span>
@@ -562,7 +528,6 @@
                 </div>
             </div>
 
-            <!-- 三才定局核心区 -->
             <div
                 style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                 <h2
@@ -570,7 +535,6 @@
                     三才定局</h2>
 
                 <div style="display: flex; justify-content: space-around; align-items: flex-start;">
-                    <!-- 天卦 -->
                     <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
                         <div
                             style="background: #e3f2fd; color: #1565c0; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #bbdefb;">
@@ -585,7 +549,6 @@
                         </div>
                     </div>
 
-                    <!-- 人卦 -->
                     <div
                         style="width: 280px; display: flex; flex-direction: column; align-items: center; border-left: 1px dashed #eee; border-right: 1px dashed #eee;">
                         <div
@@ -601,7 +564,6 @@
                         </div>
                     </div>
 
-                    <!-- 地卦 -->
                     <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
                         <div
                             style="background: #e8f5e9; color: #2e7d32; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #c8e6c9;">
@@ -617,14 +579,12 @@
                     </div>
                 </div>
 
-                <!-- 趋势条 -->
                 <div
                     style="margin-top: 50px; padding: 20px; background: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 15px; text-align: center;">
                     <p class="export-trend" style="font-size: 24px; color: #666; margin: 0; font-weight: bold;"></p>
                 </div>
             </div>
 
-            <!-- 大师批断 -->
             <div
                 style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 45px; position: relative;">
                 <div
@@ -635,18 +595,15 @@
                 </div>
             </div>
 
-            <!-- 新增：导出图片中的追问记录 (默认隐藏，有数据时显示) -->
             <div id="export-chat-history"
                 style="display: none; background: #fdfaf6; border-radius: 20px; border: 1px dashed #d4af37; padding: 45px; position: relative; margin-top: 30px;">
                 <div
                     style="position: absolute; top: -18px; left: 40px; background: #d4af37; color: #fff; padding: 5px 20px; border-radius: 5px; font-size: 20px; font-weight: bold;">
                     卦灵解惑录</div>
                 <div class="export-chat-content" style="font-size: 24px; line-height: 2.0; color: #444;">
-                    <!-- JS 注入历史对话 -->
                 </div>
             </div>
 
-            <!-- 尾部 -->
             <div class="text-center pt-6 border-t-2 border-[#d4af37]">
                 <div class="flex justify-center items-center gap-4">
                     <img src="assets/images/bokou-icon.jpeg" class="w-12 h-12 md:w-16 md:h-16 rounded-lg shadow-md">
@@ -671,38 +628,31 @@
         </div>
     </footer>
 
-    <!-- 新增：宗师追问悬浮窗模块 -->
-    <!-- 1. 悬浮按钮 -->
+    <!-- 悬浮按钮 -->
     <div id="chat-fab" class="fixed bottom-6 right-6 lg:bottom-10 lg:right-10 z-[100] hidden">
         <button
             class="btn btn-circle btn-lg bg-[#9e1c26] text-[#d4af37] border-2 border-[#d4af37] shadow-xl hover:bg-[#7a151d] transition-transform hover:scale-110">
             <i class="fa-solid fa-feather-pointed fa-xl"></i>
         </button>
-        <!-- 呼吸灯红点 -->
         <span class="chat-notification-dot absolute top-0 right-0 flex h-3 w-3">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
         </span>
     </div>
 
-    <!-- 2. 聊天面板 -->
-    <!-- 2. 聊天面板 (动态高度版) -->
+    <!-- 聊天面板 -->
     <div id="chat-panel"
         class="fixed bottom-24 right-4 lg:right-10 w-[92vw] lg:w-96 min-h-[350px] max-h-[70vh] bg-[#fffbf5] border-2 border-[#d4af37] rounded-2xl shadow-2xl flex flex-col z-[100] hidden origin-bottom-right transition-all duration-300">
-        <!-- Header -->
         <div class="bg-[#9e1c26] text-[#d4af37] p-3 rounded-t-xl flex justify-between items-center shadow-sm">
             <span class="font-bold heading-font tracking-wider"><i
                     class="fa-solid fa-yin-yang animate-spin-slow mr-2"></i>卦灵解惑</span>
             <button id="chat-close-btn" class="btn btn-sm btn-circle btn-ghost text-[#d4af37] hover:bg-black/20"><i
                     class="fa-solid fa-xmark"></i></button>
         </div>
-        <!-- Body -->
         <div id="chat-messages"
             class="flex-1 overflow-y-auto p-4 space-y-2 bg-[url('assets/images/noise.jpeg')] bg-repeat"
             style="scroll-behavior: smooth;">
-            <!-- JS 动态注入气泡 -->
         </div>
-        <!-- Input Area -->
         <div class="p-3 bg-white border-t border-[#e6ded5] rounded-b-xl flex gap-2 items-center">
             <input type="text" id="chat-input" placeholder="事主还有何疑惑，尽可追问..."
                 class="input input-bordered input-sm flex-1 focus:border-[#9e1c26] focus:outline-none bg-[#f9f9f9]"
