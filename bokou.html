@@ -204,18 +204,17 @@
         }
 
         /* ========================================================= */
-        /* 导出图片专属：直接 scale 无损放大主界面 100% 正确的卦象    */
+        /* 3. 导出图片绝对像素级修正 (彻底解决巨大/过于拥挤问题)      */
         /* ========================================================= */
 
         #export-container .hexagram-container {
-            height: 210px !important;
+            height: 180px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
             margin: 0 auto !important;
             width: 100% !important;
-            overflow: visible !important;
         }
 
         #export-container .hexagram {
@@ -223,15 +222,66 @@
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 0.5rem !important;
             margin: 0 auto !important;
             padding: 0 !important;
-            /* 关键：把主页面完美的 64px 卦象整体无损拉大 2.2 倍，阴阳爻 100% 精准等长 */
-            transform: scale(2.2) !important;
-            transform-origin: center center !important;
+            width: 120px !important;
+            transform: none !important;
+            /* 彻底清除 scale 导致的放爆变形 */
         }
 
-        /* 卦名与爻位文本居中 */
+        /* 爻线通用：固定 120px 宽，14px 高，上下各 5px 边距 (10px 完美行缝隙) */
+        #export-container .hexagram-line {
+            box-sizing: border-box !important;
+            width: 120px !important;
+            height: 14px !important;
+            margin: 5px 0 !important;
+            /* 10px 呼吸间距 */
+            padding: 0 !important;
+            border: none !important;
+            transform: none !important;
+        }
+
+        /* 阳爻：硬编码 120px 宽 */
+        #export-container .hexagram-line.yang {
+            display: block !important;
+            background-color: #2c2c2c !important;
+            border-radius: 3px !important;
+        }
+
+        #export-container .hexagram-line.yang.changing {
+            background-color: #9e1c26 !important;
+        }
+
+        /* 阴爻外框：固定 120px 宽 */
+        #export-container .hexagram-line.yin {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            background: transparent !important;
+            background-color: transparent !important;
+        }
+
+        /* 阴爻左右块：硬编码 52px！52px + 16px(中留白) + 52px = 120px (100% 绝对同宽) */
+        #export-container .hexagram-line.yin::before,
+        #export-container .hexagram-line.yin::after {
+            content: "" !important;
+            display: block !important;
+            box-sizing: border-box !important;
+            width: 52px !important;
+            /* 硬编码固定像素，拒绝一切计算误差 */
+            height: 14px !important;
+            background-color: #2c2c2c !important;
+            border-radius: 3px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #export-container .hexagram-line.yin.changing::before,
+        #export-container .hexagram-line.yin.changing::after {
+            background-color: #9e1c26 !important;
+        }
+
+        /* 卦名与文本居中 */
         #export-container .export-original-name,
         #export-container .export-inter-name,
         #export-container .export-changed-name,
@@ -243,8 +293,8 @@
             justify-content: center !important;
             text-align: center !important;
             line-height: 1.2 !important;
-            margin-top: 15px !important;
-            font-size: 32px !important;
+            margin-top: 12px !important;
+            font-size: 28px !important;
             font-weight: bold !important;
             color: #9e1c26 !important;
             width: 100% !important;
