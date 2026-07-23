@@ -1,38 +1,31 @@
 /* 主题配置 */
 :root {
-    /* 主色调：绛紫 */
     --primary: 342, 51%, 37%;
     --primary-content: 0, 0%, 100%;
     --primary-focus: 342, 51%, 32%;
 
-    /* 次要色：赭石 */
     --secondary: 23, 47%, 31%;
     --secondary-content: 0, 0%, 100%;
     --secondary-focus: 23, 47%, 26%;
 
-    /* 强调色：青瓷 */
     --accent: 185, 39%, 45%;
     --accent-content: 0, 0%, 100%;
     --accent-focus: 185, 39%, 40%;
 
-    /* 中性色：古铜 */
     --neutral: 27, 22%, 51%;
     --neutral-content: 0, 0%, 100%;
     --neutral-focus: 27, 22%, 46%;
 
-    /* 基础色：米色 */
     --base-100: 39, 45%, 95%;
     --base-200: 39, 41%, 90%;
     --base-300: 39, 37%, 85%;
     --base-content: 27, 22%, 24%;
 
-    /* 信息类颜色 */
     --info: 185, 39%, 45%;
     --success: 142, 30%, 42%;
     --warning: 34, 54%, 47%;
     --error: 342, 51%, 37%;
 
-    /* 按钮样式 */
     --btn-text-case: none;
     --btn-focus-scale: 0.95;
     --btn-color: var(--primary);
@@ -40,12 +33,10 @@
     --btn-hover-border-color: hsl(342, 51%, 42%);
     --btn-focus-border-color: hsl(342, 51%, 32%);
 
-    /* 圆角 */
     --rounded-box: 0.5rem;
     --rounded-btn: 0.25rem;
     --rounded-badge: 0.125rem;
 
-    /* 边框宽度 */
     --border-btn: 1px;
     --tab-border: 1px;
     --tab-radius: 0.25rem;
@@ -94,7 +85,6 @@ body {
     background-size: 512px;
 }
 
-/* 字体应用规范 */
 .shading-font {
     background-color: rgba(255, 255, 255, 0.6);
     border-radius: 10px;
@@ -115,7 +105,6 @@ body {
     font-weight: normal;
 }
 
-/* 特定场景字体应用 */
 .nav-text {
     font-family: 'XiaoWei', 'Alibaba-PuHuiTi', sans-serif;
 }
@@ -126,7 +115,6 @@ body {
     font-family: 'QiuHongKai', 'Alibaba-PuHuiTi', serif;
 }
 
-/* 中国风UI样式 */
 .btn {
     color: white;
     border: 1px solid transparent;
@@ -149,30 +137,6 @@ body {
     border-color: hsl(342, 51%, 35%);
 }
 
-.btn-primary:focus {
-    color: white;
-    background-image: linear-gradient(to bottom right, hsl(342, 51%, 37%), hsl(342, 51%, 32%));
-    border-color: hsl(342, 51%, 30%);
-    box-shadow: 0 0 0 1px hsl(342, 51%, 30%);
-}
-
-.btn-ghost {
-    color: #374151;
-    background-color: transparent;
-    border-color: transparent;
-}
-
-.btn-ghost:hover {
-    background-color: hsl(39, 45%, 90%);
-    color: #111827;
-    border-color: hsl(39, 41%, 85%);
-}
-
-.btn-ghost:focus {
-    background-color: hsl(39, 45%, 90%);
-    border-color: hsl(39, 41%, 85%);
-}
-
 .card {
     border: 1px solid hsl(39, 41%, 85%);
     background-image: linear-gradient(to bottom right, hsl(39, 45%, 97%), hsl(39, 45%, 93%));
@@ -180,26 +144,14 @@ body {
     transition: all 0.3s ease;
 }
 
-.card:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
 .navbar {
     background-image: linear-gradient(to bottom, hsl(39, 45%, 97%), hsl(39, 45%, 95%));
     border-bottom: 1px solid hsl(39, 41%, 85%);
 }
 
-/* 表单样式 */
-.form-label {
-    font-weight: 700;
-    color: #374151;
-    font-family: 'XiaoWei', 'Alibaba-PuHuiTi', sans-serif;
-}
-
 .input-bordered,
 .select-bordered,
 .textarea-bordered {
-    border-color: #D1D5DB;
     font-family: 'XinYiJiXiangSong', 'Alibaba-PuHuiTi', serif;
     border-color: hsl(39, 41%, 80%);
     background-color: hsl(39, 45%, 98%);
@@ -212,19 +164,8 @@ body {
     box-shadow: 0 0 0 1px hsla(342, 51%, 37%, 0.2);
 }
 
-/* 标签页样式 */
-.tab-lifted {
-    border-color: hsl(39, 41%, 85%);
-}
-
-.tab-lifted.tab-active {
-    background-color: hsl(39, 45%, 97%);
-    border-color: hsl(39, 41%, 85%);
-    border-bottom-color: transparent;
-}
-
 /* ========================================================= */
-/* 核心修复：自适应百分比阴阳爻样式 (彻底解决导出图片错乱)    */
+/* 黄金比例卦象基础 (主页面完美生效的标准样式)               */
 /* ========================================================= */
 .hexagram {
     display: flex;
@@ -238,9 +179,9 @@ body {
 .hexagram-line {
     box-sizing: border-box;
     width: 4rem;
-    /* 默认 64px */
+    /* 64px */
     height: 0.5rem;
-    /* 默认 8px */
+    /* 8px */
     border-radius: 2px;
 }
 
@@ -253,16 +194,15 @@ body {
     justify-content: space-between;
     align-items: center;
     background: transparent;
-    background-color: transparent;
 }
 
-/* 关键修复：从 1.75rem 改为 42% 动态百分比！与阳爻永远 1:1 保持完全同宽！ */
 .hexagram-line.yin::before,
 .hexagram-line.yin::after {
     content: "";
     display: block;
     box-sizing: border-box;
-    width: 42%;
+    width: 1.75rem;
+    /* 28px */
     height: 100%;
     background-color: hsl(27, 22%, 24%);
     border-radius: 2px;
@@ -277,7 +217,6 @@ body {
     background-color: hsl(342, 51%, 37%);
 }
 
-/* 页脚样式 */
 footer {
     position: fixed;
     bottom: 0;
@@ -292,20 +231,6 @@ footer {
     font-family: 'QiuHongKai', 'Alibaba-PuHuiTi', serif;
 }
 
-/* 分隔文字样式 */
-.result-divider-text {
-    writing-mode: horizontal-tb;
-    font-family: 'XiaoWei', 'Alibaba-PuHuiTi', sans-serif;
-}
-
-@media only screen and (min-width: 1024px) {
-    .result-divider-text {
-        writing-mode: vertical-rl;
-        text-orientation: upright;
-    }
-}
-
-/* 动画效果 */
 .btn,
 .input,
 .select,
@@ -313,7 +238,6 @@ footer {
     transition: all 0.3s ease;
 }
 
-/* 警告和错误信息样式 */
 .text-error {
     color: hsl(342, 51%, 37%);
 }
@@ -326,12 +250,6 @@ footer {
     color: hsl(185, 39%, 45%);
 }
 
-.tabs-lifted .tab-active {
-    background-color: hsl(39, 45%, 97%);
-    border-color: hsl(39, 41%, 85%);
-    border-bottom-color: transparent;
-}
-
 .join .btn-active {
     background-color: hsl(342, 51%, 37%);
     color: white;
@@ -341,12 +259,6 @@ footer {
 .join .btn-outline {
     background-color: transparent;
     color: hsl(342, 51%, 37%);
-    border-color: hsl(342, 51%, 37%);
-}
-
-.join .btn-outline:hover {
-    background-color: hsl(342, 51%, 37%);
-    color: white;
     border-color: hsl(342, 51%, 37%);
 }
 

@@ -204,17 +204,18 @@
         }
 
         /* ========================================================= */
-        /* 导出图片专属：60px 硬编码，彻底解决 html2canvas 百分比 Bug */
+        /* 导出图片专属：直接 scale 无损放大主界面 100% 正确的卦象    */
         /* ========================================================= */
 
         #export-container .hexagram-container {
-            height: 200px !important;
+            height: 210px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
             margin: 0 auto !important;
             width: 100% !important;
+            overflow: visible !important;
         }
 
         #export-container .hexagram {
@@ -222,60 +223,12 @@
             flex-direction: column !important;
             align-items: center !important;
             justify-content: center !important;
+            gap: 0.5rem !important;
             margin: 0 auto !important;
             padding: 0 !important;
-            gap: 0 !important;
-            width: 140px !important;
-        }
-
-        /* 阳爻：固定 140px 宽度 */
-        #export-container .hexagram-line.yang {
-            box-sizing: border-box !important;
-            width: 140px !important;
-            height: 18px !important;
-            margin: 6px 0 !important;
-            background-color: #2c2c2c !important;
-            border-radius: 3px !important;
-            border: none !important;
-        }
-
-        #export-container .hexagram-line.yang.changing {
-            background-color: #9e1c26 !important;
-        }
-
-        /* 阴爻外框：固定 140px 宽度 */
-        #export-container .hexagram-line.yin {
-            box-sizing: border-box !important;
-            width: 140px !important;
-            height: 18px !important;
-            margin: 6px 0 !important;
-            background: transparent !important;
-            background-color: transparent !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            border: none !important;
-        }
-
-        /* 关键修复：用固定 60px 代替百分比！
-           60px(左) + 20px(中空) + 60px(右) = 140px，100% 与阳爻像素级无缝对齐！ */
-        #export-container .hexagram-line.yin::before,
-        #export-container .hexagram-line.yin::after {
-            content: "" !important;
-            display: block !important;
-            box-sizing: border-box !important;
-            width: 60px !important;
-            /* 彻底拒绝百分比计算误差 */
-            height: 18px !important;
-            background-color: #2c2c2c !important;
-            border-radius: 3px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        #export-container .hexagram-line.yin.changing::before,
-        #export-container .hexagram-line.yin.changing::after {
-            background-color: #9e1c26 !important;
+            /* 关键：把主页面完美的 64px 卦象整体无损拉大 2.2 倍，阴阳爻 100% 精准等长 */
+            transform: scale(2.2) !important;
+            transform-origin: center center !important;
         }
 
         /* 卦名与爻位文本居中 */
@@ -294,6 +247,13 @@
             font-size: 32px !important;
             font-weight: bold !important;
             color: #9e1c26 !important;
+            width: 100% !important;
+        }
+
+        #export-container .export-tian-yao-info,
+        #export-container .export-ren-yao-info,
+        #export-container .export-di-yao-info {
+            text-align: center !important;
             width: 100% !important;
         }
     </style>
