@@ -606,9 +606,11 @@
         </div>
     </div>
 
-    <!-- 选牌弹窗 (Modal) -->
-    <dialog id="card_selector_modal" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box bg-[#fffbf5] p-0 overflow-hidden max-w-sm border-2 border-[#d4af37]">
+    <!-- 选牌弹窗 (Modal) - 强制全设备水平垂直 100% 居中 -->
+    <dialog id="card_selector_modal" class="modal modal-middle">
+        <div
+            class="modal-box bg-[#fffbf5] p-0 overflow-hidden w-[92vw] max-w-sm border-2 border-[#d4af37] m-auto shadow-2xl">
+            <!-- 弹窗头部 -->
             <div class="bg-[#9e1c26] text-[#d4af37] p-3 flex justify-between items-center">
                 <h3 class="font-bold text-lg heading-font">请选择扑克牌</h3>
                 <form method="dialog">
@@ -616,6 +618,7 @@
                 </form>
             </div>
 
+            <!-- 花色切换栏 -->
             <div class="flex justify-around border-b border-[#e6ded5] bg-white p-2" id="suit-tabs">
                 <button class="btn btn-ghost btn-sm text-xl suit-tab active" data-suit="spade" title="黑桃">♠</button>
                 <button class="btn btn-ghost btn-sm text-xl text-red-600 suit-tab" data-suit="heart"
@@ -625,8 +628,11 @@
                     title="方片">♦</button>
             </div>
 
+            <!-- 卡牌网格 (3行5列) -->
             <div class="p-4 bg-[#f8f5f2] min-h-[300px]">
-                <div class="grid grid-cols-5 gap-2 place-items-center" id="card-grid"></div>
+                <div class="grid grid-cols-5 gap-2 place-items-center" id="card-grid">
+                    <!-- JS 动态渲染扑克牌 -->
+                </div>
             </div>
         </div>
         <form method="dialog" class="modal-backdrop">
@@ -648,8 +654,11 @@
                 <div style="font-size: 24px;"><b style="color: #9e1c26;">求测人：</b><span class="export-gender"></span>
                 </div>
                 <div style="font-size: 24px;"><b style="color: #9e1c26;">方式：</b>伯叩扑克演数</div>
-                <div style="font-size: 24px; grid-column: span 2;"><b style="color: #9e1c26;">时间：</b><span
-                        class="export-time"></span></div>
+                <div
+                    style="font-size: 20px; line-height: 1.8; grid-column: span 2; display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 2px 0;">
+                    <b style="color: #9e1c26; flex-shrink: 0; line-height: 1.8;">时间：</b>
+                    <span class="export-time" style="line-height: 1.8; word-break: break-all;"></span>
+                </div>
                 <div
                     style="font-size: 24px; grid-column: span 2; border-top: 1px dashed #e6ded5; pt-20px; margin-top: 10px; padding-top: 15px;">
                     <b style="color: #9e1c26;">叩问：</b><span class="export-question" style="font-style: italic;"></span>
