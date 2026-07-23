@@ -62,7 +62,7 @@
             margin-bottom: 10px;
         }
 
-        /* 导出容器 Hexagram 及文字垂直水平居中修补 */
+        /* 导出容器 Hexagram 居中 */
         #export-container .hexagram-container {
             height: 200px !important;
             display: flex !important;
@@ -79,26 +79,46 @@
             margin: 0 auto !important;
         }
 
-        /* 导出时的爻线尺寸加大加厚 */
-        #export-container .hexagram-line {
+        /* 阳爻：纯色块 */
+        #export-container .hexagram-line.yang {
             width: 140px !important;
             height: 20px !important;
             margin: 5px 0 !important;
+            background-color: #333333 !important;
             border-radius: 4px !important;
         }
 
-        /* 保证卦名文字绝对垂直/水平居中 */
-        #export-container .export-original-name,
-        #export-container .export-inter-name,
-        #export-container .export-changed-name,
-        #export-container .export-tian-name,
-        #export-container .export-ren-name,
-        #export-container .export-di-name {
+        #export-container .hexagram-line.yang.changing {
+            background-color: #9e1c26 !important;
+        }
+
+        /* 阴爻：彻底摒弃 linear-gradient，改用 Flex 左右双实体块，100% 解决 html2canvas 渲染锯齿条纹 */
+        #export-container .hexagram-line.yin {
+            width: 140px !important;
+            height: 20px !important;
+            margin: 5px 0 !important;
+            background: transparent !important;
+            background-color: transparent !important;
             display: flex !important;
+            justify-content: space-between !important;
             align-items: center !important;
-            justify-content: center !important;
-            line-height: 1.2 !important;
-            margin-top: 15px !important;
+            border: none !important;
+        }
+
+        #export-container .hexagram-line.yin::before,
+        #export-container .hexagram-line.yin::after {
+            content: "" !important;
+            display: block !important;
+            width: 42% !important;
+            height: 100% !important;
+            background-color: #333333 !important;
+            border-radius: 4px !important;
+        }
+
+        /* 动爻颜色 */
+        #export-container .hexagram-line.yin.changing::before,
+        #export-container .hexagram-line.yin.changing::after {
+            background-color: #9e1c26 !important;
         }
 
         .hexagram {
@@ -615,9 +635,11 @@
                     </div>
                 </div>
 
+                <!-- 趋势条 (增加 SVG 折线图) -->
                 <div
-                    style="margin-top: 50px; padding: 20px; background: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 15px; text-align: center;">
-                    <p class="export-trend" style="font-size: 24px; color: #666; margin: 0; font-weight: bold;"></p>
+                    style="margin-top: 40px; padding: 25px; background: #fcfcfc; border: 1px solid #f0f0f0; border-radius: 15px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                    <p class="export-trend" style="font-size: 26px; color: #333; margin: 0; font-weight: bold;"></p>
+                    <div id="export-trend-svg-container" style="width: 380px; height: 70px;"></div>
                 </div>
             </div>
 
