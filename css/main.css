@@ -165,7 +165,7 @@ body {
 }
 
 /* ========================================================= */
-/* 黄金比例卦象基础 (主页面完美生效的标准样式)               */
+/* 主页面标准卦象 (硬编码 margin-right 挤出中间空隙)          */
 /* ========================================================= */
 .hexagram {
     display: flex;
@@ -178,10 +178,8 @@ body {
 
 .hexagram-line {
     box-sizing: border-box;
-    width: 4rem;
-    /* 64px */
-    height: 0.5rem;
-    /* 8px */
+    width: 4rem; /* 64px */
+    height: 0.5rem; /* 8px */
     border-radius: 2px;
 }
 
@@ -191,18 +189,27 @@ body {
 
 .hexagram-line.yin {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     background: transparent;
 }
 
-.hexagram-line.yin::before,
+/* 25.6px(左) + 12.8px(硬编码右外边距) + 25.6px(右) = 64px (100% 对齐) */
+.hexagram-line.yin::before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    width: 1.6rem; 
+    height: 100%;
+    background-color: hsl(27, 22%, 24%);
+    border-radius: 2px;
+    margin-right: 0.8rem; /* 硬编码缝隙 */
+}
+
 .hexagram-line.yin::after {
     content: "";
     display: block;
     box-sizing: border-box;
-    width: 1.75rem;
-    /* 28px */
+    width: 1.6rem;
     height: 100%;
     background-color: hsl(27, 22%, 24%);
     border-radius: 2px;
