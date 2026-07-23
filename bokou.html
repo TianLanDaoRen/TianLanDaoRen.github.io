@@ -319,6 +319,12 @@
             text-align: center !important;
             width: 100% !important;
         }
+
+        /* 导出长图：强行隐藏 AI 思考推演折叠卡片 (观象思辨微旨)，保证导出长图排版绝对干净 */
+        #export-container details,
+        #export-container summary {
+            display: none !important;
+        }
     </style>
 </head>
 
