@@ -27,7 +27,7 @@
     <!-- 新增：追问模块与动画 -->
     <script src="js/chat-assistant.js"></script>
     <style>
-        /* 1. 页面通用与动画 */
+        /* 1. 页面通用动画 */
         .animate-fade-in-up {
             animation: fadeInUp 0.3s ease-out forwards;
         }
@@ -44,7 +44,7 @@
             }
         }
 
-        /* 2. 思考推演折叠卡片 (Thinking Process Collapsible) 古风定制 */
+        /* 2. 思考推演折叠卡片 (Thinking Process Collapsible) */
         .ai-interpretation details {
             background-color: #fcfaf4;
             border: 1px solid #e6ded5;
@@ -87,7 +87,10 @@
             transform: rotate(180deg);
         }
 
-        /* 3. 导出图片专用样式修补 (100% 解决阴阳爻对不齐 & 三列不对称问题) */
+        /* ========================================================= */
+        /* 3. 导出图片专属样式：彻底隔离 main.css 的 rem 干扰         */
+        /* ========================================================= */
+
         #export-container .hexagram-container {
             height: 200px !important;
             display: flex !important;
@@ -98,6 +101,7 @@
             width: 100% !important;
         }
 
+        /* 强行抹平 main.css 里的 gap: 0.5rem */
         #export-container .hexagram {
             display: flex !important;
             flex-direction: column !important;
@@ -105,10 +109,11 @@
             justify-content: center !important;
             margin: 0 auto !important;
             padding: 0 !important;
+            gap: 0 !important;
             width: 140px !important;
         }
 
-        /* 阳爻：强制固定 140px 宽度 */
+        /* 阳爻：强制 140px 宽，彻底重置外边距 */
         #export-container .hexagram-line.yang {
             box-sizing: border-box !important;
             width: 140px !important;
@@ -123,7 +128,7 @@
             background-color: #9e1c26 !important;
         }
 
-        /* 阴爻：强制固定 140px 宽度，左右纯色块对称 */
+        /* 阴爻外框：强制 140px 宽，与阳爻 100% 完全相同 */
         #export-container .hexagram-line.yin {
             box-sizing: border-box !important;
             width: 140px !important;
@@ -137,14 +142,18 @@
             border: none !important;
         }
 
+        /* 阴爻内部伪元素：强行覆盖 main.css 里的 width: 1.75rem，改回 42% 百分比！ */
         #export-container .hexagram-line.yin::before,
         #export-container .hexagram-line.yin::after {
             content: "" !important;
             display: block !important;
             width: 42% !important;
-            height: 100% !important;
+            /* 42% * 140px = 58.8px */
+            height: 18px !important;
             background-color: #2c2c2c !important;
             border-radius: 3px !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         #export-container .hexagram-line.yin.changing::before,
@@ -152,7 +161,7 @@
             background-color: #9e1c26 !important;
         }
 
-        /* 卦名强制水平垂直居中 */
+        /* 卦名强制居中 */
         #export-container .export-original-name,
         #export-container .export-inter-name,
         #export-container .export-changed-name {
