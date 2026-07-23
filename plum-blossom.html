@@ -27,7 +27,7 @@
     <!-- 新增：追问模块与动画 -->
     <script src="js/chat-assistant.js"></script>
     <style>
-        /* 聊天气泡浮现动画 */
+        /* 1. 页面通用与动画 */
         .animate-fade-in-up {
             animation: fadeInUp 0.3s ease-out forwards;
         }
@@ -44,13 +44,58 @@
             }
         }
 
-        /* 导出容器 Hexagram 居中 */
+        /* 2. 思考推演折叠卡片 (Thinking Process Collapsible) 古风定制 */
+        .ai-interpretation details {
+            background-color: #fcfaf4;
+            border: 1px solid #e6ded5;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin: 12px 0;
+            transition: all 0.2s ease;
+        }
+
+        .ai-interpretation details[open] {
+            border-color: #d4af37;
+            background-color: #fffdf9;
+            box-shadow: 0 2px 8px rgba(158, 28, 38, 0.05);
+        }
+
+        .ai-interpretation summary {
+            cursor: pointer;
+            font-weight: bold;
+            color: #9e1c26;
+            user-select: none;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .ai-interpretation summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .ai-interpretation summary::after {
+            content: "▼";
+            font-size: 10px;
+            color: #d4af37;
+            transition: transform 0.2s ease;
+        }
+
+        .ai-interpretation details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        /* 3. 导出图片专用样式修补 (100% 解决阴阳爻对不齐 & 三列不对称问题) */
         #export-container .hexagram-container {
             height: 200px !important;
             display: flex !important;
             flex-direction: column !important;
             justify-content: center !important;
             align-items: center !important;
+            margin: 0 auto !important;
+            width: 100% !important;
         }
 
         #export-container .hexagram {
@@ -59,26 +104,31 @@
             align-items: center !important;
             justify-content: center !important;
             margin: 0 auto !important;
+            padding: 0 !important;
+            width: 140px !important;
         }
 
-        /* 阳爻：纯色块 */
+        /* 阳爻：强制固定 140px 宽度 */
         #export-container .hexagram-line.yang {
+            box-sizing: border-box !important;
             width: 140px !important;
-            height: 20px !important;
-            margin: 5px 0 !important;
-            background-color: #333333 !important;
-            border-radius: 4px !important;
+            height: 18px !important;
+            margin: 6px 0 !important;
+            background-color: #2c2c2c !important;
+            border-radius: 3px !important;
+            border: none !important;
         }
 
         #export-container .hexagram-line.yang.changing {
             background-color: #9e1c26 !important;
         }
 
-        /* 阴爻：彻底摒弃 linear-gradient，改用 Flex 左右双实体块，100% 解决 html2canvas 渲染锯齿条纹 */
+        /* 阴爻：强制固定 140px 宽度，左右纯色块对称 */
         #export-container .hexagram-line.yin {
+            box-sizing: border-box !important;
             width: 140px !important;
-            height: 20px !important;
-            margin: 5px 0 !important;
+            height: 18px !important;
+            margin: 6px 0 !important;
             background: transparent !important;
             background-color: transparent !important;
             display: flex !important;
@@ -93,14 +143,29 @@
             display: block !important;
             width: 42% !important;
             height: 100% !important;
-            background-color: #333333 !important;
-            border-radius: 4px !important;
+            background-color: #2c2c2c !important;
+            border-radius: 3px !important;
         }
 
-        /* 动爻颜色 */
         #export-container .hexagram-line.yin.changing::before,
         #export-container .hexagram-line.yin.changing::after {
             background-color: #9e1c26 !important;
+        }
+
+        /* 卦名强制水平垂直居中 */
+        #export-container .export-original-name,
+        #export-container .export-inter-name,
+        #export-container .export-changed-name {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            line-height: 1.2 !important;
+            margin-top: 15px !important;
+            font-size: 32px !important;
+            font-weight: bold !important;
+            color: #9e1c26 !important;
+            width: 100% !important;
         }
     </style>
 </head>
@@ -480,53 +545,59 @@
                 </div>
             </div>
 
-            <!-- 卦象推演区 -->
+            <!-- 卦象推演 (修改为 Grid 3等分) -->
             <div
                 style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                 <h2
                     style="text-align: center; font-size: 32px; color: #333; margin-bottom: 40px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;">
                     卦象推演</h2>
-                <div style="display: flex; justify-content: space-around; align-items: flex-start;">
+
+                <div
+                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: 100%; box-sizing: border-box; align-items: start;">
                     <!-- 本卦 -->
-                    <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
                         <div
                             style="background: #e3f2fd; color: #1565c0; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #bbdefb;">
                             本卦</div>
                         <div class="hexagram export-original-hexagram"
                             style="height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         </div>
-                        <div style="text-align: center; margin-top: 20px;">
+                        <div style="text-align: center; margin-top: 20px; width: 100%;">
                             <p class="export-original-name"
-                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;">
+                            </p>
                         </div>
                     </div>
 
-                    <!-- 互卦 -->
+                    <!-- 互卦 (中间列) -->
                     <div
-                        style="width: 280px; display: flex; flex-direction: column; align-items: center; border-left: 1px dashed #eee; border-right: 1px dashed #eee;">
+                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-left: 1px dashed #eee; border-right: 1px dashed #eee; box-sizing: border-box;">
                         <div
                             style="background: #fff3e0; color: #ef6c00; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #ffe0b2;">
                             互卦</div>
                         <div class="hexagram export-inter-hexagram"
                             style="height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         </div>
-                        <div style="text-align: center; margin-top: 20px;">
+                        <div style="text-align: center; margin-top: 20px; width: 100%;">
                             <p class="export-inter-name"
                                 style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
                         </div>
                     </div>
 
                     <!-- 变卦 -->
-                    <div style="width: 280px; display: flex; flex-direction: column; align-items: center;">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
                         <div
                             style="background: #e8f5e9; color: #2e7d32; padding: 8px 25px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 30px; border: 1px solid #c8e6c9;">
                             变卦</div>
                         <div class="hexagram export-changed-hexagram"
                             style="height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                         </div>
-                        <div style="text-align: center; margin-top: 20px;">
+                        <div style="text-align: center; margin-top: 20px; width: 100%;">
                             <p class="export-changed-name"
-                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;">
+                            </p>
                         </div>
                     </div>
                 </div>
