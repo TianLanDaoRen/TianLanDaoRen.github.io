@@ -56,12 +56,10 @@
     display: none;
 }
 
-/* Track */
 *::-webkit-scrollbar-track {
     display: none;
 }
 
-/*Handle*/
 *::-webkit-scrollbar-thumb {
     display: none;
 }
@@ -225,17 +223,25 @@ body {
     border-bottom-color: transparent;
 }
 
-/* 卦象样式 */
+/* ========================================================= */
+/* 核心修复：自适应百分比阴阳爻样式 (彻底解决导出图片错乱)    */
+/* ========================================================= */
 .hexagram {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
+    margin: 0 auto;
 }
 
 .hexagram-line {
+    box-sizing: border-box;
     width: 4rem;
+    /* 默认 64px */
     height: 0.5rem;
+    /* 默认 8px */
+    border-radius: 2px;
 }
 
 .hexagram-line.yang {
@@ -245,14 +251,21 @@ body {
 .hexagram-line.yin {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    background: transparent;
+    background-color: transparent;
 }
 
+/* 关键修复：从 1.75rem 改为 42% 动态百分比！与阳爻永远 1:1 保持完全同宽！ */
 .hexagram-line.yin::before,
 .hexagram-line.yin::after {
     content: "";
-    width: 1.75rem;
-    height: 0.5rem;
+    display: block;
+    box-sizing: border-box;
+    width: 42%;
+    height: 100%;
     background-color: hsl(27, 22%, 24%);
+    border-radius: 2px;
 }
 
 .hexagram-line.yang.changing {
@@ -313,7 +326,6 @@ footer {
     color: hsl(185, 39%, 45%);
 }
 
-/* New Tab Styles */
 .tabs-lifted .tab-active {
     background-color: hsl(39, 45%, 97%);
     border-color: hsl(39, 41%, 85%);
@@ -338,7 +350,7 @@ footer {
     border-color: hsl(342, 51%, 37%);
 }
 
-/* 思考推演折叠卡片 (Thinking Process Collapsible) 古风定制 */
+/* 思考推演折叠卡片 */
 .ai-interpretation details {
     background-color: #fcfaf4;
     border: 1px solid #e6ded5;

@@ -528,7 +528,7 @@
         </div>
     </div>
 
-    <!-- 导出图片容器 (1:1 深度对齐伯叩三才盘的高清画质、大字号与排版风格) -->
+    <!-- 导出图片容器 (修复单行时间不换行与 1/3 严格平分) -->
     <div id="export-container"
         class="fixed top-0 left-[-9999px] bg-[#fffbf5] p-12 text-gray-800 w-[680px] lg:w-[1920px] z-[-1]">
         <div class="export-content" style="display: flex; flex-direction: column; gap: 30px;">
@@ -541,20 +541,23 @@
             <!-- 基本信息网格 -->
             <div
                 style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: white; padding: 30px; border-radius: 20px; border: 1px solid #e6ded5;">
-                <div style="font-size: 24px;"><b style="color: #9e1c26;">求测人：</b><span class="export-gender"></span>
+                <div style="font-size: 22px;"><b style="color: #9e1c26;">求测人：</b><span class="export-gender"></span>
                 </div>
-                <div style="font-size: 24px;"><b style="color: #9e1c26;">起卦方式：</b><span class="export-method"></span>
+                <div style="font-size: 22px;"><b style="color: #9e1c26;">起卦方式：</b><span class="export-method"></span>
                 </div>
-                <div style="font-size: 24px; grid-column: span 2;"><b style="color: #9e1c26;">时间：</b><span
-                        class="export-time"></span></div>
+                <!-- 关键修复：white-space: nowrap 防止时间溢出换行 -->
                 <div
-                    style="font-size: 24px; grid-column: span 2; border-top: 1px dashed #e6ded5; margin-top: 10px; padding-top: 15px;">
+                    style="font-size: 20px; grid-column: span 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <b style="color: #9e1c26;">起卦时间：</b><span class="export-time"></span>
+                </div>
+                <div
+                    style="font-size: 22px; grid-column: span 2; border-top: 1px dashed #e6ded5; margin-top: 10px; padding-top: 15px;">
                     <b style="color: #9e1c26;">求问事项：</b><span class="export-question"
                         style="font-style: italic;"></span>
                 </div>
             </div>
 
-            <!-- 卦象推演 (修改为 Grid 3等分) -->
+            <!-- 卦象推演 (Grid 3等分) -->
             <div
                 style="background: white; border-radius: 20px; border: 1px solid #e6ded5; padding: 40px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
                 <h2
@@ -574,12 +577,11 @@
                         </div>
                         <div style="text-align: center; margin-top: 20px; width: 100%;">
                             <p class="export-original-name"
-                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;">
-                            </p>
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
                         </div>
                     </div>
 
-                    <!-- 互卦 (中间列) -->
+                    <!-- 互卦 -->
                     <div
                         style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-left: 1px dashed #eee; border-right: 1px dashed #eee; box-sizing: border-box;">
                         <div
@@ -605,8 +607,7 @@
                         </div>
                         <div style="text-align: center; margin-top: 20px; width: 100%;">
                             <p class="export-changed-name"
-                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;">
-                            </p>
+                                style="font-size: 32px; font-weight: bold; color: #9e1c26; margin: 0;"></p>
                         </div>
                     </div>
                 </div>
@@ -632,7 +633,7 @@
                 <div class="export-chat-content" style="font-size: 24px; line-height: 2.0; color: #444;"></div>
             </div>
 
-            <!-- 底部 -->
+            <!-- 尾部 -->
             <div class="text-center pt-6 border-t-2 border-[#d4af37]">
                 <div class="flex justify-center items-center gap-4">
                     <img src="assets/images/plum-icon.jpeg" class="w-12 h-12 md:w-16 md:h-16 rounded-lg shadow-md">
