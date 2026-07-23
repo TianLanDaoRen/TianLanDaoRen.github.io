@@ -88,7 +88,7 @@
         }
 
         /* ========================================================= */
-        /* 3. 导出图片绝对像素级修正 (硬编码右外边距撑开缝隙)          */
+        /* 3. 导出图片防压缩硬编码 (flex-shrink: 0 防变形)            */
         /* ========================================================= */
 
         #export-container .hexagram-container {
@@ -112,20 +112,21 @@
             transform: none !important;
         }
 
-        /* 爻线外框：固定 120px 宽，14px 高，10px 上下行缝 */
+        /* 爻线外框：固定 120px 宽，14px 高，10px 行间距 */
         #export-container .hexagram-line {
+            display: flex !important;
             box-sizing: border-box !important;
             width: 120px !important;
             height: 14px !important;
             margin: 5px 0 !important;
             padding: 0 !important;
             border: none !important;
-            transform: none !important;
+            flex-shrink: 0 !important;
+            /* 关键：禁止收缩 */
         }
 
-        /* 阳爻：固定 120px 实心块 */
+        /* 阳爻：固定 120px 实体长条 */
         #export-container .hexagram-line.yang {
-            display: block !important;
             background-color: #2c2c2c !important;
             border-radius: 3px !important;
         }
@@ -134,40 +135,27 @@
             background-color: #9e1c26 !important;
         }
 
-        /* 阴爻外框：固定 120px */
+        /* 阴爻：两端 50px 黑块，中间自动分缝 20px */
         #export-container .hexagram-line.yin {
-            display: flex !important;
-            justify-content: flex-start !important;
-            /* 从左往右排列 */
-            align-items: center !important;
             background: transparent !important;
             background-color: transparent !important;
+            justify-content: space-between !important;
+            align-items: center !important;
         }
 
-        /* 阴爻左块：50px 宽 + 20px 强制右边距！撑开绝对缝隙！ */
-        #export-container .hexagram-line.yin::before {
-            content: "" !important;
-            display: block !important;
-            box-sizing: border-box !important;
-            width: 50px !important;
-            height: 14px !important;
-            background-color: #2c2c2c !important;
-            border-radius: 3px !important;
-            margin-right: 20px !important;
-            /* 强制 20px 缝隙，html2canvas 必出缝隙！ */
-            margin-left: 0 !important;
-            padding: 0 !important;
-        }
-
-        /* 阴爻右块：50px 宽 (50 + 20缝 + 50 = 120px) */
+        /* 阴爻伪元素：强制 50px 宽，且 flex-shrink: 0 绝不被压缩为方块！ */
+        #export-container .hexagram-line.yin::before,
         #export-container .hexagram-line.yin::after {
             content: "" !important;
             display: block !important;
             box-sizing: border-box !important;
             width: 50px !important;
+            /* 锁死 50 像素矩形 */
             height: 14px !important;
             background-color: #2c2c2c !important;
             border-radius: 3px !important;
+            flex-shrink: 0 !important;
+            /* 彻底禁止压缩成小小方块！ */
             margin: 0 !important;
             padding: 0 !important;
         }
