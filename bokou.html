@@ -204,7 +204,7 @@
         }
 
         /* ========================================================= */
-        /* 3. 导出图片专属样式：彻底隔离 main.css 的 rem 干扰         */
+        /* 导出图片专属：60px 硬编码，彻底解决 html2canvas 百分比 Bug */
         /* ========================================================= */
 
         #export-container .hexagram-container {
@@ -228,6 +228,7 @@
             width: 140px !important;
         }
 
+        /* 阳爻：固定 140px 宽度 */
         #export-container .hexagram-line.yang {
             box-sizing: border-box !important;
             width: 140px !important;
@@ -242,6 +243,7 @@
             background-color: #9e1c26 !important;
         }
 
+        /* 阴爻外框：固定 140px 宽度 */
         #export-container .hexagram-line.yin {
             box-sizing: border-box !important;
             width: 140px !important;
@@ -255,12 +257,15 @@
             border: none !important;
         }
 
+        /* 关键修复：用固定 60px 代替百分比！
+           60px(左) + 20px(中空) + 60px(右) = 140px，100% 与阳爻像素级无缝对齐！ */
         #export-container .hexagram-line.yin::before,
         #export-container .hexagram-line.yin::after {
             content: "" !important;
             display: block !important;
-            width: 42% !important;
-            /* 彻底覆盖 main.css 的 1.75rem */
+            box-sizing: border-box !important;
+            width: 60px !important;
+            /* 彻底拒绝百分比计算误差 */
             height: 18px !important;
             background-color: #2c2c2c !important;
             border-radius: 3px !important;
@@ -273,6 +278,10 @@
             background-color: #9e1c26 !important;
         }
 
+        /* 卦名与爻位文本居中 */
+        #export-container .export-original-name,
+        #export-container .export-inter-name,
+        #export-container .export-changed-name,
         #export-container .export-tian-name,
         #export-container .export-ren-name,
         #export-container .export-di-name {
@@ -285,13 +294,6 @@
             font-size: 32px !important;
             font-weight: bold !important;
             color: #9e1c26 !important;
-            width: 100% !important;
-        }
-
-        #export-container .export-tian-yao-info,
-        #export-container .export-ren-yao-info,
-        #export-container .export-di-yao-info {
-            text-align: center !important;
             width: 100% !important;
         }
     </style>
