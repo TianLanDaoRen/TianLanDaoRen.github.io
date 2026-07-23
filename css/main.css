@@ -337,3 +337,46 @@ footer {
     color: white;
     border-color: hsl(342, 51%, 37%);
 }
+
+/* 思考推演折叠卡片 (Thinking Process Collapsible) 古风定制 */
+.ai-interpretation details {
+    background-color: #fcfaf4;
+    border: 1px solid #e6ded5;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 12px 0;
+    transition: all 0.2s ease;
+}
+
+.ai-interpretation details[open] {
+    border-color: #d4af37;
+    background-color: #fffdf9;
+    box-shadow: 0 2px 8px rgba(158, 28, 38, 0.05);
+}
+
+.ai-interpretation summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #9e1c26;
+    user-select: none;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.ai-interpretation summary::-webkit-details-marker {
+    display: none;
+}
+
+.ai-interpretation summary::after {
+    content: "▼";
+    font-size: 10px;
+    color: #d4af37;
+    transition: transform 0.2s ease;
+}
+
+.ai-interpretation details[open] summary::after {
+    transform: rotate(180deg);
+}

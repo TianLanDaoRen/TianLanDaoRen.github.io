@@ -43,6 +43,45 @@
                 transform: translateY(0);
             }
         }
+
+        /* 导出容器 Hexagram 及文字垂直水平居中修补 */
+        #export-container .hexagram-container {
+            height: 200px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+
+        #export-container .hexagram {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 auto !important;
+        }
+
+        /* 导出时的爻线尺寸加大加厚 */
+        #export-container .hexagram-line {
+            width: 140px !important;
+            height: 20px !important;
+            margin: 5px 0 !important;
+            border-radius: 4px !important;
+        }
+
+        /* 保证卦名文字绝对垂直/水平居中 */
+        #export-container .export-original-name,
+        #export-container .export-inter-name,
+        #export-container .export-changed-name,
+        #export-container .export-tian-name,
+        #export-container .export-ren-name,
+        #export-container .export-di-name {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1.2 !important;
+            margin-top: 15px !important;
+        }
     </style>
 </head>
 
@@ -106,6 +145,22 @@
                             </label>
                             <textarea id="question" class="textarea textarea-bordered text-font h-24"
                                 placeholder="请详细描述您想求问的事项..." required></textarea>
+                            <!-- 新增：快捷求问标签 -->
+                            <div class="flex flex-wrap gap-1.5 mt-2 text-xs" id="prompt-chips">
+                                <span class="text-gray-400 self-center mr-1">快捷叩问:</span>
+                                <button type="button"
+                                    class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                    data-text="近期事业发展与跳槽抉择">💼 事业跳槽</button>
+                                <button type="button"
+                                    class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                    data-text="当前感情走向与复合几率">❤️ 感情走向</button>
+                                <button type="button"
+                                    class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                    data-text="近期财运起伏与投资风险">💰 财运投资</button>
+                                <button type="button"
+                                    class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                    data-text="健康隐患排查与调理建议">🌱 健康调理</button>
+                            </div>
                         </div>
 
                         <!-- 起卦方式选择 -->
@@ -396,7 +451,7 @@
                 </div>
                 <div style="font-size: 24px;"><b style="color: #9e1c26;">起卦方式：</b><span class="export-method"></span>
                 </div>
-                <div style="font-size: 24px; grid-column: span 2;"><b style="color: #9e1c26;">起卦时间：</b><span
+                <div style="font-size: 24px; grid-column: span 2;"><b style="color: #9e1c26;">时间：</b><span
                         class="export-time"></span></div>
                 <div
                     style="font-size: 24px; grid-column: span 2; border-top: 1px dashed #e6ded5; margin-top: 10px; padding-top: 15px;">

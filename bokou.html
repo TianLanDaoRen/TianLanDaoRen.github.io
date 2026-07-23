@@ -62,27 +62,43 @@
             margin-bottom: 10px;
         }
 
+        /* 导出容器 Hexagram 及文字垂直水平居中修补 */
         #export-container .hexagram-container {
-            height: 200px;
+            height: 200px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
         }
 
+        #export-container .hexagram {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 auto !important;
+        }
+
+        /* 导出时的爻线尺寸加大加厚 */
         #export-container .hexagram-line {
-            width: 120px !important;
-            height: 18px !important;
-            margin: 6px 0 !important;
-            border-radius: 3px !important;
+            width: 140px !important;
+            height: 20px !important;
+            margin: 5px 0 !important;
+            border-radius: 4px !important;
         }
 
-        #export-container .hexagram-line.yin {
-            background: linear-gradient(to right, #2c2c2c 42%, transparent 42%, transparent 58%, #2c2c2c 58%) !important;
-        }
-
-        #export-container .hexagram-line.changing {
-            background-color: #9e1c26 !important;
-        }
-
-        #export-container .hexagram-line.yin.changing {
-            background: linear-gradient(to right, #9e1c26 42%, transparent 42%, transparent 58%, #9e1c26 58%) !important;
+        /* 保证卦名文字绝对垂直/水平居中 */
+        #export-container .export-original-name,
+        #export-container .export-inter-name,
+        #export-container .export-changed-name,
+        #export-container .export-tian-name,
+        #export-container .export-ren-name,
+        #export-container .export-di-name {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1.2 !important;
+            margin-top: 15px !important;
         }
 
         .hexagram {
@@ -277,6 +293,22 @@
                                 <textarea id="question"
                                     class="textarea textarea-bordered h-24 text-base focus:border-[#9e1c26] focus:ring-1 focus:ring-[#9e1c26] bg-white leading-relaxed w-full max-w-full box-border"
                                     placeholder="请诚心默念您的问题，例如：近期事业发展趋势如何？" required></textarea>
+                                <!-- 新增：快捷求问标签 -->
+                                <div class="flex flex-wrap gap-1.5 mt-2 text-xs" id="prompt-chips">
+                                    <span class="text-gray-400 self-center mr-1">快捷叩问:</span>
+                                    <button type="button"
+                                        class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                        data-text="近期事业发展与跳槽抉择">💼 事业跳槽</button>
+                                    <button type="button"
+                                        class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                        data-text="当前感情走向与复合几率">❤️ 感情走向</button>
+                                    <button type="button"
+                                        class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                        data-text="近期财运起伏与投资风险">💰 财运投资</button>
+                                    <button type="button"
+                                        class="btn btn-xs btn-outline btn-ghost text-gray-600 hover:bg-[#9e1c26] hover:text-white border-[#d4af37]/50 prompt-chip"
+                                        data-text="健康隐患排查与调理建议">🌱 健康调理</button>
+                                </div>
                             </div>
                         </div>
 
@@ -438,15 +470,19 @@
                                 </div>
                             </div>
 
-                            <!-- 趋势图谱 -->
-                            <div class="alert bg-[#f9f9f9] border border-[#eee] shadow-sm mb-6 rounded-lg">
-                                <i class="fa-solid fa-chart-line text-[#9e1c26] text-xl"></i>
-                                <div class="flex flex-col md:flex-row md:gap-4 w-full">
-                                    <span
-                                        class="font-bold text-sm md:text-base text-gray-700 whitespace-nowrap">爻位趋势：</span>
-                                    <span id="trend-text"
-                                        class="text-sm md:text-base text-[#333] font-bold">计算中...</span>
+                            <!-- 趋势图谱 (整合 SVG 动态 K 线折线图) -->
+                            <div
+                                class="alert bg-[#f9f9f9] border border-[#eee] shadow-sm mb-6 rounded-lg flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-chart-line text-[#9e1c26] text-xl"></i>
+                                    <div>
+                                        <span class="font-bold text-sm text-gray-700">爻位趋势：</span>
+                                        <span id="trend-text" class="text-sm text-[#333] font-bold">计算中...</span>
+                                    </div>
                                 </div>
+                                <!-- 新增：SVG 折线图容器 -->
+                                <div id="trend-svg-container"
+                                    class="w-full md:w-56 h-12 flex items-center justify-center"></div>
                             </div>
 
                             <!-- AI 解析面板 -->
