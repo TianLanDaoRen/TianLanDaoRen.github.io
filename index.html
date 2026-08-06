@@ -22,6 +22,7 @@
     <script src="js/main.js"></script>
     <!-- 新增：导览模块与动画 -->
     <script src="js/chat-assistant.js"></script>
+    <script src="js/news-carousel_ori.js"></script>
     <style>
         /* 聊天气泡浮现动画 */
         .animate-fade-in-up {
@@ -42,54 +43,71 @@
     </style>
 </head>
 
-<!-- 首页发Key引流弹窗 -->
-<dialog id="cdkey_promo_modal" class="modal modal-bottom sm:modal-middle z-[999]">
-    <!-- 弹窗主体，使用你的卡片风格和背景渐变 -->
-    <div class="modal-box bg-base-100 border-2 border-[#e6ded5] shadow-2xl relative"
-        style="background-image: linear-gradient(to bottom right, hsl(39, 45%, 97%), hsl(39, 45%, 93%));">
+<!-- 新增：最近消息轮播展示弹窗 (取代原发Key引流弹窗) -->
+<dialog id="news-modal" class="modal modal-middle backdrop-blur-sm z-[200]">
+    <div
+        class="modal-box bg-[#fffbf5] border-2 border-[#d4af37] rounded-2xl shadow-2xl p-0 overflow-hidden max-w-lg w-[92vw] text-gray-800 flex flex-col max-h-[85vh] m-auto">
+        <!-- 固定头部：标题 + 发布日期 + 置顶 Badge + 关闭按钮 (无法滚动) -->
+        <div
+            class="bg-[#9e1c26] text-[#d4af37] p-4 flex flex-col gap-1 relative shadow-sm border-b border-[#d4af37]/30 flex-shrink-0">
+            <div class="flex justify-between items-start pr-8">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <!-- 置顶状态标签 -->
+                    <span id="news-top-badge"
+                        class="badge bg-[#d4af37] text-[#9e1c26] font-bold border-none hidden text-xs px-2 py-0.5">
+                        <i class="fa-solid fa-thumbtack mr-1"></i>置顶
+                    </span>
+                    <h3 id="news-item-title"
+                        class="heading-font text-xl md:text-2xl text-[#fffbf5] font-bold tracking-wide break-words">
+                        <!-- 动态填充标题 -->
+                    </h3>
+                </div>
+            </div>
+            <div class="flex items-center justify-between text-xs text-[#d4af37]/80 font-mono mt-1">
+                <span><i class="fa-regular fa-clock mr-1"></i>发布时间：<span id="news-item-date">--</span></span>
+                <span id="news-counter-badge" class="bg-black/20 px-2 py-0.5 rounded-full text-[11px]">1 / 1</span>
+            </div>
+            <button id="news-close-x"
+                class="btn btn-sm btn-circle btn-ghost absolute top-3 right-3 text-[#d4af37] hover:bg-black/20">
+                <i class="fa-solid fa-xmark fa-lg"></i>
+            </button>
+        </div>
 
-        <h3 class="font-bold text-2xl heading-font text-[#9e1c26] mb-4 text-center">
-            <i class="fa-solid fa-gift mr-2"></i>云笥散人·专属福利
-        </h3>
+        <!-- 可滚动内容区：标题和日期固定，此处独立垂直滚动，且不引发主页面滚动 -->
+        <div class="p-5 md:p-6 overflow-y-auto flex-1 min-h-[160px] max-h-[45vh] bg-[#fbf8f2] text-font text-base leading-relaxed break-words space-y-3"
+            id="news-item-content">
+            <!-- 动态填充正文内容 -->
+        </div>
 
-        <p class="py-4 text-font text-lg text-gray-700 text-center leading-relaxed">
-            福生无量天尊。云笥闲暇之余开发之游戏现已上架 Steam。<br>
-            相逢即是缘，凡至本站之居士，皆可免费抽取 <strong class="text-[#9e1c26]">Steam 激活码</strong> 一枚！<br>
-            <span class="text-sm text-gray-500 mt-2 block">（每位居士凭Steam账号验证即可自助领取！）</span>
-        </p>
+        <!-- 底部栏：左右轮播按钮 + 最近7天不再显示复选框 -->
+        <div
+            class="p-3 md:p-4 bg-[#fffbf5] border-t border-[#e6ded5] flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0">
+            <!-- 最近 7 天不再显示复选框 -->
+            <label
+                class="label cursor-pointer p-0 gap-2 select-none text-xs text-gray-600 hover:text-[#9e1c26] transition-colors">
+                <input type="checkbox" id="news-suppress-checkbox"
+                    class="checkbox checkbox-xs checkbox-error border-[#9e1c26]" />
+                <span class="label-text text-xs text-gray-600 font-medium">最近7天不再显示</span>
+            </label>
 
-        <div class="modal-action justify-center gap-4 mt-6">
-            <!-- 关闭按钮，使用你的 btn-ghost 风格 -->
-            <form method="dialog">
-                <button class="btn btn-ghost text-font text-lg">我知道了</button>
-            </form>
-            <!-- 前往领取按钮，使用你的 btn-primary 风格 -->
-            <a href="cdkey.html"
-                class="btn btn-primary text-font text-lg border-none shadow-md hover:scale-105 transition-transform">
-                前往领取 <i class="fa-solid fa-arrow-right ml-1"></i>
-            </a>
+            <!-- 左右轮播按钮与关闭 -->
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button id="news-prev-btn"
+                    class="btn btn-sm btn-outline border-[#d4af37] text-[#9e1c26] hover:bg-[#9e1c26] hover:text-white hover:border-[#9e1c26]">
+                    <i class="fa-solid fa-chevron-left"></i> 上一条
+                </button>
+                <button id="news-next-btn"
+                    class="btn btn-sm btn-outline border-[#d4af37] text-[#9e1c26] hover:bg-[#9e1c26] hover:text-white hover:border-[#9e1c26]">
+                    下一条 <i class="fa-solid fa-chevron-right"></i>
+                </button>
+                <button id="news-confirm-btn"
+                    class="btn btn-sm bg-[#9e1c26] hover:bg-[#7a151d] text-white border-none shadow-md ml-1">
+                    关 闭
+                </button>
+            </div>
         </div>
     </div>
-    <!-- 点击弹窗外部也可关闭 -->
-    <form method="dialog" class="modal-backdrop">
-        <button>close</button>
-    </form>
 </dialog>
-
-<!-- 弹窗触发脚本 -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 每次访问 index.html 自动弹出 (如果嫌太烦人，后续可以教你用 sessionStorage 改为仅弹一次)
-        const modal = document.getElementById('cdkey_promo_modal');
-        // 1. 检查本地记忆：是否已领过 Key，或者是否点击过“我知道了”
-        const hasKey = localStorage.getItem('gualing_cdkey');
-        if (modal && !hasKey) {
-            setTimeout(() => {
-                modal.showModal();
-            }, 500); // 延迟半秒弹出，体验更好
-        }
-    });
-</script>
 
 <body class="min-h-screen">
     <!-- 导航栏 -->
