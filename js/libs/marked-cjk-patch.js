@@ -132,8 +132,78 @@
         .replace(/\$\$([\s\S]+?)\$\$/g, (m, expr) => translateLatex(expr))
         .replace(/\$((?![0-9])[^$\n]+)\$/g, (m, expr) => translateLatex(expr));
     }
+    // === 第五部分：ASCII 框线表格 → GFM 表格 ===
+    // LLM 常把排盘/表格用 ``` 代码块包裹成 ASCII 框线表格（┌─┬─┐），marked 渲染为
+    // <pre><code> 且页面无溢出兜底 → 撑破容器。转换：fence 状态机在代码块内检测完整表格
+    // （┌顶行+└底行+表体全为边框/数据行+按│切分列数一致+≥2数据行+单元格无 |/换行/--- 开头）
+    // 后消费 fence 行、输出 GFM 表格语法 → marked 渲染为 <table>（单元格自动换行，零溢出）。
+    // fence 内表格前后的说明行：转义 markdown 语义字符后输出为普通段落；
+    // 含 $ 或 \ 的行（会与 fixLatex/转义冲突）→ 整块降级原样保留代码块。
+    // 幂等：输出为 GFM（无框线）→ 二次处理不触发；流式半截原样保留。
+    const ASCII_TOP_RE = /^\s*┌[─┬]*┐\s*$/;
+    const ASCII_BOT_RE = /^\s*└[─┴]*┘\s*$/;
+    const ASCII_MID_RE = /^\s*├[─┼]*┤\s*$/;
+    const DANGER_CELL_RE = /[|\n]/;
+    function asciiTableToGfm(src) {
+      if (!src || !src.includes('┌')) return src;
+      const lines = src.split('\n');
+      const out = [];
+      let i = 0;
+      while (i < lines.length) {
+        const line = lines[i];
+        const fenceMatch = line.match(/^\s*(```+|~~~+)\s*[\w-]*\s*$/);
+        if (!fenceMatch) { out.push(line); i++; continue; }
+        const fenceChar = fenceMatch[1][0];
+        const fenceLen = fenceMatch[1].length;
+        const fenceCloseRe = new RegExp('^\\s*' + fenceChar + '{' + fenceLen + ',}\\s*$');
+        const content = [];
+        let j = i + 1;
+        while (j < lines.length && !fenceCloseRe.test(lines[j])) { content.push(lines[j]); j++; }
+        if (j >= lines.length) { out.push(...lines.slice(i)); break; } // 未闭合 fence 原样
+        // fence 内提取表格
+        const start = content.findIndex((l) => ASCII_TOP_RE.test(l));
+        let table = null;
+        if (start >= 0) {
+          let cols = null;
+          const rows = [];
+          let end = -1;
+          for (let k = start + 1; k < content.length; k++) {
+            const l = content[k];
+            if (ASCII_BOT_RE.test(l)) { end = k; break; }
+            if (ASCII_MID_RE.test(l)) continue;
+            if (!l.includes('│')) break; // 非表格行 → 表格不完整
+            const cells = l.split('│').slice(1, -1).map((c) => c.trim());
+            if (cells.length < 2 || cells.some((c) => DANGER_CELL_RE.test(c) || /^---/.test(c))) break;
+            if (cols === null) cols = cells.length;
+            else if (cells.length !== cols) { cols = -1; break; }
+            rows.push(cells);
+          }
+          if (end > start && cols > 0 && rows.length >= 2) table = { start, end, rows };
+        }
+        if (!table) { out.push(line, ...content, lines[j]); i = j + 1; continue; } // 普通代码块原样
+        const preText = content.slice(0, table.start);
+        const postText = content.slice(table.end + 1);
+        // 语义泄漏防护：含 $ 或 \ 的行 → 整块降级
+        const blockFallback = [...preText, ...postText].some((l) => /[$\\]/.test(l));
+        if (blockFallback) { out.push(line, ...content, lines[j]); i = j + 1; continue; }
+        // 语义字符转义（# 标题、列表/引用、数字列表、| 表格）→ 输出为普通段落
+        const escapeSemantic = (l) =>
+          l
+            .replace(/^(#{1,6})(?=\s)/, '\\$1')
+            .replace(/^([-*+>])(?=\s)/, '\\$1')
+            .replace(/^(\d+)([.)])(?=\s)/, '$1\\$2')
+            .replace(/^\|/, '\\|');
+        for (const pl of preText) out.push(escapeSemantic(pl));
+        out.push('| ' + table.rows[0].join(' | ') + ' |');
+        out.push('|' + table.rows[0].map(() => '---').join('|') + '|');
+        for (let r = 1; r < table.rows.length; r++) out.push('| ' + table.rows[r].join(' | ') + ' |');
+        for (const pl of postText) out.push(escapeSemantic(pl));
+        i = j + 1;
+      }
+      return out.join('\n');
+    }
     // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
-    marked.use({ hooks: { preprocess: (src) => fixLatex(fixLinkEmphasis(normalizeEmphasis(src))) } });
+    marked.use({ hooks: { preprocess: (src) => fixLatex(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(src)))) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }

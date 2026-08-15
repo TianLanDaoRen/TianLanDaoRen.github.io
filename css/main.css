@@ -311,3 +311,55 @@ footer {
 .ai-interpretation details[open] summary::after {
     transform: rotate(180deg);
 }
+/* ===== ASCII表格转GFM渲染样式 + 代码块溢出兜底（marked-cjk-patch 第五部分） ===== */
+.ai-interpretation table,
+.message-content table,
+.streaming-content table,
+.export-ai-content table,
+.export-chat-content table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+    margin: 8px 0;
+    font-size: 0.9rem;
+}
+.ai-interpretation th, .ai-interpretation td,
+.message-content th, .message-content td,
+.streaming-content th, .streaming-content td,
+.export-ai-content th, .export-ai-content td,
+.export-chat-content th, .export-chat-content td {
+    border: 1px solid #e6ded5;
+    padding: 4px 8px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    vertical-align: top;
+}
+.ai-interpretation th,
+.message-content th,
+.streaming-content th,
+.export-ai-content th,
+.export-chat-content th {
+    background-color: #fcfaf4;
+    font-weight: 600;
+}
+/* 代码块溢出兜底（转换失败/普通代码块）：横向滚动，不撑破容器 */
+.ai-interpretation pre,
+.message-content pre,
+.streaming-content pre {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre;
+    -webkit-overflow-scrolling: touch;
+}
+.ai-interpretation pre::-webkit-scrollbar,
+.message-content pre::-webkit-scrollbar,
+.streaming-content pre::-webkit-scrollbar {
+    height: 6px;
+}
+.ai-interpretation pre::-webkit-scrollbar-thumb,
+.message-content pre::-webkit-scrollbar-thumb,
+.streaming-content pre::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 3px;
+}
