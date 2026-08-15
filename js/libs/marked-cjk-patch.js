@@ -54,6 +54,26 @@
       inline.emStrongRDelimAst = cjkify(inline.emStrongRDelimAst);
       inline.__cjkPatched = true;
     }
+
+    // === 第二部分：嵌套强调规范化 ===
+    // marked 的线性扫描算法无法处理「外层单星包裹 + 内部含 **」且内部 ** 前为
+    // 空格或 ASCII 标点的嵌套强调（如 *起卦时为**丙申月**，…① **体卦艮土**…*，
+    // CommonMark 规范栈算法可以处理）→ 外层 em 配对错乱、星号字面残留。
+    // 预处理：命中该模式时删除外层单星，内部 ** 独立配对为 strong，保证无字面星号。
+    // 触发条件：单星包裹 + 内容含 ** + 内容含「空格 或 非CJK豁免标点 + **」。
+    // 成功段（内部 ** 前全为汉字/豁免标点，marked 可正常嵌套解析）不受影响。
+    const triggerRe = new RegExp('(?:\\s|(?:(?!' + CJK_CLS + ')[\\p{P}\\p{S}]))\\*\\*', 'u');
+    const emNestRe = /(?<!\*)\*(?!\*)((?:[^*]|\*\*)+?)(?<!\*)\*(?!\*)/gm;
+    function normalizeEmphasis(src) {
+      if (!src || !src.includes('*')) return src;
+      return src.replace(emNestRe, (m, g1) => {
+        if (!g1.includes('**')) return m;
+        if (!triggerRe.test(g1)) return m;
+        return g1; // 删外层单星：*A① **B** C* → A① **B** C
+      });
+    }
+    // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
+    marked.use({ hooks: { preprocess: (src) => normalizeEmphasis(src) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }
