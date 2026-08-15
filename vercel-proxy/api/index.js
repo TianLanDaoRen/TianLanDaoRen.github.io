@@ -45,7 +45,20 @@ export default async function handler(request) {
     // 💡 北京 ECS 无法直连 opencode.ai（实测 TCP 不通），经 Vercel Edge 中转；
     // 认证由上游 relay 的 Authorization: Bearer 原样透传，本层不存储任何密钥；
     // SSE 流式经 Edge fetch 流式透传（Response body 直接桥接）。
+    // 同时作为「OpenAI 兼容自定义模型供应商」对外暴露：补 CORS 头支持网页端客户端。
     if (url.pathname.startsWith('/opencode-proxy')) {
+        const corsHeaders = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+            'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+            'Access-Control-Max-Age': '86400',
+        };
+
+        // CORS 预检
+        if (request.method === 'OPTIONS') {
+            return new Response(null, { status: 204, headers: corsHeaders });
+        }
+
         const ocPath = url.pathname.replace(/^\/opencode-proxy/, '') + url.search;
         const ocTarget = `https://opencode.ai${ocPath}`;
 
@@ -58,13 +71,16 @@ export default async function handler(request) {
             });
 
             const ocResponse = new Response(ocRes.body, ocRes);
+            ocResponse.headers.set('Access-Control-Allow-Origin', '*');
+            ocResponse.headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+            ocResponse.headers.set('Access-Control-Allow-Headers', 'Authorization, Content-Type');
             return ocResponse;
         } catch (err) {
             return new Response(JSON.stringify({
                 error: { code: 502, message: `OpenCode Edge Fetch Error: ${err.message}`, status: "BAD_GATEWAY" }
             }), {
                 status: 502,
-                headers: { 'Content-Type': 'application/json' }
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
             });
         }
     }
