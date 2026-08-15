@@ -95,6 +95,21 @@
         return '[' + open + label + close + ']' + rest;
       });
     }
+    // === 第三部分补充：星号包裹的纯方括号文本 → 方括号内强调 ===
+    // 根因（2026-08-16 实测复现）：**后紧跟 ASCII 标点 [（如 **[...]**），且 ** 前为汉字
+    // 时，marked 的 left-flanking 判定（后是标点则要求前是空白/标点）→ 判定失败 →
+    // **[...]** 无法开包 → 字面星号 + 后续所有 ** 配对错位（如用户案例
+    // 「然互卦中藏**[离火克体]**——…提示**表面顺畅…**」渲染成星号泄漏 + 错位加粗）。
+    // 注意：链接版本 **[text](url)** 已被 fixLinkEmphasis 先行内移为 [**text**](url)，
+    // 此处只处理无 url 的纯方括号文本；转换后 ** 进入 [ 内部，left-flanking 判定恢复。
+    // 转换：**[text]** → [**text**]，*[text]* → [*text*]（幂等：输出形态不再含"星号包方括号"）。
+    const bracketEmRe = /(?<!\*)(\*{1,2})(\[[^\]\n]*\])(\*{1,2})(?!\*)/g;
+    function fixBracketEmphasis(src) {
+      if (!src || !src.includes('*') || !src.includes('[')) return src;
+      return src.replace(bracketEmRe, (m, open, bracket, close) => {
+        return '[' + open + bracket.slice(1, -1) + close + ']';
+      });
+    }
     // === 第四部分：轻量 LaTeX 翻译（marked 无数学扩展）===
     // $...$ 数学模式 marked 原生不解析，字面显示很"捞"。
     // 轻量翻译：剥离 $ 并把常用 LaTeX 命令替换为 Unicode 符号（箭头/运算符/希腊字母等）。
@@ -203,7 +218,7 @@
       return out.join('\n');
     }
     // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
-    marked.use({ hooks: { preprocess: (src) => fixLatex(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(src)))) } });
+    marked.use({ hooks: { preprocess: (src) => fixLatex(fixBracketEmphasis(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(src))))) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }
