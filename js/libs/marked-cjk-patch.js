@@ -11,6 +11,10 @@
  *       只替换 marked 内部两条解析正则，把 CJK 标点从"标点类"中豁免（视为普通字符）：
  *         - emStrongLDelim    ：修复"强调前有文字"的入口判定（如 云：**《》**有云）
  *         - emStrongRDelimAst ：修复星号闭合（如 **《》**字）
+ *       v5：字符类同时去掉 \p{S}（符号）——六十四卦 ䷭、八卦 ☰、太极 ☯、花色 ♣、
+ *       扑克牌 🃏 等 Unicode So 符号在"加粗内容结尾"时同样闭合失败（**《地风升》䷭**乃进升之象
+ *       中闭包 ** 前是符号 ䷭、后是汉字 → 双不靠），现将其与 CJK 标点一样视为内容字符；
+ *       嵌套强调触发条件同步去掉 \p{S}。
  *       下划线版 emStrongRDelimUnd 刻意不动（CommonMark _ 词内规则，foo_bar 不强调）。
  *       注意：marked 的 inline rules 有 normal/gfm/breaks/pedantic 四套共享变体，
  *       且 setOptions 后可能切换变体 → 补丁对四套全部覆盖（各自幂等）。
@@ -32,10 +36,14 @@
 
     // CJK 标点码点范围：CJK符号标点、全角形式、中文引号/破折号/省略号/间隔号/书名号等
     const CJK_CLS = '[\u3000-\u303F\uFF00-\uFFEF\u2014\u2018-\u201F\u2026\u00B7\u2013\u2015\u2032\u2033\u3008-\u3011\u3014-\u301B\uFF5B\uFF5D]';
-    const punctN        = '(?:(?!' + CJK_CLS + ')[\\p{P}\\p{S}])';
-    const punctSpaceN   = '(?:(?!' + CJK_CLS + ')[\\s\\p{P}\\p{S}])';
-    const notPunctN     = '(?:(?!' + CJK_CLS + ')[^\\s\\p{P}\\p{S}]|' + CJK_CLS + ')';
-    const notPunctTildeN = '(?:(?:(?!' + CJK_CLS + ')[^\\s\\p{P}\\p{S}])|~|' + CJK_CLS + ')';
+    // 注意：四类字符类只豁免 \p{P}（标点），刻意去掉 \p{S}（符号）。
+    // 六十四卦（䷀-䷿ U+4DC0-4DFF）、八卦（☰☷）、太极（☯）、花色（♠♥♦♣）、
+    // 扑克牌（🃏）等均为 Unicode So（Symbol）类别 → 视为"内容字符"，
+    // 使 `**《地风升》䷭**，` 这类"加粗内容以符号结尾"的闭合判定成功。
+    const punctN        = '(?:(?!' + CJK_CLS + ')[\\p{P}])';
+    const punctSpaceN   = '(?:(?!' + CJK_CLS + ')[\\s\\p{P}])';
+    const notPunctN     = '(?:(?!' + CJK_CLS + ')[^\\s\\p{P}]|' + CJK_CLS + ')';
+    const notPunctTildeN = '(?:(?:(?!' + CJK_CLS + ')[^\\s\\p{P}])|~|' + CJK_CLS + ')';
 
     // 把正则中的三类互补字符类替换为 CJK 豁免版（三类同步替换，保持分类一致性）
     function cjkify(re) {
@@ -62,7 +70,8 @@
     // 预处理：命中该模式时删除外层单星，内部 ** 独立配对为 strong，保证无字面星号。
     // 触发条件：单星包裹 + 内容含 ** + 内容含「空格 或 非CJK豁免标点 + **」。
     // 成功段（内部 ** 前全为汉字/豁免标点，marked 可正常嵌套解析）不受影响。
-    const triggerRe = new RegExp('(?:\\s|(?:(?!' + CJK_CLS + ')[\\p{P}\\p{S}]))\\*\\*', 'u');
+    // 触发条件同步去掉 \p{S}：符号（六十四卦/八卦/花色等）按内容字符处理，不触发删外层单星。
+    const triggerRe = new RegExp('(?:\\s|(?:(?!' + CJK_CLS + ')[\\p{P}]))\\*\\*', 'u');
     const emNestRe = /(?<!\*)\*(?!\*)((?:[^*]|\*\*)+?)(?<!\*)\*(?!\*)/gm;
     function normalizeEmphasis(src) {
       if (!src || !src.includes('*')) return src;
@@ -100,11 +109,22 @@
       '\\theta': 'θ', '\\lambda': 'λ', '\\mu': 'μ', '\\pi': 'π', '\\sigma': 'σ',
       '\\phi': 'φ', '\\omega': 'ω', '\\Delta': 'Δ', '\\Omega': 'Ω',
       '\\circ': '°', '\\degree': '°', '\\%': '%', '\\&': '&', '\\#': '#',
+      '\\pmod': 'mod', '\\bmod': 'mod', '\\mod': 'mod',
     };
+    // 一次性正则：\\ + (按长度降序的 key 去反斜杠) + 词边界 (?![a-zA-Z])。
+    // 词边界保证 \pmod 不会被 \pm 子串误替换（pm 后跟 o 是字母 → 该分支不匹配），
+    // \pmatrix/\pmb 等更长的命令也保持原样；\pmod 6 正确译为 mod 6。
+    const latexRe = new RegExp(
+      '\\\\(?:' +
+      Object.keys(latexMap)
+        .map((k) => k.slice(1))
+        .sort((a, b) => b.length - a.length)
+        .join('|') +
+      ')(?![a-zA-Z])',
+      'g'
+    );
     function translateLatex(expr) {
-      let out = expr;
-      for (const [k, v] of Object.entries(latexMap)) out = out.split(k).join(v);
-      return out.trim();
+      return expr.replace(latexRe, (m) => latexMap[m]).trim();
     }
     function fixLatex(src) {
       if (!src || !src.includes('$')) return src;
