@@ -72,8 +72,22 @@
         return g1; // 删外层单星：*A① **B** C* → A① **B** C
       });
     }
+    // === 第三部分：星号包裹链接 → 链接内强调 ===
+    // marked 先 tokenize 链接再掩码解析强调：**[text](url)** 掩码后为 **[aaa]**，
+    // 若其后紧跟汉字（如 **[...]**即可），] + ** 触发 opening run 误判 → 字面星号。
+    // 转换：**[text](url)** → [**text**](url)，*[text](url)* → [*text*](url)（幂等、流式安全）。
+    const linkEmRe = /(?<!\*)(\*{1,2})(\[[^\]]*\]\([^)]*\))(\*{1,2})(?!\*)/g;
+    function fixLinkEmphasis(src) {
+      if (!src || !src.includes('*')) return src;
+      return src.replace(linkEmRe, (m, open, link, close) => {
+        const bracket = link.indexOf(']');
+        const label = link.slice(1, bracket);
+        const rest = link.slice(bracket + 1);
+        return '[' + open + label + close + ']' + rest;
+      });
+    }
     // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
-    marked.use({ hooks: { preprocess: (src) => normalizeEmphasis(src) } });
+    marked.use({ hooks: { preprocess: (src) => fixLinkEmphasis(normalizeEmphasis(src)) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }
