@@ -86,8 +86,34 @@
         return '[' + open + label + close + ']' + rest;
       });
     }
+    // === 第四部分：轻量 LaTeX 翻译（marked 无数学扩展）===
+    // $...$ 数学模式 marked 原生不解析，字面显示很"捞"。
+    // 轻量翻译：剥离 $ 并把常用 LaTeX 命令替换为 Unicode 符号（箭头/运算符/希腊字母等）。
+    // 金额保护：$ 后紧跟数字视为金额，不翻译（如 价格 $5，共 $10）。
+    const latexMap = {
+      '\\rightarrow': '→', '\\leftarrow': '←', '\\Rightarrow': '⇒', '\\Leftarrow': '⇐',
+      '\\leftrightarrow': '↔', '\\Leftrightarrow': '⇔', '\\uparrow': '↑', '\\downarrow': '↓',
+      '\\times': '×', '\\div': '÷', '\\cdot': '·', '\\pm': '±', '\\mp': '∓',
+      '\\geq': '≥', '\\leq': '≤', '\\neq': '≠', '\\approx': '≈', '\\equiv': '≡',
+      '\\infty': '∞', '\\sum': '∑', '\\prod': '∏', '\\sqrt': '√', '\\partial': '∂',
+      '\\alpha': 'α', '\\beta': 'β', '\\gamma': 'γ', '\\delta': 'δ', '\\epsilon': 'ε',
+      '\\theta': 'θ', '\\lambda': 'λ', '\\mu': 'μ', '\\pi': 'π', '\\sigma': 'σ',
+      '\\phi': 'φ', '\\omega': 'ω', '\\Delta': 'Δ', '\\Omega': 'Ω',
+      '\\circ': '°', '\\degree': '°', '\\%': '%', '\\&': '&', '\\#': '#',
+    };
+    function translateLatex(expr) {
+      let out = expr;
+      for (const [k, v] of Object.entries(latexMap)) out = out.split(k).join(v);
+      return out.trim();
+    }
+    function fixLatex(src) {
+      if (!src || !src.includes('$')) return src;
+      return src
+        .replace(/\$\$([\s\S]+?)\$\$/g, (m, expr) => translateLatex(expr))
+        .replace(/\$((?![0-9])[^$\n]+)\$/g, (m, expr) => translateLatex(expr));
+    }
     // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
-    marked.use({ hooks: { preprocess: (src) => fixLinkEmphasis(normalizeEmphasis(src)) } });
+    marked.use({ hooks: { preprocess: (src) => fixLatex(fixLinkEmphasis(normalizeEmphasis(src))) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }
