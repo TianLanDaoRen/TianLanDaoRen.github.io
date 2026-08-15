@@ -44,8 +44,11 @@ export default async function handler(request) {
     // 2.5. 处理 OpenCode Go 套餐代理请求 (/opencode-proxy/* → https://opencode.ai/*)
     // 💡 北京 ECS 无法直连 opencode.ai（实测 TCP 不通），经 Vercel Edge 中转；
     // 认证由上游 relay 的 Authorization: Bearer 原样透传，本层不存储任何密钥；
-    // SSE 流式经 Edge fetch 流式透传（Response body 直接桥接）。
-    // 同时作为「OpenAI 兼容自定义模型供应商」对外暴露：补 CORS 头支持网页端客户端。
+    // 同时作为「OpenAI 兼容自定义模型供应商」对外暴露：
+    //   ① 补 CORS 头支持网页端客户端
+    //   ② SSE 流规范化：上游在 [DONE] 后多发一行非标准 {"choices":[],"cost":"0"}，
+    //      严格 OpenAI 客户端会因此不结束——截断 [DONE] 之后的所有内容
+    //   ③ /models 注入 reasoning 能力标记：让客户端知道哪些模型支持 thinking（实测支持）
     if (url.pathname.startsWith('/opencode-proxy')) {
         const corsHeaders = {
             'Access-Control-Allow-Origin': '*',
@@ -70,6 +73,59 @@ export default async function handler(request) {
                 redirect: 'follow'
             });
 
+            // ③ /models：注入 reasoning 能力扩展字段（实测支持思考的模型）
+            if (ocPath.includes('/models')) {
+                const text = await ocRes.text();
+                const jsonHeaders = { ...corsHeaders, 'Content-Type': 'application/json; charset=utf-8' };
+                try {
+                    const j = JSON.parse(text);
+                    const THINKING_MODELS = new Set(['deepseek-v4-pro', 'deepseek-v4-flash', 'kimi-k3', 'glm-5.3']);
+                    if (j && Array.isArray(j.data)) {
+                        j.data.forEach(m => { if (m && THINKING_MODELS.has(m.id)) m.reasoning = true; });
+                    }
+                    return new Response(JSON.stringify(j), { status: 200, headers: jsonHeaders });
+                } catch {
+                    return new Response(text, { status: 200, headers: jsonHeaders });
+                }
+            }
+
+            // ② SSE 流规范化：读到 data: [DONE] 即结束，丢弃其后所有内容
+            if (request.method === 'POST' && ocRes.ok) {
+                const ct = ocRes.headers.get('content-type') || '';
+                if (ct.includes('text/event-stream') || ct.includes('text/plain')) {
+                    const encoder = new TextEncoder();
+                    const decoder = new TextDecoder();
+                    let buffer = '';
+                    let finished = false;
+                    const stream = ocRes.body.pipeThrough(new TransformStream({
+                        transform(chunk, controller) {
+                            buffer += decoder.decode(chunk, { stream: true });
+                            let idx;
+                            while ((idx = buffer.indexOf('\n')) >= 0) {
+                                const line = buffer.slice(0, idx + 1);
+                                buffer = buffer.slice(idx + 1);
+                                if (line.trim() === 'data: [DONE]') {
+                                    controller.enqueue(encoder.encode(line));
+                                    finished = true;
+                                    controller.terminate();
+                                    return;
+                                }
+                                controller.enqueue(encoder.encode(line));
+                            }
+                        },
+                        flush(controller) {
+                            if (buffer && !finished) controller.enqueue(encoder.encode(buffer));
+                            if (!finished) controller.terminate(); // 上游 EOF 未遇 DONE 也正常收尾
+                        }
+                    }));
+                    return new Response(stream, {
+                        status: 200,
+                        headers: { ...corsHeaders, 'Content-Type': 'text/event-stream; charset=utf-8' }
+                    });
+                }
+            }
+
+            // 其余（非流式 JSON 等）：原样透传 + CORS
             const ocResponse = new Response(ocRes.body, ocRes);
             ocResponse.headers.set('Access-Control-Allow-Origin', '*');
             ocResponse.headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
