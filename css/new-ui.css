@@ -34,6 +34,12 @@ body::before {
     background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 240px 240px;
 }
 
+/* 标题底色块去除（shading-font 不再有白底，观感干净） */
+.shading-font {
+    background-color: transparent !important;
+    border-radius: 0 !important;
+}
+
 /* 金线画框装饰（L3） */
 body::after {
     content: "";
