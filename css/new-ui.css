@@ -5,11 +5,11 @@
 
 /* ---------- 1. 背景体系（保留原 bg 图打底，高级化呈现） ---------- */
 body {
-    /* 原 bg-pattern.jpg 保留：平铺底纹（用户指定保留原图） */
+    /* 原 bg-pattern.jpg 保留：1024×680 原比例平铺（禁拉伸） */
     background-color: #f2ebdc !important;
     background-image: url('../assets/images/bg-pattern.jpg') !important;
     background-repeat: repeat !important;
-    background-size: 512px 512px !important;
+    background-size: 512px auto !important;
 }
 
 /* 遮罩层（fixed，bg 图之上、粒子之下）：压平纹样噪感 + 晕染色 */
@@ -45,14 +45,30 @@ body::after {
     border-radius: 18px;
 }
 
-/* 粒子画布（层叠序：bg图 < 遮罩 < 粒子 < 内容；pointer-events:none 不挡交互） */
-#gui-atmosphere-canvas {
+/* 三层特效画布（层叠序：bg图 < 遮罩 < 流体/网格 < 太极 < 内容；均不挡交互） */
+#gui-fluid-canvas,
+#gui-grid-canvas {
     position: fixed;
     inset: 0;
     z-index: -1;
     pointer-events: none;
     width: 100vw;
     height: 100vh;
+}
+
+#gui-fluid-canvas {
+    mix-blend-mode: multiply;   /* 亮底上墨彩融合 */
+    opacity: 0.85;
+}
+
+/* 太极粒子装置（hero 右上，内容之下） */
+#gui-taiji-wrap {
+    position: fixed;
+    top: 13%;
+    right: 7%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.92;
 }
 
 /* ---------- 2. 液态玻璃容器体系 ---------- */
@@ -284,6 +300,19 @@ footer,
     #gui-hero-plate svg {
         width: 76px;
         height: 76px;
+    }
+
+    /* 移动端：太极装置居中偏上 */
+    #gui-taiji-wrap {
+        top: 9%;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.8;
+    }
+
+    #gui-fluid-canvas {
+        display: none;   /* 移动端关 WebGL 节能 */
     }
 
     .hexagram {
