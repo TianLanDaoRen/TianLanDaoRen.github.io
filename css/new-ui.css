@@ -5,11 +5,9 @@
 
 /* ---------- 1. 背景体系（保留原 bg 图打底，高级化呈现） ---------- */
 body {
-    /* 原 bg-pattern.jpg 保留：1024×680 显式比例（512×340 防歧义） */
+    /* 背景图彻底抹杀：全屏流体自绘背景 */
     background-color: #f2ebdc !important;
-    background-image: url('../assets/images/bg-pattern.jpg') !important;
-    background-repeat: repeat !important;
-    background-size: 512px 340px !important;
+    background-image: none !important;
 }
 
 /* 遮罩层：高强度米白实罩（bg 压至暗纹质感）+ 晕染色 + 噪点 */
@@ -87,7 +85,6 @@ body::after {
     transform: translateX(-50%);
     z-index: 0;
     pointer-events: none;
-    opacity: 0.95;
 }
 
 #gui-taiji-canvas {
