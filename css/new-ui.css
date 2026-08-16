@@ -5,14 +5,14 @@
 
 /* ---------- 1. 背景体系（保留原 bg 图打底，高级化呈现） ---------- */
 body {
-    /* 原 bg-pattern.jpg 保留：1024×680 原比例平铺（禁拉伸） */
+    /* 原 bg-pattern.jpg 保留：1024×680 显式比例（512×340 防歧义） */
     background-color: #f2ebdc !important;
     background-image: url('../assets/images/bg-pattern.jpg') !important;
     background-repeat: repeat !important;
-    background-size: 512px auto !important;
+    background-size: 512px 340px !important;
 }
 
-/* 遮罩层（fixed，bg 图之上、粒子之下）：压平纹样噪感 + 晕染色 */
+/* 遮罩层：高强度米白实罩（bg 压至暗纹质感）+ 晕染色 + 噪点 */
 body::before {
     content: "";
     position: fixed;
@@ -20,12 +20,12 @@ body::before {
     z-index: -1;
     pointer-events: none;
     background-image:
-        /* 柔和米白提亮（让底纹成为淡雅暗纹而非刺眼平铺） */
-        radial-gradient(130% 100% at 50% 0%, rgba(250, 246, 236, 0.72), rgba(250, 246, 236, 0.35) 55%, rgba(246, 241, 230, 0.45)),
+        /* 米白高覆盖罩：bg 图减弱为隐约暗纹（特效层由此凸显） */
+        radial-gradient(130% 110% at 50% 0%, rgba(246, 241, 230, 0.9), rgba(246, 241, 230, 0.82) 55%, rgba(243, 237, 224, 0.78)),
         /* 右上暖金光雾 */
-        radial-gradient(170% 130% at 118% -24%, rgba(212, 175, 55, 0.12), transparent 62%),
+        radial-gradient(170% 130% at 118% -24%, rgba(212, 175, 55, 0.13), transparent 62%),
         /* 左下朱砂淡晕 */
-        radial-gradient(160% 120% at -18% 118%, rgba(158, 28, 38, 0.09), transparent 60%),
+        radial-gradient(160% 120% at -18% 118%, rgba(158, 28, 38, 0.10), transparent 60%),
         /* 下方极淡缥青 */
         radial-gradient(150% 110% at 50% 132%, rgba(64, 148, 158, 0.06), transparent 62%),
         /* 宣纸肌理噪点 */
