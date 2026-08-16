@@ -34,10 +34,16 @@ body::before {
     background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 240px 240px;
 }
 
-/* 标题底色块去除（shading-font 不再有白底，观感干净） */
+/* 标题底色块去除 + 白晕描边（粒子背景上保持醒目） */
 .shading-font {
     background-color: transparent !important;
     border-radius: 0 !important;
+}
+
+.shading-font.heading-font,
+h1.heading-font,
+.shading-font.text-font {
+    text-shadow: 0 1px 3px rgba(255, 252, 245, 0.95), 0 0 10px rgba(255, 252, 245, 0.7);
 }
 
 /* 金线画框装饰（L3） */
