@@ -43,7 +43,11 @@ body::before {
 .shading-font.heading-font,
 h1.heading-font,
 .shading-font.text-font {
-    text-shadow: 0 1px 3px rgba(255, 252, 245, 0.95), 0 0 10px rgba(255, 252, 245, 0.7);
+    text-shadow:
+        0 0 6px rgba(255, 252, 245, 0.98),
+        0 0 16px rgba(255, 252, 245, 0.8),
+        0 0 28px rgba(255, 252, 245, 0.5),
+        0 2px 4px rgba(255, 252, 245, 0.9);
 }
 
 /* 金线画框装饰（L3） */
@@ -209,14 +213,32 @@ footer,
     background-color: rgba(255, 253, 249, 0.8) !important;
 }
 
-/* ---------- 3. 卦象容器（方形玻璃，避免爻线容器被圆化变形） ---------- */
-.hexagram {
-    background: rgba(250, 246, 236, 0.45);
+/* ---------- 3. 卦象容器（统一玻璃：白底容器玻璃化、内部去双层、等高） ---------- */
+.hexagram-container {
+    background: rgba(250, 246, 236, 0.45) !important;
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
     border-radius: 1rem;
-    padding: 1rem 1.6rem;
+}
+
+/* 内部爻线/占位符：透明底 + 撑满容器（无卦象的★也与卦象等高） */
+.hexagram-container > div {
+    width: 100%;
+    height: 100%;
+    min-height: 96px;
+    justify-content: center;
+    background: transparent !important;
+    border: none !important;
+}
+
+.hexagram {
+    background: transparent !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
 }
 
 /* 动爻朱砂呼吸 */
@@ -229,6 +251,24 @@ footer,
 @keyframes gui-breath {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.55; }
+}
+
+/* 解卦 panel 背景统一为输入框底色（去太白） */
+#panel-yi,
+#panel-ai,
+#panel-main {
+    background-color: rgba(255, 252, 245, 0.72) !important;
+    border-color: rgba(197, 184, 163, 0.75) !important;
+    border-radius: 1rem;
+}
+
+/* 用户中心面板玻璃化 */
+.uc-panel {
+    background: rgba(250, 246, 236, 0.55) !important;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.22);
 }
 
 /* ---------- 4. 入场动画（.reveal 由 JS 注入，JS 失败=内容立即可见） ---------- */
@@ -299,6 +339,27 @@ footer,
     backdrop-filter: blur(18px) saturate(1.05);
     border: 1px solid rgba(212, 175, 55, 0.45) !important;
     box-shadow: 0 28px 60px -24px rgba(74, 66, 53, 0.35) !important;
+}
+
+/* chat 三部分：顶部朱砂玻璃 / 中部视口半透明 / 底部输入玻璃 */
+#chat-panel > div:first-child {
+    background: rgba(158, 28, 38, 0.82) !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+#chat-messages {
+    background-color: rgba(250, 246, 236, 0.4) !important;
+    background-image: url('../assets/images/noise.jpeg');
+    background-blend-mode: overlay;
+}
+
+#chat-panel > div:last-child {
+    background: rgba(250, 246, 236, 0.78) !important;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(212, 175, 55, 0.3) !important;
 }
 /* 面板容器 */
 [class*="chat-"] {
