@@ -130,7 +130,7 @@
     // 词边界保证 \pmod 不会被 \pm 子串误替换（pm 后跟 o 是字母 → 该分支不匹配），
     // \pmatrix/\pmb 等更长的命令也保持原样；\pmod 6 正确译为 mod 6。
     const latexRe = new RegExp(
-      '\\\\(?:' +
+      '(?<!\\\\)\\\\(?:' +
       Object.keys(latexMap)
         .map((k) => k.slice(1))
         .sort((a, b) => b.length - a.length)
@@ -159,7 +159,7 @@
       if (k !== '\\#' && k !== '\\&' && k !== '\\%') mathOnlyMap[k] = latexMap[k];
     }
     const mathOnlyRe = new RegExp(
-      '\\\\(?:' +
+      '(?<!\\\\)\\\\(?:' +
       Object.keys(mathOnlyMap)
         .map((k) => k.slice(1))
         .sort((a, b) => b.length - a.length)
@@ -167,36 +167,52 @@
       ')(?![a-zA-Z])',
       'g'
     );
-    function translateBareLatex(src) {
+    // 【修复·B2/B3】保护区统一掩码：fenced 代码块（```/~~~）整块 + 行内代码 span（`...`）
+    // 在【任何翻译之前】替换为 \u0000N\u0000 占位符，翻译结束后还原——
+    // 保证 $ 公式翻译与裸命令翻译都绝不触碰代码/字面量内容。
+    function maskProtected(src) {
+      const spans = [];
       const lines = src.split('\n');
-      let inFence = null; // { char, len }：fenced 代码块状态（``` / ~~~）
+      let inFence = null;
       const out = [];
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         if (!inFence) {
           const fm = line.match(/^\s*(```+|~~~+)\s*[\w-]*\s*$/);
-          if (fm) { inFence = { char: fm[1][0], len: fm[1].length }; out.push(line); continue; }
-          // 保护行内代码 span（`...`），避免误翻 `\times` 等字面量
-          const spans = [];
-          const masked = line.replace(/`[^`]*`/g, (m) => { spans.push(m); return '\u0000' + (spans.length - 1) + '\u0000'; });
-          const replaced = masked.replace(mathOnlyRe, (m) => mathOnlyMap[m] ?? m);
-          out.push(replaced.replace(/\u0000(\d+)\u0000/g, (_, n) => spans[+n]));
+          if (fm) {
+            inFence = { char: fm[1][0], len: fm[1].length, start: spans.length };
+            spans.push(line);
+            out.push('\u0000' + (spans.length - 1) + '\u0000');
+            continue;
+          }
+          const maskedLine = line.replace(/`[^`]*`/g, (m) => {
+            spans.push(m);
+            return '\u0000' + (spans.length - 1) + '\u0000';
+          });
+          out.push(maskedLine);
         } else {
-          out.push(line);
+          spans[inFence.start] += '\n' + line;
           const closeRe = new RegExp('^\\s*' + inFence.char + '{' + inFence.len + ',}\\s*$');
           if (closeRe.test(line)) inFence = null;
         }
       }
-      return out.join('\n');
+      return { masked: out.join('\n'), spans };
+    }
+    function restoreProtected(masked, spans) {
+      return masked.replace(/\u0000(\d+)\u0000/g, (_, n) => spans[+n] ?? '');
     }
     function fixLatex(src) {
       if (!src) return src;
-      // 1. $...$ / $$...$$ 公式翻译：内容分类（金额保留，公式翻译）
-      let out = src
-        .replace(/\$\$([\s\S]+?)\$\$/g, (m, expr) => translateLatex(expr))
-        .replace(/\$([^$\n]+)\$/g, (m, expr) => (isFormula(expr) ? translateLatex(expr) : m));
-      // 2. 缺陷B：$ 之外的裸 LaTeX 命令全文本翻译（跳过 fence/行内代码，排除 \# \& \%）
-      return translateBareLatex(out);
+      // 0. 先掩码保护区（fence + 行内代码），翻译只作用于保护区之外
+      const { masked, spans } = maskProtected(src);
+      // 1. $...$ / $$...$$ 公式翻译：内容分类（金额保留，公式翻译）；(?<!\\) 防转义 $ 误配对
+      let out = masked
+        .replace(/(?<!\\)\$\$([\s\S]+?)\$\$/g, (m, expr) => translateLatex(expr))
+        .replace(/(?<!\\)\$([^$\n]+)\$/g, (m, expr) => (isFormula(expr) ? translateLatex(expr) : m));
+      // 2. 缺陷B：$ 之外的裸 LaTeX 命令全文本翻译（掩码区内不触碰；排除 \# \& \%；(?<!\\) 防双反斜杠）
+      out = out.replace(mathOnlyRe, (m) => mathOnlyMap[m] ?? m);
+      // 3. 还原保护区
+      return restoreProtected(out, spans);
     }
 
     // === 第五部分：ASCII 框线表格 → GFM 表格 ===
