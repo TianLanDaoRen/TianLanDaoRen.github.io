@@ -45,30 +45,49 @@ body::after {
     border-radius: 18px;
 }
 
-/* 三层特效画布（层叠序：bg图 < 遮罩 < 流体/网格 < 太极 < 内容；均不挡交互） */
+/* ============================================================
+   特效层正 z 架构（Harness 同款：全部正数区间，规避负 z 渲染坑）
+   层叠序：bg图/遮罩(根底) → 特效层 z:0 → 内容 z:1 → 悬浮件
+   ============================================================ */
 #gui-fluid-canvas,
 #gui-grid-canvas {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
     width: 100vw;
     height: 100vh;
 }
 
 #gui-fluid-canvas {
-    mix-blend-mode: multiply;   /* 亮底上墨彩融合 */
+    mix-blend-mode: multiply;
     opacity: 0.85;
 }
 
-/* 太极粒子装置（hero 右上，内容之下） */
+/* 太极粒子装置（hero 右上，内容之下但特效层之上区域） */
 #gui-taiji-wrap {
     position: fixed;
-    top: 13%;
-    right: 7%;
-    z-index: -1;
+    top: 11%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 0;
     pointer-events: none;
-    opacity: 0.92;
+    opacity: 0.95;
+}
+
+/* 内容层提升 z:1（置于特效层之上）：只提升透明/实底内容容器，
+   不触碰 navbar/chat-fab/modal 等自带定位的元素 */
+.container,
+main,
+.form-card,
+[class*="panel"],
+[class*="content"],
+form,
+.card,
+h1.heading-font,
+.hero-inner {
+    position: relative;
+    z-index: 1;
 }
 
 /* ---------- 2. 液态玻璃容器体系 ---------- */
@@ -125,6 +144,8 @@ body::after {
 /* 页脚玻璃化 */
 footer,
 .footer {
+    position: fixed;
+    z-index: 2;
     background: rgba(250, 246, 236, 0.66) !important;
     -webkit-backdrop-filter: blur(14px) saturate(1.05);
     backdrop-filter: blur(14px) saturate(1.05);
