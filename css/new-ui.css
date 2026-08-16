@@ -3,13 +3,16 @@
    追加层：在 main.css / daisyUI / tailwind 之后加载
    ======================================================== */
 
-/* ---------- 1. 宣纸纸底（替换 bg-pattern.jpg 平铺） ---------- */
+/* ---------- 1. 背景体系（保留原 bg 图打底，高级化呈现） ---------- */
 body {
-    background: #f2ebdc !important;               /* 暖宣纸底（比纯白更温润） */
-    background-image: none !important;            /* 去掉纹样平铺 */
+    /* 原 bg-pattern.jpg 保留：平铺底纹（用户指定保留原图） */
+    background-color: #f2ebdc !important;
+    background-image: url('../assets/images/bg-pattern.jpg') !important;
+    background-repeat: repeat !important;
+    background-size: 512px 512px !important;
 }
 
-/* 噪点纸纹 + 水墨晕染层（fixed，内容之下；大尺寸渐变，无椭圆轮廓） */
+/* 遮罩层（fixed，bg 图之上、粒子之下）：压平纹样噪感 + 晕染色 */
 body::before {
     content: "";
     position: fixed;
@@ -17,16 +20,18 @@ body::before {
     z-index: -1;
     pointer-events: none;
     background-image:
-        /* 宣纸肌理：SVG feTurbulence 噪点 */
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.075'/%3E%3C/svg%3E"),
-        /* 右上暖金光雾（中心在屏外，仅见渐变过渡） */
-        radial-gradient(170% 130% at 118% -24%, rgba(212, 175, 55, 0.11), transparent 62%),
+        /* 柔和米白提亮（让底纹成为淡雅暗纹而非刺眼平铺） */
+        radial-gradient(130% 100% at 50% 0%, rgba(250, 246, 236, 0.72), rgba(250, 246, 236, 0.35) 55%, rgba(246, 241, 230, 0.45)),
+        /* 右上暖金光雾 */
+        radial-gradient(170% 130% at 118% -24%, rgba(212, 175, 55, 0.12), transparent 62%),
         /* 左下朱砂淡晕 */
-        radial-gradient(160% 120% at -18% 118%, rgba(158, 28, 38, 0.085), transparent 60%),
+        radial-gradient(160% 120% at -18% 118%, rgba(158, 28, 38, 0.09), transparent 60%),
         /* 下方极淡缥青 */
-        radial-gradient(150% 110% at 50% 132%, rgba(64, 148, 158, 0.055), transparent 62%);
-    background-repeat: repeat, no-repeat, no-repeat, no-repeat;
-    background-size: 240px 240px, 100% 100%, 100% 100%, 100% 100%;
+        radial-gradient(150% 110% at 50% 132%, rgba(64, 148, 158, 0.06), transparent 62%),
+        /* 宣纸肌理噪点 */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 240px 240px;
 }
 
 /* 金线画框装饰（L3） */
@@ -40,11 +45,11 @@ body::after {
     border-radius: 18px;
 }
 
-/* 粒子画布由 ui-atmosphere.js 创建（内容层之上，pointer-events:none 不挡交互） */
+/* 粒子画布（层叠序：bg图 < 遮罩 < 粒子 < 内容；pointer-events:none 不挡交互） */
 #gui-atmosphere-canvas {
     position: fixed;
     inset: 0;
-    z-index: 1;
+    z-index: -1;
     pointer-events: none;
     width: 100vw;
     height: 100vh;
