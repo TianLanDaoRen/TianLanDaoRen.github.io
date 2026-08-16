@@ -91,9 +91,7 @@ body::after {
 }
 
 #gui-taiji-canvas {
-    display: block;
-    border-radius: 9999px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 18px 40px -18px rgba(74, 66, 53, 0.3);
+    display: block;   /* 透明画布，无边框无阴影 */
 }
 
 /* 内容层提升 z:1（置于特效层之上）：只提升透明/实底内容容器，
