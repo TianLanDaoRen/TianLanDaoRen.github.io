@@ -141,12 +141,64 @@
     function translateLatex(expr) {
       return expr.replace(latexRe, (m) => latexMap[m]).trim();
     }
-    function fixLatex(src) {
-      if (!src || !src.includes('$')) return src;
-      return src
-        .replace(/\$\$([\s\S]+?)\$\$/g, (m, expr) => translateLatex(expr))
-        .replace(/\$((?![0-9])[^$\n]+)\$/g, (m, expr) => translateLatex(expr));
+    // 【修复·缺陷A】金额/公式分类：$...$ 内容含公式特征（LaTeX命令 \、运算符、变量开头）→ 翻译；
+    // 纯数字/中文金额（含千分位、小数、货币单位）→ 视为金额，保留原样。
+    // 替代旧的 (?![0-9]) 前置排除——它把 $1+10=...$ 这类"数字开头的公式"误判为金额而跳过翻译。
+    function isFormula(expr) {
+      const t = expr.trim();
+      if (/\\/.test(t)) return true; // LaTeX 命令（\div \times 等）
+      if (/[=+\-−×÷·^_≥≤≠≡≈<>]/.test(t)) return true; // 数学运算符
+      if (/^[a-zA-Z(]/.test(t)) return true; // 变量/表达式开头（S=1+... 等）
+      return false; // 纯数字/中文金额（$5、$10 元、$99.9、$1,200、$2026年）→ 非公式
     }
+    // 【修复·缺陷B】裸 LaTeX 命令全文本翻译（无 $ 包裹，如 N=(0\times16)）：
+    // - 仅白名单数学命令替换（排除 \# \& \%——它们是 markdown 转义，裸翻译 \#→# 会造成标题语义泄漏）
+    // - 跳过 fenced 代码块（``` / ~~~）与行内代码 `...`，不误伤 escape 序列（\n \t \d 等非白名单原样保留）
+    const mathOnlyMap = {};
+    for (const k of Object.keys(latexMap)) {
+      if (k !== '\\#' && k !== '\\&' && k !== '\\%') mathOnlyMap[k] = latexMap[k];
+    }
+    const mathOnlyRe = new RegExp(
+      '\\\\(?:' +
+      Object.keys(mathOnlyMap)
+        .map((k) => k.slice(1))
+        .sort((a, b) => b.length - a.length)
+        .join('|') +
+      ')(?![a-zA-Z])',
+      'g'
+    );
+    function translateBareLatex(src) {
+      const lines = src.split('\n');
+      let inFence = null; // { char, len }：fenced 代码块状态（``` / ~~~）
+      const out = [];
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!inFence) {
+          const fm = line.match(/^\s*(```+|~~~+)\s*[\w-]*\s*$/);
+          if (fm) { inFence = { char: fm[1][0], len: fm[1].length }; out.push(line); continue; }
+          // 保护行内代码 span（`...`），避免误翻 `\times` 等字面量
+          const spans = [];
+          const masked = line.replace(/`[^`]*`/g, (m) => { spans.push(m); return '\u0000' + (spans.length - 1) + '\u0000'; });
+          const replaced = masked.replace(mathOnlyRe, (m) => mathOnlyMap[m] ?? m);
+          out.push(replaced.replace(/\u0000(\d+)\u0000/g, (_, n) => spans[+n]));
+        } else {
+          out.push(line);
+          const closeRe = new RegExp('^\\s*' + inFence.char + '{' + inFence.len + ',}\\s*$');
+          if (closeRe.test(line)) inFence = null;
+        }
+      }
+      return out.join('\n');
+    }
+    function fixLatex(src) {
+      if (!src) return src;
+      // 1. $...$ / $$...$$ 公式翻译：内容分类（金额保留，公式翻译）
+      let out = src
+        .replace(/\$\$([\s\S]+?)\$\$/g, (m, expr) => translateLatex(expr))
+        .replace(/\$([^$\n]+)\$/g, (m, expr) => (isFormula(expr) ? translateLatex(expr) : m));
+      // 2. 缺陷B：$ 之外的裸 LaTeX 命令全文本翻译（跳过 fence/行内代码，排除 \# \& \%）
+      return translateBareLatex(out);
+    }
+
     // === 第五部分：ASCII 框线表格 → GFM 表格 ===
     // LLM 常把排盘/表格用 ``` 代码块包裹成 ASCII 框线表格（┌─┬─┐），marked 渲染为
     // <pre><code> 且页面无溢出兜底 → 撑破容器。转换：fence 状态机在代码块内检测完整表格
