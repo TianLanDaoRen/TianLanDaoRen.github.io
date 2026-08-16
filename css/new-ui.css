@@ -60,8 +60,8 @@ body::after {
 }
 
 #gui-fluid-canvas {
-    mix-blend-mode: multiply;
-    opacity: 0.85;
+    mix-blend-mode: normal;
+    opacity: 1;
 }
 
 /* 太极粒子装置（hero 右上，内容之下但特效层之上区域） */
