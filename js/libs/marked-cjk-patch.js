@@ -201,6 +201,33 @@
     function restoreProtected(masked, spans) {
       return masked.replace(/\u0000(\d+)\u0000/g, (_, n) => spans[+n] ?? '');
     }
+    // === v8：损坏 LaTeX 恢复层 ===
+    // 上游（opencode.ai 等 OpenAI 兼容源）偶发把 \times/\div 的反斜杠转义处理错误：
+    // \t 被序列化为真实 TAB（0x09），下游 JSON.parse 按 JSON 语义解释为 TAB →
+    // \times 变成 "TAB+imes"、\div 变成 "TAB+div"，fixLatex 正则永远匹配不到（反斜杠已丢失）。
+    // 正常 markdown 文本几乎不会出现「TAB 紧跟 LaTeX 命令词干」——命中即视为损坏，恢复为 \ 前缀。
+    // 幂等：恢复后无 TAB，不再二次匹配；流式安全：半截词干（如 "TAB+di"）不命中，等待后续 chunk。
+    const CORRUPTED_LATEX_MAP = {
+      imes: '\\times',
+      times: '\\times',
+      div: '\\div',
+      frac: '\\frac',
+      cdot: '\\cdot',
+      approx: '\\approx',
+      rightarrow: '\\rightarrow',
+      le: '\\le',
+      ge: '\\ge',
+      ne: '\\ne',
+      pm: '\\pm'
+    };
+    // 词干按长度降序（rightarrow 先于短词干），防子串误配
+    const corruptedStems = Object.keys(CORRUPTED_LATEX_MAP).sort((a, b) => b.length - a.length);
+    // 正则中 \t 即真实 TAB；(?![a-zA-Z]) 防 "TAB+imesx" 之类误伤
+    const corruptedLatexRe = new RegExp('\t(' + corruptedStems.join('|') + ')(?![a-zA-Z])', 'g');
+    function restoreCorruptedLatex(src) {
+      if (!src || src.indexOf('\t') === -1) return src;
+      return src.replace(corruptedLatexRe, (m, stem) => CORRUPTED_LATEX_MAP[stem]);
+    }
     function fixLatex(src) {
       if (!src) return src;
       // 0. 先掩码保护区（fence + 行内代码），翻译只作用于保护区之外
@@ -286,7 +313,8 @@
       return out.join('\n');
     }
     // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
-    marked.use({ hooks: { preprocess: (src) => fixLatex(fixBracketEmphasis(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(src))))) } });
+    // v8：restoreCorruptedLatex 置于链最前——先恢复上游损坏的反斜杠，后续 fixLatex 才能命中
+    marked.use({ hooks: { preprocess: (src) => fixLatex(fixBracketEmphasis(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(restoreCorruptedLatex(src)))))) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }
