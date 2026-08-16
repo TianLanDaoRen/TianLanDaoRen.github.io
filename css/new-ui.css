@@ -280,6 +280,25 @@ footer,
     backdrop-filter: blur(18px);
 }
 
+/* 登录/注册选项卡：active(白底类) 覆盖为朱砂底白字，调色明显 */
+#tab-login.bg-white,
+#tab-reg.bg-white {
+    background: #9e1c26 !important;
+    color: #fff !important;
+    box-shadow: 0 6px 16px -6px rgba(158, 28, 38, 0.6) !important;
+}
+
+/* Turnstile 组件玻璃化尝试：白底乘混融合进页面 */
+.cf-turnstile iframe {
+    border-radius: 8px;
+    mix-blend-mode: multiply;
+    filter: saturate(0.85) brightness(1.03);
+}
+
+#turnstile-container {
+    background: transparent !important;
+}
+
 /* 公告弹窗玻璃（保险，防 Tailwind runtime 覆盖） */
 #news-modal .modal-box {
     background: rgba(250, 246, 236, 0.9) !important;
