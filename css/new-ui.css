@@ -333,7 +333,7 @@ footer,
     }
 
     #gui-fluid-canvas {
-        display: none;   /* 移动端关 WebGL 节能 */
+        opacity: 0.85;   /* 移动端保留涟漪效果，略降不透明度省电 */
     }
 
     .hexagram {
