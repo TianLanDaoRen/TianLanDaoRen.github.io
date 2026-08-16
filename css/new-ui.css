@@ -83,12 +83,17 @@ body::after {
 /* 太极粒子装置（hero 右上，内容之下但特效层之上区域） */
 #gui-taiji-wrap {
     position: fixed;
-    top: 44%;          /* 卦灵AI 最大标题正下方（紧贴心口，居中） */
-    left: 50%;
-    transform: translateX(-50%);
+    inset: 0;
     z-index: 0;
     pointer-events: none;
     opacity: 0.95;
+}
+
+#gui-taiji-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
 }
 
 /* 内容层提升 z:1（置于特效层之上）：只提升透明/实底内容容器，
@@ -251,6 +256,35 @@ footer,
 @keyframes gui-breath {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.55; }
+}
+
+/* 爻位趋势条玻璃化 */
+.alert.bg-\[\#f9f9f9\] {
+    background: rgba(255, 252, 245, 0.72) !important;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-color: rgba(212, 175, 55, 0.28) !important;
+}
+
+/* 手动指定卡槽玻璃化（天/人/地三卡） */
+.bg-white.border.border-gray-200 {
+    background: rgba(255, 252, 245, 0.72) !important;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+/* 登录页表单卡玻璃化 */
+.max-w-md.bg-white.shadow-2xl {
+    background: rgba(250, 246, 236, 0.78) !important;
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+}
+
+/* 公告弹窗玻璃（保险，防 Tailwind runtime 覆盖） */
+#news-modal .modal-box {
+    background: rgba(250, 246, 236, 0.9) !important;
+    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(22px);
 }
 
 /* 解卦 panel 背景统一为输入框底色（去太白） */
