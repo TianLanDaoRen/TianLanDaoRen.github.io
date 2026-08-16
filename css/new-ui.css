@@ -1,0 +1,322 @@
+/* =========================================================
+   卦灵AI · 新UI「宣纸天机」视觉体系
+   追加层：在 main.css / daisyUI / tailwind 之后加载
+   ======================================================== */
+
+/* ---------- 1. 宣纸纸底（替换 bg-pattern.jpg 平铺） ---------- */
+body {
+    background: #f6f1e6 !important;               /* 暖象牙宣纸底 */
+    background-image: none !important;            /* 去掉纹样平铺 */
+}
+
+/* 噪点纸纹 + 水墨晕染层（fixed，内容之下） */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        /* 宣纸肌理：SVG feTurbulence 噪点（透明度极低） */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+        /* 水墨晕染：朱砂淡痕 / 金雾 / 墨晕 / 极淡缥青 */
+        radial-gradient(1100px 640px at 12% -6%, rgba(158, 28, 38, 0.055), transparent 60%),
+        radial-gradient(900px 560px at 92% 4%, rgba(212, 175, 55, 0.06), transparent 58%),
+        radial-gradient(1000px 700px at 78% 96%, rgba(74, 66, 53, 0.045), transparent 62%),
+        radial-gradient(760px 480px at 6% 88%, rgba(64, 148, 158, 0.04), transparent 60%),
+        radial-gradient(1200px 800px at 50% 50%, rgba(255, 252, 244, 0), transparent 100%);
+    background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+    background-size: 240px 240px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+}
+
+/* 金线画框装饰（L3） */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 10px;
+    z-index: -1;
+    pointer-events: none;
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 18px;
+}
+
+/* 粒子画布由 ui-atmosphere.js 创建（fixed z-index -1） */
+#gui-atmosphere-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* ---------- 2. 液态玻璃容器体系 ---------- */
+/* 卡片 */
+.card {
+    background: rgba(250, 246, 236, 0.62) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.05);
+    backdrop-filter: blur(18px) saturate(1.05);
+    border: 1px solid rgba(212, 175, 55, 0.22) !important;
+    border-radius: 1rem;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        0 10px 30px -12px rgba(74, 66, 53, 0.22) !important;
+    transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease !important;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212, 175, 55, 0.55) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 22px 44px -16px rgba(74, 66, 53, 0.28),
+        0 0 0 1px rgba(212, 175, 55, 0.18) !important;
+}
+
+/* 导航栏玻璃化 */
+.navbar {
+    background: rgba(250, 246, 236, 0.72) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(1.08);
+    backdrop-filter: blur(16px) saturate(1.08);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3) !important;
+    transition: background .35s ease;
+}
+
+.navbar.scrolled {
+    background: rgba(250, 246, 236, 0.86) !important;
+}
+
+/* 品牌文字金线装饰 */
+.navbar .heading-font {
+    position: relative;
+}
+
+/* 语言下拉菜单玻璃化 */
+.dropdown-content {
+    background: rgba(250, 246, 236, 0.9) !important;
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 18px 40px -18px rgba(74, 66, 53, 0.3) !important;
+}
+
+/* 页脚玻璃化 */
+footer,
+.footer {
+    background: rgba(250, 246, 236, 0.66) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(1.05);
+    backdrop-filter: blur(14px) saturate(1.05);
+    border-top: 1px solid rgba(212, 175, 55, 0.35) !important;
+}
+
+/* 弹窗 / modal 玻璃化 */
+.modal-box {
+    background: rgba(250, 246, 236, 0.92) !important;
+    -webkit-backdrop-filter: blur(22px);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    border-radius: 1.25rem !important;
+    box-shadow: 0 30px 60px -24px rgba(74, 66, 53, 0.35) !important;
+}
+
+/* 输入框柔化 */
+.input-bordered,
+.select-bordered,
+.textarea-bordered {
+    background-color: rgba(255, 252, 245, 0.72) !important;
+    border-color: rgba(197, 184, 163, 0.75) !important;
+    border-radius: 0.55rem;
+    transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+/* 主按钮质感微调 */
+.btn-primary {
+    background-image: linear-gradient(to bottom right, hsl(342, 51%, 40%), hsl(342, 51%, 33%)) !important;
+    box-shadow: 0 8px 20px -10px rgba(158, 28, 38, 0.55);
+}
+
+.btn-primary:hover {
+    background-image: linear-gradient(to bottom right, hsl(342, 51%, 45%), hsl(342, 51%, 38%)) !important;
+    box-shadow: 0 12px 26px -10px rgba(158, 28, 38, 0.6);
+}
+
+/* 思考推演折叠卡：金边玻璃 */
+.ai-interpretation details {
+    background-color: rgba(252, 250, 244, 0.72) !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    border-radius: 0.75rem;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.ai-interpretation details[open] {
+    border-color: rgba(212, 175, 55, 0.6) !important;
+    background-color: rgba(255, 253, 249, 0.8) !important;
+}
+
+/* ---------- 3. 卦象玻璃圆盘（结果区） ---------- */
+.hexagram {
+    background: radial-gradient(circle at 30% 20%, rgba(255, 252, 244, 0.65), rgba(250, 246, 236, 0.28) 70%);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 9999px;
+    padding: 2.2rem 2.2rem;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 14px 30px -12px rgba(74, 66, 53, 0.25);
+}
+
+/* 动爻朱砂呼吸 */
+.hexagram-line.changing.yang,
+.hexagram-line.changing.yin::before,
+.hexagram-line.changing.yin::after {
+    animation: gui-breath 2.4s ease-in-out infinite;
+}
+
+@keyframes gui-breath {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+}
+
+/* ---------- 4. 入场动画（.reveal 由 JS 注入，JS 失败=内容立即可见） ---------- */
+.reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* ---------- 5. 首页 hero 玻璃卦盘装置 ---------- */
+#gui-hero-plate {
+    width: 176px;
+    height: 176px;
+    margin: 0 auto 26px;
+    border-radius: 9999px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 32% 22%, rgba(255, 252, 244, 0.7), rgba(250, 246, 236, 0.26) 68%);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.38);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.65),
+        0 22px 44px -18px rgba(74, 66, 53, 0.3);
+}
+
+#gui-hero-plate::after {
+    content: "";
+    position: absolute;
+    inset: -14px;
+    border-radius: 9999px;
+    border: 1px dashed rgba(212, 175, 55, 0.28);
+    animation: gui-spin 36s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes gui-spin {
+    to { transform: rotate(360deg); }
+}
+
+#gui-hero-plate svg {
+    width: 108px;
+    height: 108px;
+}
+
+.gui-hero-line {
+    stroke: rgba(74, 66, 53, 0.8);
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+
+.gui-hero-line.changing {
+    stroke: hsl(342, 51%, 40%);
+    animation: gui-breath 2.4s ease-in-out infinite;
+}
+
+/* ---------- 6. 聊天悬浮窗玻璃化（不动交互结构） ---------- */
+/* 面板容器 */
+[class*="chat-"] {
+    scrollbar-width: thin;
+}
+
+/* chat-fab 按钮本身保持红金体系，仅面板类增强由页面各自 inline 处理 */
+
+/* ---------- 7. 响应式 ---------- */
+@media (max-width: 640px) {
+    /* 移动端：去掉画框、玻璃 blur 收窄控开销 */
+    body::after {
+        border: none;
+        inset: 0;
+    }
+
+    .card {
+        -webkit-backdrop-filter: blur(11px);
+        backdrop-filter: blur(11px);
+    }
+
+    .navbar {
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+
+    #gui-hero-plate {
+        width: 124px;
+        height: 124px;
+    }
+
+    #gui-hero-plate svg {
+        width: 76px;
+        height: 76px;
+    }
+
+    .hexagram {
+        padding: 1.7rem 1.9rem;
+    }
+}
+
+/* ---------- 8. 无障碍：减弱动效 ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .hexagram-line.changing.yang,
+    .hexagram-line.changing.yin::before,
+    .hexagram-line.changing.yin::after,
+    #gui-hero-plate::after,
+    .gui-hero-line.changing {
+        animation: none !important;
+    }
+
+    .card,
+    .btn-primary,
+    .btn-primary:hover {
+        transition: none !important;
+    }
+}
+
+/* ---------- 9. 兜底：不支持 backdrop-filter ---------- */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .card {
+        background: rgba(250, 246, 236, 0.94) !important;
+    }
+
+    .navbar {
+        background: rgba(250, 246, 236, 0.94) !important;
+    }
+
+    footer,
+    .footer {
+        background: rgba(250, 246, 236, 0.94) !important;
+    }
+}
