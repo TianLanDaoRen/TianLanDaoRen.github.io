@@ -83,7 +83,8 @@ body::after {
 /* 太极粒子装置（hero 右上，内容之下但特效层之上区域） */
 #gui-taiji-wrap {
     position: fixed;
-    inset: 0;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 0;
     pointer-events: none;
     opacity: 0.95;
