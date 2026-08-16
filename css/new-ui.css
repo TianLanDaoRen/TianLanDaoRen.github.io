@@ -242,6 +242,13 @@ footer,
 }
 
 /* ---------- 6. 聊天悬浮窗玻璃化（不动交互结构） ---------- */
+#chat-panel {
+    background: rgba(250, 246, 236, 0.88) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.05);
+    backdrop-filter: blur(18px) saturate(1.05);
+    border: 1px solid rgba(212, 175, 55, 0.45) !important;
+    box-shadow: 0 28px 60px -24px rgba(74, 66, 53, 0.35) !important;
+}
 /* 面板容器 */
 [class*="chat-"] {
     scrollbar-width: thin;
