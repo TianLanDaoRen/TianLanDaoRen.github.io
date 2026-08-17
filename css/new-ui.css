@@ -310,13 +310,19 @@ footer,
     border-radius: 1rem;
 }
 
-/* 用户中心面板玻璃化 */
+/* 用户中心：取消玻璃化（恢复原实底样式） */
 .uc-panel {
-    background: rgba(250, 246, 236, 0.55) !important;
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    border: 1px solid rgba(212, 175, 55, 0.22);
+    background: transparent !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+}
+
+#uc_modal .modal-box {
+    background: #fffbf5 !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
 }
 
 /* ---------- 4. 入场动画（.reveal 由 JS 注入，JS 失败=内容立即可见） ---------- */
