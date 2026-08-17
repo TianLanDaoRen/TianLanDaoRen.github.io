@@ -380,41 +380,7 @@ footer,
     animation: gui-breath 2.4s ease-in-out infinite;
 }
 
-/* ---------- 6. 聊天悬浮窗玻璃化（不动交互结构） ---------- */
-#chat-panel {
-    background: rgba(250, 246, 236, 0.88) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(1.05);
-    backdrop-filter: blur(18px) saturate(1.05);
-    border: 1px solid rgba(212, 175, 55, 0.45) !important;
-    box-shadow: 0 28px 60px -24px rgba(74, 66, 53, 0.35) !important;
-}
-
-/* chat 三部分：顶部朱砂玻璃 / 中部视口半透明 / 底部输入玻璃 */
-#chat-panel > div:first-child {
-    background: rgba(158, 28, 38, 0.82) !important;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-}
-
-#chat-messages {
-    background-color: rgba(250, 246, 236, 0.4) !important;
-    background-image: url('../assets/images/noise.jpeg');
-    background-blend-mode: overlay;
-}
-
-#chat-panel > div:last-child {
-    background: rgba(250, 246, 236, 0.78) !important;
-    -webkit-backdrop-filter: blur(14px);
-    backdrop-filter: blur(14px);
-    border-top: 1px solid rgba(212, 175, 55, 0.3) !important;
-}
-/* 面板容器 */
-[class*="chat-"] {
-    scrollbar-width: thin;
-}
-
-/* chat-fab 按钮本身保持红金体系，仅面板类增强由页面各自 inline 处理 */
+/* chat 面板：取消玻璃化（最上层，恢复原实底样式），仅保留红金体系 */
 
 /* ---------- 7. 响应式 ---------- */
 @media (max-width: 640px) {
