@@ -88,7 +88,8 @@ body::after {
 }
 
 #gui-taiji-canvas {
-    display: block;   /* 透明画布，无边框无阴影 */
+    display: block;
+    /* 透明画布，无边框无阴影 */
 }
 
 /* 内容层提升 z:1（置于特效层之上）：只提升透明/实底内容容器，
@@ -223,7 +224,7 @@ footer,
 }
 
 /* 内部爻线/占位符：透明底 + 撑满容器（无卦象的★也与卦象等高） */
-.hexagram-container > div {
+.hexagram-container>div {
     width: 100%;
     height: 100%;
     min-height: 96px;
@@ -249,8 +250,15 @@ footer,
 }
 
 @keyframes gui-breath {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.55; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.55;
+    }
 }
 
 /* 爻位趋势条玻璃化 */
@@ -304,7 +312,8 @@ footer,
 /* 解卦 panel 背景统一为输入框底色（去太白） */
 #panel-yi,
 #panel-ai,
-#panel-main {
+#panel-main,
+#panel-addit {
     background-color: rgba(255, 252, 245, 0.72) !important;
     border-color: rgba(197, 184, 163, 0.75) !important;
     border-radius: 1rem;
@@ -367,7 +376,9 @@ footer,
 }
 
 @keyframes gui-spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 #gui-hero-plate svg {
@@ -390,6 +401,7 @@ footer,
 
 /* ---------- 7. 响应式 ---------- */
 @media (max-width: 640px) {
+
     /* 移动端：去掉画框、玻璃 blur 收窄控开销 */
     body::after {
         border: none;
@@ -426,7 +438,8 @@ footer,
     }
 
     #gui-fluid-canvas {
-        opacity: 0.85;   /* 移动端保留涟漪效果，略降不透明度省电 */
+        opacity: 0.85;
+        /* 移动端保留涟漪效果，略降不透明度省电 */
     }
 
     .hexagram {
