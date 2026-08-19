@@ -1,0 +1,343 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "卦灵 Gualing 全链路全景",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/TianLanDaoRen/TianLanDaoRen.github.io",
+      "revision": "1b3c7d07966f225c514624865633fabf77935152"
+    },
+    "viewBox": [
+      1410,
+      460
+    ]
+  },
+  "components": [
+    {
+      "id": "frontend",
+      "type": "frontend",
+      "label": "GualingAI 前端",
+      "sublabel": "gualing.top · 9 页面",
+      "pos": [
+        40,
+        60
+      ],
+      "size": [
+        180,
+        64
+      ],
+      "sources": [
+        {
+          "path": "js/plum.js",
+          "label": "/ai/stream 流式调用"
+        }
+      ]
+    },
+    {
+      "id": "go-backend",
+      "type": "backend",
+      "label": "GoGualingServer",
+      "sublabel": "gin :8300 · /gualing-core",
+      "pos": [
+        330,
+        60
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "relay",
+      "type": "backend",
+      "label": "gemini-relay",
+      "sublabel": "express+ws :3000",
+      "pos": [
+        620,
+        60
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "vercel-gemini",
+      "type": "cloud",
+      "label": "Vercel 代理",
+      "sublabel": "gemini.gualing.top",
+      "pos": [
+        910,
+        60
+      ],
+      "size": [
+        180,
+        64
+      ],
+      "sources": [
+        {
+          "path": "vercel-proxy/api/index.js",
+          "line": 71,
+          "label": "opencode 代理"
+        }
+      ]
+    },
+    {
+      "id": "vercel-tts",
+      "type": "cloud",
+      "label": "Vercel 语音",
+      "sublabel": "tts.gualing.top · voicecraft",
+      "pos": [
+        40,
+        180
+      ],
+      "size": [
+        180,
+        64
+      ],
+      "sources": [
+        {
+          "path": "vercel-voicecraft/api/index.js",
+          "line": 526,
+          "label": "handler 路由"
+        }
+      ]
+    },
+    {
+      "id": "mysql",
+      "type": "database",
+      "label": "MySQL",
+      "sublabel": "gualing_db",
+      "pos": [
+        330,
+        180
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "opencode",
+      "type": "external",
+      "label": "opencode.ai",
+      "sublabel": "兜底供应商",
+      "pos": [
+        620,
+        180
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "siliconflow",
+      "type": "external",
+      "label": "硅基流动",
+      "sublabel": "ASR 转写",
+      "pos": [
+        40,
+        320
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "edge-tts",
+      "type": "external",
+      "label": "Edge TTS",
+      "sublabel": "微软语音合成",
+      "pos": [
+        330,
+        320
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "paypal",
+      "type": "external",
+      "label": "PayPal",
+      "sublabel": "创建/捕获订单",
+      "pos": [
+        620,
+        320
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "deepseek-api",
+      "type": "external",
+      "label": "DeepSeek API",
+      "sublabel": "api.deepseek.com",
+      "pos": [
+        910,
+        320
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "gemini-api",
+      "type": "external",
+      "label": "Google Gemini",
+      "sublabel": "官方 API · 3 key",
+      "pos": [
+        1200,
+        320
+      ],
+      "size": [
+        180,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "gualing.top — GitHub Pages + Cloudflare",
+      "wraps": [
+        "frontend"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "yunsisanren.top VPS — nginx → gin :8300 / relay :3000",
+      "wraps": [
+        "go-backend",
+        "relay"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "fe-go",
+      "from": "frontend",
+      "to": "go-backend",
+      "label": "HTTPS /gualing-core/*",
+      "variant": "emphasis"
+    },
+    {
+      "id": "go-relay",
+      "from": "go-backend",
+      "to": "relay",
+      "label": "SSE 流式",
+      "variant": "emphasis"
+    },
+    {
+      "id": "relay-vg",
+      "from": "relay",
+      "to": "vercel-gemini",
+      "label": "HTTPS /v1beta",
+      "variant": "emphasis"
+    },
+    {
+      "id": "fe-tts",
+      "from": "frontend",
+      "to": "vercel-tts",
+      "label": "HTTPS /v1/audio/*",
+      "variant": "dashed",
+      "labelDy": 46
+    },
+    {
+      "id": "go-mysql",
+      "from": "go-backend",
+      "to": "mysql",
+      "label": "SQL",
+      "labelDy": 46
+    },
+    {
+      "id": "go-paypal",
+      "from": "go-backend",
+      "to": "paypal",
+      "label": "REST 订单"
+    },
+    {
+      "id": "relay-oc",
+      "from": "relay",
+      "to": "opencode",
+      "label": "opencode 兜底",
+      "variant": "dashed",
+      "labelDy": 46
+    },
+    {
+      "id": "relay-ds",
+      "from": "relay",
+      "to": "deepseek-api",
+      "label": "HTTPS · 402 降级",
+      "variant": "dashed"
+    },
+    {
+      "id": "vg-gemini",
+      "from": "vercel-gemini",
+      "to": "gemini-api",
+      "label": "HTTPS 流式"
+    },
+    {
+      "id": "vt-edge",
+      "from": "vercel-tts",
+      "to": "edge-tts",
+      "label": "TTS speech"
+    },
+    {
+      "id": "vt-sf",
+      "from": "vercel-tts",
+      "to": "siliconflow",
+      "label": "ASR 转写",
+      "labelDy": 46
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "前端 9 页功能",
+      "items": [
+        "占卜主流程：梅花 plum-blossom / 伯叩 bokou",
+        "八字排盘 bazi-paipan · 宫殿 palace",
+        "注册/充值/CDKey/用户中心 register·recharge·cdkey·user-center",
+        "氛围层 ui-atmosphere：WebGL 墨彩流体+网格粒子+太极粒子",
+        "语音 chat-assistant + gualing-tts（TTS 朗读）"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Go 后端 gin :8300",
+      "items": [
+        "公开：public-key(RSA)/user/auth/ai/public-stream/paypal/config/payment/price/news/latest",
+        "鉴权 JWT：ai/stream(ProxyAI)/history/user/profile/sign/paypal create·capture",
+        "RSA 加密载荷 → 转发本地 relay；thought 状态机 + details 规范化",
+        "流中断判定 → 余额退款回滚"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "relay :3000",
+      "items": [
+        "GLOBAL_FALLBACK_MODELS 11 级降级链",
+        "MAX_CONTINUATION_TRIES=3 断点续传（systemInstruction + 「继续。」）",
+        "首字超时也走降级；convertGeminiToDeepSeek 跨供应商转换",
+        "DeepSeek 402 时 opencode-go-main 兜底"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Vercel Functions",
+      "items": [
+        "gemini.gualing.top：gemini 流式代理 + /opencode-proxy + /steam-proxy + /turnstile-proxy",
+        "tts.gualing.top：voicecraft /v1/audio/speech（Edge TTS）+ /v1/audio/transcriptions（硅基流动）",
+        "Node.js Runtime · maxDuration=300s"
+      ]
+    }
+  ]
+}
