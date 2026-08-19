@@ -2,106 +2,541 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "卦灵 Gualing 全链路全景",
+    "title": "卦灵 Gualing 全链路端点全景",
     "quality_profile": "showcase",
+    "animation": "trace",
     "repository": {
       "url": "https://github.com/TianLanDaoRen/TianLanDaoRen.github.io",
       "revision": "1b3c7d07966f225c514624865633fabf77935152"
     },
     "viewBox": [
-      1410,
-      460
+      1980,
+      1560
+    ],
+    "views": [
+      {
+        "id": "flow",
+        "label": "主链路",
+        "note": "前端占卜 → Go ProxyAI → relay → 降级链 → 供应商",
+        "focus": [
+          "fe-plum",
+          "go-aistream",
+          "relay-core",
+          "fb-1",
+          "vp-gemini",
+          "gemini-api"
+        ]
+      },
+      {
+        "id": "frontend",
+        "label": "前端全页",
+        "note": "9 页面 + 语音/氛围层，各页面调用的 Go 端点见 sublabel",
+        "focus": [
+          "fe-index",
+          "fe-plum",
+          "fe-bokou",
+          "fe-bazi",
+          "fe-palace",
+          "fe-cdkey",
+          "fe-register",
+          "fe-user",
+          "fe-recharge",
+          "fe-tts",
+          "fe-ui"
+        ]
+      },
+      {
+        "id": "goapi",
+        "label": "Go 端点",
+        "note": "/gualing-core 公开 + 鉴权 19 端点全量节点化",
+        "focus": [
+          "go-news",
+          "go-pubkey",
+          "go-auth",
+          "go-ping",
+          "go-pubai",
+          "go-pconf",
+          "go-price",
+          "go-aistream",
+          "go-ppcreate",
+          "go-ppcapture",
+          "go-logout",
+          "go-userinfo",
+          "go-sign",
+          "go-profile",
+          "go-asset",
+          "go-signcal",
+          "go-hlist",
+          "go-hdetail",
+          "go-hupdate"
+        ]
+      },
+      {
+        "id": "chain",
+        "label": "降级链",
+        "note": "GLOBAL_FALLBACK_MODELS 11 站逐级降级 + 供应商归属",
+        "focus": [
+          "relay-core",
+          "fb-1",
+          "fb-2",
+          "fb-3",
+          "fb-4",
+          "fb-5",
+          "fb-6",
+          "fb-7",
+          "fb-8",
+          "fb-9",
+          "fb-10",
+          "fb-11"
+        ]
+      },
+      {
+        "id": "vercel",
+        "label": "Vercel + 外部",
+        "note": "gemini/tts 两域函数与全部上游供应商",
+        "focus": [
+          "vp-gemini",
+          "vp-opencode",
+          "vp-steam",
+          "vp-turnstile",
+          "vt-speech",
+          "vt-transcribe",
+          "gemini-api",
+          "deepseek-api",
+          "opencode-x",
+          "edge-tts",
+          "siliconflow",
+          "paypal"
+        ]
+      }
     ]
   },
   "components": [
     {
-      "id": "frontend",
+      "id": "fe-index",
       "type": "frontend",
-      "label": "GualingAI 前端",
-      "sublabel": "gualing.top · 9 页面",
+      "label": "首页 index",
+      "sublabel": "取公告 /news/latest",
       "pos": [
         40,
-        60
+        40
       ],
       "size": [
         180,
-        64
+        60
+      ]
+    },
+    {
+      "id": "fe-register",
+      "type": "frontend",
+      "label": "注册 register",
+      "sublabel": "调 POST /user/auth",
+      "pos": [
+        40,
+        152
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-cdkey",
+      "type": "frontend",
+      "label": "CDKey cdkey",
+      "sublabel": "Turnstile + 领 Key",
+      "pos": [
+        40,
+        264
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-palace",
+      "type": "frontend",
+      "label": "宫殿 palace",
+      "sublabel": "免费占卜 public-stream",
+      "pos": [
+        40,
+        376
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-tts",
+      "type": "frontend",
+      "label": "语音助手 TTS",
+      "sublabel": "调 tts.gualing.top",
+      "pos": [
+        40,
+        488
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-ui",
+      "type": "frontend",
+      "label": "氛围层 ui",
+      "sublabel": "WebGL 无后端",
+      "pos": [
+        280,
+        600
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-plum",
+      "type": "frontend",
+      "label": "梅花易数 plum",
+      "sublabel": "调 /ai/stream",
+      "pos": [
+        280,
+        40
+      ],
+      "size": [
+        180,
+        60
       ],
       "sources": [
         {
           "path": "js/plum.js",
-          "label": "/ai/stream 流式调用"
+          "label": "占卜主流程"
         }
       ]
     },
     {
-      "id": "go-backend",
+      "id": "fe-user",
+      "type": "frontend",
+      "label": "用户中心 user",
+      "sublabel": "调 /user/info·profile",
+      "pos": [
+        280,
+        152
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-recharge",
+      "type": "frontend",
+      "label": "充值 recharge",
+      "sublabel": "调 /price·paypal/create",
+      "pos": [
+        280,
+        264
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-bokou",
+      "type": "frontend",
+      "label": "伯叩 bokou",
+      "sublabel": "调 /ai/stream",
+      "pos": [
+        280,
+        376
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fe-bazi",
+      "type": "frontend",
+      "label": "八字 bazi-paipan",
+      "sublabel": "免费排盘 public-stream",
+      "pos": [
+        280,
+        488
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-news",
       "type": "backend",
-      "label": "GoGualingServer",
-      "sublabel": "gin :8300 · /gualing-core",
+      "label": "GET /news/latest",
+      "sublabel": "公开",
       "pos": [
-        330,
-        60
+        540,
+        40
       ],
       "size": [
         180,
-        64
+        60
       ]
     },
     {
-      "id": "relay",
+      "id": "go-pubkey",
       "type": "backend",
-      "label": "gemini-relay",
-      "sublabel": "express+ws :3000",
+      "label": "GET /public-key",
+      "sublabel": "RSA 公钥·公开",
       "pos": [
-        620,
-        60
+        780,
+        40
       ],
       "size": [
         180,
-        64
+        60
       ]
     },
     {
-      "id": "vercel-gemini",
-      "type": "cloud",
-      "label": "Vercel 代理",
-      "sublabel": "gemini.gualing.top",
+      "id": "go-ping",
+      "type": "backend",
+      "label": "GET /ping",
+      "sublabel": "健康检查·公开",
       "pos": [
-        910,
-        60
+        1020,
+        40
       ],
       "size": [
         180,
-        64
-      ],
-      "sources": [
-        {
-          "path": "vercel-proxy/api/index.js",
-          "line": 71,
-          "label": "opencode 代理"
-        }
+        60
       ]
     },
     {
-      "id": "vercel-tts",
-      "type": "cloud",
-      "label": "Vercel 语音",
-      "sublabel": "tts.gualing.top · voicecraft",
+      "id": "go-pconf",
+      "type": "backend",
+      "label": "GET /paypal/config",
+      "sublabel": "公开",
       "pos": [
-        40,
-        180
+        1260,
+        40
       ],
       "size": [
         180,
-        64
+        60
+      ]
+    },
+    {
+      "id": "go-logout",
+      "type": "backend",
+      "label": "POST /user/logout",
+      "sublabel": "鉴权",
+      "pos": [
+        1500,
+        40
       ],
-      "sources": [
-        {
-          "path": "vercel-voicecraft/api/index.js",
-          "line": 526,
-          "label": "handler 路由"
-        }
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-aistream",
+      "type": "backend",
+      "label": "POST /ai/stream ★",
+      "sublabel": "ProxyAI 核心",
+      "pos": [
+        540,
+        152
+      ],
+      "size": [
+        180,
+        60
+      ],
+      "tag": "核心"
+    },
+    {
+      "id": "go-auth",
+      "type": "backend",
+      "label": "POST /user/auth",
+      "sublabel": "登录/注册·公开",
+      "pos": [
+        780,
+        152
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-price",
+      "type": "backend",
+      "label": "GET /payment/price",
+      "sublabel": "点数计价·公开",
+      "pos": [
+        1020,
+        152
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-pubai",
+      "type": "backend",
+      "label": "POST /ai/public-stream",
+      "sublabel": "免鉴权 AI",
+      "pos": [
+        1260,
+        152
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-userinfo",
+      "type": "backend",
+      "label": "GET /user/info",
+      "sublabel": "鉴权",
+      "pos": [
+        1500,
+        152
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-sign",
+      "type": "backend",
+      "label": "POST /user/sign",
+      "sublabel": "每日签到",
+      "pos": [
+        780,
+        264
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-profile",
+      "type": "backend",
+      "label": "GET/POST /user/profile",
+      "sublabel": "资料",
+      "pos": [
+        1020,
+        264
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-asset",
+      "type": "backend",
+      "label": "GET /user/asset-logs",
+      "sublabel": "资产流水",
+      "pos": [
+        1260,
+        264
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-ppcreate",
+      "type": "backend",
+      "label": "POST /paypal/create",
+      "sublabel": "创建订单",
+      "pos": [
+        1500,
+        264
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-signcal",
+      "type": "backend",
+      "label": "GET /user/sign-calendar",
+      "sublabel": "签到日历",
+      "pos": [
+        780,
+        376
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-hlist",
+      "type": "backend",
+      "label": "GET /history/list",
+      "sublabel": "历史列表",
+      "pos": [
+        1020,
+        376
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-hdetail",
+      "type": "backend",
+      "label": "GET /history/detail",
+      "sublabel": "历史详情",
+      "pos": [
+        1260,
+        376
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-ppcapture",
+      "type": "backend",
+      "label": "POST /paypal/capture",
+      "sublabel": "捕获订单",
+      "pos": [
+        1500,
+        376
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "go-hupdate",
+      "type": "backend",
+      "label": "POST /history/update",
+      "sublabel": "续写历史",
+      "pos": [
+        1020,
+        488
+      ],
+      "size": [
+        180,
+        60
       ]
     },
     {
@@ -110,68 +545,214 @@
       "label": "MySQL",
       "sublabel": "gualing_db",
       "pos": [
-        330,
-        180
+        780,
+        488
       ],
       "size": [
         180,
-        64
+        60
       ]
     },
     {
-      "id": "opencode",
-      "type": "external",
-      "label": "opencode.ai",
-      "sublabel": "兜底供应商",
+      "id": "relay-core",
+      "type": "backend",
+      "label": "relay :3000",
+      "sublabel": "express+ws · 续传",
       "pos": [
-        620,
-        180
+        540,
+        376
       ],
       "size": [
         180,
-        64
+        60
       ]
     },
     {
-      "id": "siliconflow",
+      "id": "fb-1",
       "type": "external",
-      "label": "硅基流动",
-      "sublabel": "ASR 转写",
+      "label": "gemini-3.7-flash",
+      "sublabel": "gemini·Vercel 代理",
       "pos": [
-        40,
-        320
+        540,
+        620
       ],
       "size": [
         180,
-        64
+        60
       ]
     },
     {
-      "id": "edge-tts",
+      "id": "fb-2",
       "type": "external",
-      "label": "Edge TTS",
-      "sublabel": "微软语音合成",
+      "label": "gemini-3.6-flash",
+      "sublabel": "gemini·Vercel 代理",
       "pos": [
-        330,
-        320
+        780,
+        620
       ],
       "size": [
         180,
-        64
+        60
       ]
     },
     {
-      "id": "paypal",
+      "id": "fb-3",
       "type": "external",
-      "label": "PayPal",
-      "sublabel": "创建/捕获订单",
+      "label": "deepseek-v4-pro",
+      "sublabel": "deepseek 官方",
       "pos": [
-        620,
-        320
+        1020,
+        620
       ],
       "size": [
         180,
-        64
+        60
+      ]
+    },
+    {
+      "id": "fb-4",
+      "type": "external",
+      "label": "gpt-5.6-luna",
+      "sublabel": "opencode 中转",
+      "pos": [
+        1260,
+        620
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fb-5",
+      "type": "external",
+      "label": "glm-5.3",
+      "sublabel": "opencode 中转",
+      "pos": [
+        1500,
+        620
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fb-6",
+      "type": "external",
+      "label": "kimi-k3",
+      "sublabel": "opencode 中转",
+      "pos": [
+        1740,
+        620
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fb-7",
+      "type": "external",
+      "label": "deepseek-v4-flash",
+      "sublabel": "deepseek 官方",
+      "pos": [
+        1740,
+        732
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fb-8",
+      "type": "external",
+      "label": "gemini-3.5-flash",
+      "sublabel": "gemini·Vercel 代理",
+      "pos": [
+        1500,
+        732
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fb-9",
+      "type": "external",
+      "label": "gemini-3.5-flash-lite",
+      "sublabel": "gemini·Vercel 代理",
+      "pos": [
+        1260,
+        732
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fb-10",
+      "type": "external",
+      "label": "gemini-3.1-flash-lite",
+      "sublabel": "gemini·Vercel 代理",
+      "pos": [
+        1020,
+        732
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "fb-11",
+      "type": "external",
+      "label": "gemini-3-flash-preview",
+      "sublabel": "gemini·Vercel 代理",
+      "pos": [
+        780,
+        732
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "vp-gemini",
+      "type": "cloud",
+      "label": "Vercel 流式代理",
+      "sublabel": "/v1beta/* gemini 域",
+      "pos": [
+        540,
+        1040
+      ],
+      "size": [
+        180,
+        60
+      ],
+      "sources": [
+        {
+          "path": "vercel-proxy/api/index.js",
+          "label": "gemini 流式代理"
+        }
+      ]
+    },
+    {
+      "id": "vp-opencode",
+      "type": "cloud",
+      "label": "Vercel 中转",
+      "sublabel": "/opencode-proxy/*",
+      "pos": [
+        1500,
+        1040
+      ],
+      "size": [
+        180,
+        60
       ]
     },
     {
@@ -180,164 +761,350 @@
       "label": "DeepSeek API",
       "sublabel": "api.deepseek.com",
       "pos": [
-        910,
-        320
+        1020,
+        1040
       ],
       "size": [
         180,
-        64
+        60
       ]
     },
     {
       "id": "gemini-api",
       "type": "external",
       "label": "Google Gemini",
-      "sublabel": "官方 API · 3 key",
+      "sublabel": "官方 · 3 key",
       "pos": [
-        1200,
-        320
+        540,
+        1280
       ],
       "size": [
         180,
-        64
+        60
+      ]
+    },
+    {
+      "id": "opencode-x",
+      "type": "external",
+      "label": "opencode.ai",
+      "sublabel": "兜底供应商",
+      "pos": [
+        1500,
+        1280
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "vp-steam",
+      "type": "cloud",
+      "label": "Vercel /steam-proxy",
+      "sublabel": "gemini 域",
+      "pos": [
+        780,
+        1400
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "vp-turnstile",
+      "type": "cloud",
+      "label": "Vercel /turnstile-proxy",
+      "sublabel": "gemini 域",
+      "pos": [
+        1020,
+        1400
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "vt-speech",
+      "type": "cloud",
+      "label": "Vercel /v1/audio/speech",
+      "sublabel": "tts 域 · Edge TTS",
+      "pos": [
+        40,
+        900
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "vt-transcribe",
+      "type": "cloud",
+      "label": "/v1/audio/transcriptions",
+      "sublabel": "tts 域 · ASR",
+      "pos": [
+        40,
+        1180
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "edge-tts",
+      "type": "external",
+      "label": "Edge TTS",
+      "sublabel": "微软合成",
+      "pos": [
+        40,
+        1440
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "siliconflow",
+      "type": "external",
+      "label": "硅基流动",
+      "sublabel": "ASR",
+      "pos": [
+        280,
+        1440
+      ],
+      "size": [
+        180,
+        60
+      ]
+    },
+    {
+      "id": "paypal",
+      "type": "external",
+      "label": "PayPal",
+      "sublabel": "REST",
+      "pos": [
+        1500,
+        488
+      ],
+      "size": [
+        180,
+        60
       ]
     }
   ],
   "boundaries": [
     {
       "kind": "region",
-      "label": "gualing.top — GitHub Pages + Cloudflare",
+      "label": "gualing.top 前端 — GitHub Pages + Cloudflare",
       "wraps": [
-        "frontend"
+        "fe-index",
+        "fe-register",
+        "fe-cdkey",
+        "fe-palace",
+        "fe-tts",
+        "fe-ui",
+        "fe-plum",
+        "fe-user",
+        "fe-recharge",
+        "fe-bokou",
+        "fe-bazi"
       ]
     },
     {
       "kind": "region",
-      "label": "yunsisanren.top VPS — nginx → gin :8300 / relay :3000",
+      "label": "yunsisanren.top VPS — gin :8300 /gualing-core",
       "wraps": [
-        "go-backend",
-        "relay"
+        "go-news",
+        "go-pubkey",
+        "go-ping",
+        "go-pconf",
+        "go-logout",
+        "go-aistream",
+        "go-auth",
+        "go-price",
+        "go-pubai",
+        "go-userinfo",
+        "go-sign",
+        "go-profile",
+        "go-asset",
+        "go-ppcreate",
+        "go-signcal",
+        "go-hlist",
+        "go-hdetail",
+        "go-ppcapture",
+        "go-hupdate",
+        "mysql",
+        "paypal"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "yunsisanren.top VPS — relay :3000 降级链",
+      "wraps": [
+        "relay-core",
+        "fb-1",
+        "fb-2",
+        "fb-3",
+        "fb-4",
+        "fb-5",
+        "fb-6",
+        "fb-7",
+        "fb-8",
+        "fb-9",
+        "fb-10",
+        "fb-11"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "Vercel Functions — gemini.gualing.top",
+      "wraps": [
+        "vp-gemini",
+        "vp-opencode",
+        "vp-steam",
+        "vp-turnstile"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "Vercel Functions — tts.gualing.top",
+      "wraps": [
+        "vt-speech",
+        "vt-transcribe"
       ]
     }
   ],
   "connections": [
     {
-      "id": "fe-go",
-      "from": "frontend",
-      "to": "go-backend",
-      "label": "HTTPS /gualing-core/*",
+      "id": "plt-ai",
+      "from": "fe-plum",
+      "to": "go-aistream",
+      "label": "POST /ai/stream",
       "variant": "emphasis"
     },
     {
-      "id": "go-relay",
-      "from": "go-backend",
-      "to": "relay",
-      "label": "SSE 流式",
-      "variant": "emphasis"
+      "id": "bk-ai",
+      "from": "fe-bokou",
+      "to": "go-aistream",
+      "label": "POST /ai/stream"
     },
     {
-      "id": "relay-vg",
-      "from": "relay",
-      "to": "vercel-gemini",
-      "label": "HTTPS /v1beta",
-      "variant": "emphasis"
+      "id": "ai-relay",
+      "from": "go-aistream",
+      "to": "relay-core",
+      "label": "SSE 转发",
+      "variant": "emphasis",
+      "labelDy": 56
     },
     {
-      "id": "fe-tts",
-      "from": "frontend",
-      "to": "vercel-tts",
-      "label": "HTTPS /v1/audio/*",
-      "variant": "dashed",
-      "labelDy": 46
+      "id": "relay-fb1",
+      "from": "relay-core",
+      "to": "fb-1",
+      "label": "降级起始",
+      "labelDy": 56
     },
     {
-      "id": "go-mysql",
-      "from": "go-backend",
-      "to": "mysql",
-      "label": "SQL",
-      "labelDy": 46
+      "id": "fb1-2",
+      "from": "fb-1",
+      "to": "fb-2"
     },
     {
-      "id": "go-paypal",
-      "from": "go-backend",
-      "to": "paypal",
-      "label": "REST 订单"
+      "id": "fb2-3",
+      "from": "fb-2",
+      "to": "fb-3"
     },
     {
-      "id": "relay-oc",
-      "from": "relay",
-      "to": "opencode",
-      "label": "opencode 兜底",
-      "variant": "dashed",
-      "labelDy": 46
+      "id": "fb3-4",
+      "from": "fb-3",
+      "to": "fb-4"
     },
     {
-      "id": "relay-ds",
-      "from": "relay",
-      "to": "deepseek-api",
-      "label": "HTTPS · 402 降级",
-      "variant": "dashed"
+      "id": "fb4-5",
+      "from": "fb-4",
+      "to": "fb-5"
     },
     {
-      "id": "vg-gemini",
-      "from": "vercel-gemini",
+      "id": "fb5-6",
+      "from": "fb-5",
+      "to": "fb-6"
+    },
+    {
+      "id": "fb6-7",
+      "from": "fb-6",
+      "to": "fb-7"
+    },
+    {
+      "id": "fb7-8",
+      "from": "fb-7",
+      "to": "fb-8"
+    },
+    {
+      "id": "fb8-9",
+      "from": "fb-8",
+      "to": "fb-9"
+    },
+    {
+      "id": "fb9-10",
+      "from": "fb-9",
+      "to": "fb-10"
+    },
+    {
+      "id": "fb10-11",
+      "from": "fb-10",
+      "to": "fb-11"
+    },
+    {
+      "id": "gem-chain",
+      "from": "fb-1",
+      "to": "vp-gemini",
+      "label": "经 Vercel 代理",
+      "variant": "emphasis",
+      "labelDy": 150
+    },
+    {
+      "id": "vg-gem",
+      "from": "vp-gemini",
       "to": "gemini-api",
-      "label": "HTTPS 流式"
+      "label": "HTTPS 流式",
+      "variant": "emphasis",
+      "labelDy": 56
     },
     {
-      "id": "vt-edge",
-      "from": "vercel-tts",
-      "to": "edge-tts",
-      "label": "TTS speech"
+      "id": "vo-oc",
+      "from": "vp-opencode",
+      "to": "opencode-x",
+      "label": "HTTPS",
+      "labelDy": 150
     },
     {
-      "id": "vt-sf",
-      "from": "vercel-tts",
+      "id": "tts-vs",
+      "from": "fe-tts",
+      "to": "vt-speech",
+      "label": "/v1/audio/speech",
+      "variant": "dashed",
+      "labelDy": 160
+    },
+    {
+      "id": "vt-asr",
+      "from": "vt-transcribe",
       "to": "siliconflow",
       "label": "ASR 转写",
-      "labelDy": 46
-    }
-  ],
-  "cards": [
-    {
-      "dot": "cyan",
-      "title": "前端 9 页功能",
-      "items": [
-        "占卜主流程：梅花 plum-blossom / 伯叩 bokou",
-        "八字排盘 bazi-paipan · 宫殿 palace",
-        "注册/充值/CDKey/用户中心 register·recharge·cdkey·user-center",
-        "氛围层 ui-atmosphere：WebGL 墨彩流体+网格粒子+太极粒子",
-        "语音 chat-assistant + gualing-tts（TTS 朗读）"
-      ]
-    },
-    {
-      "dot": "emerald",
-      "title": "Go 后端 gin :8300",
-      "items": [
-        "公开：public-key(RSA)/user/auth/ai/public-stream/paypal/config/payment/price/news/latest",
-        "鉴权 JWT：ai/stream(ProxyAI)/history/user/profile/sign/paypal create·capture",
-        "RSA 加密载荷 → 转发本地 relay；thought 状态机 + details 规范化",
-        "流中断判定 → 余额退款回滚"
-      ]
-    },
-    {
-      "dot": "amber",
-      "title": "relay :3000",
-      "items": [
-        "GLOBAL_FALLBACK_MODELS 11 级降级链",
-        "MAX_CONTINUATION_TRIES=3 断点续传（systemInstruction + 「继续。」）",
-        "首字超时也走降级；convertGeminiToDeepSeek 跨供应商转换",
-        "DeepSeek 402 时 opencode-go-main 兜底"
-      ]
-    },
-    {
-      "dot": "violet",
-      "title": "Vercel Functions",
-      "items": [
-        "gemini.gualing.top：gemini 流式代理 + /opencode-proxy + /steam-proxy + /turnstile-proxy",
-        "tts.gualing.top：voicecraft /v1/audio/speech（Edge TTS）+ /v1/audio/transcriptions（硅基流动）",
-        "Node.js Runtime · maxDuration=300s"
-      ]
+      "via": [
+        [
+          130,
+          1330
+        ],
+        [
+          370,
+          1330
+        ]
+      ],
+      "fromSide": "bottom",
+      "toSide": "top"
     }
   ]
 }
