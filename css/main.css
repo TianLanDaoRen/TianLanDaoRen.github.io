@@ -351,6 +351,9 @@ footer {
     overflow-x: auto;
     white-space: pre;
     -webkit-overflow-scrolling: touch;
+    /* 💡 字符画对齐（2026-09-03）：CJK 等宽栈——已装 Sarasa/WenKai Mono/Noto Mono CJK 的用户用等宽中文，
+       其余回退系统字体；因提示词已强制全宽制图符+全角空格缩进，对齐与 Latin 字体度量解耦，此栈只做兜底 */
+    font-family: "LXGW WenKai Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", "Noto Sans Mono CJK SC", "Sarasa Term SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", monospace;
 }
 .ai-interpretation pre::-webkit-scrollbar,
 .message-content pre::-webkit-scrollbar,
