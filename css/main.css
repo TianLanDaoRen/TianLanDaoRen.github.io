@@ -346,7 +346,12 @@ footer {
 /* 代码块溢出兜底（转换失败/普通代码块）：横向滚动，不撑破容器 */
 .ai-interpretation pre,
 .message-content pre,
-.streaming-content pre {
+.streaming-content pre,
+/* 💡 2026-09-03 补 code 子元素：marked 输出 <pre><code>，Tailwind 的 code 选择器直接命中 code，
+   直接命中永远胜过从 pre 继承——只写 pre 等于没写 */
+.ai-interpretation pre code,
+.message-content pre code,
+.streaming-content pre code {
     max-width: 100%;
     overflow-x: auto;
     white-space: pre;
