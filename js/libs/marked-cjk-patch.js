@@ -341,9 +341,29 @@
       }
       return lines.join('\n');
     }
+    // === 第七部分（v10）：加粗/斜体 span 内部的 ASCII 方括号 → 全角方括号 ===
+    // 根因（2026-09-04 线上实拍）：**…[…]** 闭包 ** 前是 ASCII ]（\p{P} 标点）、后是汉字/CJK标点，
+    // 按 CommonMark right-flanking 判定无法闭合 → 整段 ** 字面残留
+    // （如 **【结论】**：**今夕…[体卦…摩擦]**）。注意这是 CJK 豁免引入的回归：
+    // 原生 marked 下 。，属标点、闭包正常；豁免把 CJK 标点判为内容字符后"前标点+后CJK"双不靠。
+    // 修复：span 内 ASCII [...]（排除链接 [...](url)/图片 ![...]/脚注 [^...]）转全角［…］，
+    // ［］属 CJK 豁免类 → 闭包 ** 前为内容字符 → 正常闭合，且整段保持加粗、视觉几乎无差。
+    // 幂等：输出无 ASCII [ → 二次不命中；星号紧贴方括号（**[x]**）首字符即 [，留给 fixBracketEmphasis。
+    const EMPH_BRACKET_SPAN_RE = /(\*{1,2})([^*\n\[][^*\n]*?\[[^\]\n]*\][^*\n]*?)(\1)(?!\*)/g;
+    function fixEmphasisBrackets(src) {
+      if (!src || src.indexOf('*') === -1 || src.indexOf('[') === -1) return src;
+      return src.replace(EMPH_BRACKET_SPAN_RE, (m, open, inner, close) => {
+        const converted = inner.replace(/!?\[[^\]\n]*\](?!\()/g, (b) => {
+          if (b.charCodeAt(0) === 33 || b.charCodeAt(1) === 94) return b; // ![ / [^ 保留
+          return '［' + b.slice(1, -1) + '］';
+        });
+        if (converted === inner) return m;
+        return open + converted + close;
+      });
+    }
     // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
     // v8：restoreCorruptedLatex 置于链最前——先恢复上游损坏的反斜杠，后续 fixLatex 才能命中
-    marked.use({ hooks: { preprocess: (src) => fixLatex(fixBracketEmphasis(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(fixFenceGuaBullets(restoreCorruptedLatex(src))))))) } });
+    marked.use({ hooks: { preprocess: (src) => fixLatex(fixBracketEmphasis(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(fixFenceGuaBullets(fixEmphasisBrackets(restoreCorruptedLatex(src)))))))) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }
