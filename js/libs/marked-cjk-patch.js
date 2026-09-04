@@ -312,9 +312,38 @@
       }
       return out.join('\n');
     }
+    // === 第六部分：fence 内卦画行的 markdown 行首标记剥离 ===
+    // AI 偶发在 ``` 卦画块内行首带出 * / - / + / > / # / 数字. 等标记（如 "* ━━　━━ …"），
+    // fence 内应逐字渲染 → 字面星号残留并挤占列宽（2026-09-04 线上实拍）。
+    // 仅当行内含卦画字符（━ U+2501 / ▅ U+2585 / ═ U+2500系）才视为卦画行并剥离
+    // （普通代码块/真实列表不受影响）；幂等、流式安全（输出无标记 → 二次处理不再命中）。
+    const GUA_ART_RE = /[━▅═]/;
+    const FENCE_MARKER_RE = /^(\s*)(?:[*\-+>]\s+|#{1,6}\s+|\d{1,3}[.)]\s+)/;
+    function fixFenceGuaBullets(src) {
+      if (!src || !GUA_ART_RE.test(src)) return src;
+      const lines = src.split('\n');
+      let inFence = null;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (!inFence) {
+          const fm = line.match(/^\s*(```+|~~~+)\s*[\w-]*\s*$/);
+          if (fm) inFence = { char: fm[1][0], len: fm[1].length };
+          continue;
+        }
+        const closeRe = new RegExp('^\\s*' + inFence.char + '{' + inFence.len + ',}\\s*$');
+        if (closeRe.test(line)) { inFence = null; continue; }
+        if (!GUA_ART_RE.test(line)) continue;
+        let fixed = line;
+        for (let k = 0; k < 3 && FENCE_MARKER_RE.test(fixed); k++) {
+          fixed = fixed.replace(FENCE_MARKER_RE, '$1');
+        }
+        lines[i] = fixed;
+      }
+      return lines.join('\n');
+    }
     // marked.parse 为 getter-only 属性（v18 UMD），无法包装 → 用官方 hooks.preprocess
     // v8：restoreCorruptedLatex 置于链最前——先恢复上游损坏的反斜杠，后续 fixLatex 才能命中
-    marked.use({ hooks: { preprocess: (src) => fixLatex(fixBracketEmphasis(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(restoreCorruptedLatex(src)))))) } });
+    marked.use({ hooks: { preprocess: (src) => fixLatex(fixBracketEmphasis(fixLinkEmphasis(normalizeEmphasis(asciiTableToGfm(fixFenceGuaBullets(restoreCorruptedLatex(src))))))) } });
   } catch (e) {
     // 静默失败：保持 marked 原行为，不阻塞页面
   }

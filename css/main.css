@@ -351,7 +351,10 @@ footer {
    直接命中永远胜过从 pre 继承——只写 pre 等于没写 */
 .ai-interpretation pre code,
 .message-content pre code,
-.streaming-content pre code {
+.streaming-content pre code,
+/* 💡 2026-09-04 导出图片容器不在 .ai-interpretation 内，字体栈到不了——单独补 */
+.export-ai-content pre,
+.export-ai-content pre code {
     max-width: 100%;
     overflow-x: auto;
     white-space: pre;
