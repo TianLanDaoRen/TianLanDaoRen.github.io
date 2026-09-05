@@ -14,10 +14,11 @@
     <script src="js/libs/marked.min.js"></script>
     <script src="js/libs/marked-cjk-patch.js?v=20260816-4"></script>
     <script src="js/libs/font-awesome.js"></script>
-    <script src="js/utils.js"></script>
+    <script src="js/utils.js?v=20260905-bz1"></script>
+    <script src="js/gualing-birth.js?v=20260905-bz1"></script>
     <script src="js/gualing-crypto-api.js"></script>
     <script src="js/user-center.js"></script>
-    <script src="js/bazi.js"></script>
+    <script src="js/bazi.js?v=20260905-bz1"></script>
     <script src="js/news-carousel.js"></script>
 </head>
 
@@ -69,14 +70,51 @@
                             <input type="hidden" name="gender" value="男">
                         </div>
 
+                        <!-- 历法切换（默认北京时区） -->
+                        <div class="form-control w-full mb-4">
+                            <label class="label"><span class="label-text text-font">历法（默认北京时区）</span></label>
+                            <div class="join w-full cal-group">
+                                <button class="join-item btn btn-primary flex-1 cal-btn btn-active" data-cal="solar">公历</button>
+                                <button class="join-item btn btn-outline flex-1 cal-btn" data-cal="lunar">农历</button>
+                            </div>
+                        </div>
+
                         <!-- 出生日期 -->
                         <div class="form-control w-full mb-4">
                             <label class="label">
-                                <span class="label-text text-font">出生日期（真太阳时、早晚子时、公历）</span>
+                                <span class="label-text text-font">出生时间（出生地当地墙钟）</span>
                                 <span class="birth-alt label-text-alt text-error"></span>
                             </label>
-                            <input type="text" name="birth" class="input input-bordered text-font"
-                                placeholder="例如：1990-01-01 12:00" />
+                            <input type="datetime-local" name="birth" class="input input-bordered text-font w-full" />
+                        </div>
+
+                        <!-- 真太阳时 -->
+                        <div class="form-control mb-4">
+                            <label class="cursor-pointer label justify-start gap-2 py-1">
+                                <input type="checkbox" name="solar" checked class="checkbox checkbox-sm" />
+                                <span class="label-text text-font">真太阳时修正（推荐）</span>
+                            </label>
+                        </div>
+
+                        <!-- 出生地址（真太阳时需选具体地址） -->
+                        <div class="form-control w-full mb-4 addr-box">
+                            <label class="label"><span class="label-text text-font">出生地址（省/市/区县）</span></label>
+                            <div class="flex gap-1">
+                                <select name="addr1" class="select select-bordered flex-1 text-font"></select>
+                                <select name="addr2" class="select select-bordered flex-1 text-font"></select>
+                                <select name="addr3" class="select select-bordered flex-1 text-font"></select>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-6 mb-4">
+                            <label class="cursor-pointer label justify-start gap-2 py-1">
+                                <input type="checkbox" name="dst" class="checkbox checkbox-sm" />
+                                <span class="label-text text-font">夏令时出生</span>
+                            </label>
+                            <label class="cursor-pointer label justify-start gap-2 py-1">
+                                <input type="checkbox" name="midnight" class="checkbox checkbox-sm" />
+                                <span class="label-text text-font">早晚子时（23点算次日）</span>
+                            </label>
                         </div>
 
                         <!-- 排盘按钮 -->
