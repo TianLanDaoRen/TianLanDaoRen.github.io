@@ -8,3 +8,5 @@ gemini*.js
 node_modules/
 backup/
 *test*
+# 混淆器本地备份（3774个/242MB，不进仓库，git历史可溯）
+backup/

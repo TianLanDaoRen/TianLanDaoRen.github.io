@@ -1,3 +1,4 @@
+@import url('https://cdn.jsdelivr.net/npm/@fontsource/zcool-xiaowei@5.1.0/index.css');
 /* 主题配置 */
 :root {
     --primary: 342, 51%, 37%;
@@ -59,21 +60,25 @@
 @font-face {
     font-family: 'Alibaba-PuHuiTi';
     src: url('../assets/fonts/Alibaba_PuHuiTi_2.0_55_Regular_55_Regular.woff2') format('woff2');
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'XinYiJiXiangSong';
     src: url('../assets/fonts/Fontquan-XinYiJiXiangSong-Regular.woff2') format('woff2');
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'QiuHongKai';
     src: url('../assets/fonts/Yanshi-QiuHongKai.woff2') format('woff2');
+    font-display: swap;
 }
 
 @font-face {
-    font-family: 'XiaoWei';
+    font-family: 'ZCOOL XiaoWei', 'XiaoWei';
     src: url('../assets/fonts/Zcool-XiaoWei.woff2') format('woff2');
+    font-display: swap;
 }
 
 /* 基础样式 */
@@ -91,7 +96,7 @@ body {
 }
 
 .heading-font {
-    font-family: 'XiaoWei', 'Alibaba-PuHuiTi', sans-serif;
+    font-family: 'ZCOOL XiaoWei', 'XiaoWei', 'Alibaba-PuHuiTi', sans-serif;
     font-weight: bolder;
 }
 
@@ -106,7 +111,7 @@ body {
 }
 
 .nav-text {
-    font-family: 'XiaoWei', 'Alibaba-PuHuiTi', sans-serif;
+    font-family: 'ZCOOL XiaoWei', 'XiaoWei', 'Alibaba-PuHuiTi', sans-serif;
 }
 
 .interpretation,
