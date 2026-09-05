@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-cn" class="scroll-smooth" data-theme="light">
+
+<head>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <title>卦灵AI - 后台管理</title>
+    <link rel="icon" href="assets/images/icon.jpeg" />
+    <link rel="stylesheet" href="css/main.css?v=20260903-mono2" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/new-ui.css?v=20260816-nui63" />
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="js/utils.js?v=20260816"></script>
+    <script src="js/gualing-crypto-api.js?v=20260816"></script>
+    <script src="js/user-center.js?v=20260905-adm1"></script>
+    <script src="js/adminops.js?v=20260905-adm1"></script>
+</head>
+
+<body class="min-h-screen">
+    <!-- 顶栏（复用全局 navbar-end 登录态渲染；管理员入口由此进入） -->
+    <div class="navbar bg-base-100/90 backdrop-blur border-b border-[#e6ded5] sticky top-0 z-40 px-3 sm:px-6">
+        <div class="navbar-start">
+            <a href="index.html" class="text-xl font-bold text-[#9e1c26] heading-font tracking-widest">卦灵AI · 后台管理</a>
+        </div>
+        <div class="navbar-end"></div>
+    </div>
+
+    <main class="max-w-7xl mx-auto p-3 sm:p-6">
+        <!-- 鉴权门禁：默认展示，通过后端 /admin/me 后才揭示正文 -->
+        <div id="adm-gate" class="card bg-base-100 border border-[#e6ded5] shadow p-8 text-center">
+            <span class="loading loading-spinner loading-lg text-[#9e1c26] mx-auto"></span>
+            <p class="mt-4 text-gray-500">正在向后台核验管理员身份…</p>
+        </div>
+
+        <div id="adm-denied" class="hidden card bg-base-100 border border-red-200 shadow p-8 text-center">
+            <i class="fa-solid fa-shield-halved fa-3x text-red-300"></i>
+            <h2 class="text-xl font-bold mt-4">需要管理员权限</h2>
+            <p class="text-gray-500 mt-2 text-sm">本地登录态不足为凭，已被后台拒绝。<a href="index.html" class="link text-[#9e1c26]">返回首页</a></p>
+        </div>
+
+        <div id="adm-body" class="hidden">
+            <!-- 概览统计 -->
+            <h2 class="font-bold text-lg mb-3"><i class="fa-solid fa-chart-line text-[#9e1c26] mr-2"></i>全站概览</h2>
+            <div id="adm-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"></div>
+
+            <!-- 数据表 -->
+            <div class="flex items-center gap-3 mb-3 flex-wrap">
+                <h2 class="font-bold text-lg"><i class="fa-solid fa-database text-[#9e1c26] mr-2"></i>数据管理</h2>
+                <div id="adm-tabs" class="tabs tabs-boxed tabs-sm flex-wrap"></div>
+            </div>
+
+            <div class="card bg-base-100 border border-[#e6ded5] shadow">
+                <div class="p-3 flex gap-2 flex-wrap items-center border-b border-[#e6ded5]">
+                    <input id="adm-q" type="text" placeholder="搜索（可搜列）…" class="input input-bordered input-sm w-56" />
+                    <button id="adm-search" class="btn btn-sm">搜索</button>
+                    <select id="adm-pagesize" class="select select-bordered select-sm">
+                        <option value="10">10/页</option>
+                        <option value="20" selected>20/页</option>
+                        <option value="50">50/页</option>
+                        <option value="100">100/页</option>
+                    </select>
+                    <span id="adm-total" class="text-sm text-gray-500 ml-auto"></span>
+                    <button id="adm-create" class="btn btn-sm bg-[#9e1c26] text-white border-none">+ 新建</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="table table-sm table-zebra">
+                        <thead id="adm-thead"></thead>
+                        <tbody id="adm-tbody"></tbody>
+                    </table>
+                </div>
+                <div class="p-3 flex gap-2 items-center justify-center border-t border-[#e6ded5]">
+                    <button id="adm-prev" class="btn btn-sm">上一页</button>
+                    <span id="adm-pageinfo" class="text-sm text-gray-500"></span>
+                    <button id="adm-next" class="btn btn-sm">下一页</button>
+                    <input id="adm-jump" type="number" min="1" class="input input-bordered input-sm w-20" placeholder="页码" />
+                    <button id="adm-go" class="btn btn-sm">跳转</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 行编辑弹窗 -->
+    <dialog id="adm-modal" class="modal">
+        <div class="modal-box max-w-2xl">
+            <h3 id="adm-modal-title" class="font-bold text-lg mb-4">编辑记录</h3>
+            <div id="adm-form" class="flex flex-col gap-3 max-h-[60vh] overflow-y-auto"></div>
+            <div id="adm-form-err" class="text-sm text-red-500 mt-2 hidden"></div>
+            <div class="modal-action">
+                <button id="adm-save" class="btn bg-[#9e1c26] text-white border-none">保存</button>
+                <form method="dialog"><button class="btn">取消</button></form>
+            </div>
+        </div>
+    </dialog>
+
+    <!-- 密码重置弹窗 -->
+    <dialog id="adm-pwmodal" class="modal">
+        <div class="modal-box max-w-sm">
+            <h3 class="font-bold text-lg mb-4">重置用户密码 <span id="adm-pw-who" class="text-[#9e1c26]"></span></h3>
+            <input id="adm-pw-new" type="text" placeholder="新密码（6-64位）" class="input input-bordered w-full" />
+            <div id="adm-pw-err" class="text-sm text-red-500 mt-2 hidden"></div>
+            <div class="modal-action">
+                <button id="adm-pw-save" class="btn bg-[#9e1c26] text-white border-none">重置</button>
+                <form method="dialog"><button class="btn">取消</button></form>
+            </div>
+        </div>
+    </dialog>
+</body>
+
+</html>
