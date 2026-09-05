@@ -72,7 +72,7 @@ export default async function handler(req, res) {
         const corsHeaders = {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
-            'Access-Control-Allow-Headers': 'Authorization, Content-Type',
+            'Access-Control-Allow-Headers': 'Authorization, Content-Type, x-opencode-session',
             'Access-Control-Max-Age': '86400',
         };
 
@@ -91,6 +91,10 @@ export default async function handler(req, res) {
             };
             if (req.headers['authorization']) {
                 cleanOcHeaders['Authorization'] = req.headers['authorization'];
+            }
+            // 💡 2026-09-05 opencode 强制要求 x-opencode-session（09/06 起缺头可能报错），必须透传
+            if (req.headers['x-opencode-session']) {
+                cleanOcHeaders['x-opencode-session'] = req.headers['x-opencode-session'];
             }
 
             let reqBody = undefined;
