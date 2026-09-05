@@ -105,8 +105,8 @@
 
             <!-- 区块 1：人机验证与 Steam 登录 -->
             <div id="step-auth" class="flex flex-col items-center gap-6">
-                <!-- Turnstile 容器 -->
-                <div class="cf-turnstile" data-sitekey="0x4AAAAAADDhFTIqoZVk_a7b" data-theme="light"></div>
+                <!-- Turnstile 自动校验容器（interaction-only，由 cdkey.js 显式渲染） -->
+                <div id="ts-widget" data-sitekey="0x4AAAAAADDhFTIqoZVk_a7b" data-theme="light"></div>
 
                 <p class="text-sm text-gray-500 text-font text-center">
                     * 需使用 Steam 授权登录以防止批量倒卖<br>
@@ -176,7 +176,7 @@
             </div>
         </footer>
 
-        <script type="module" src="js/cdkey.js"></script>
+        <script type="module" src="js/cdkey.js?v=20260905-tsauto"></script>
     <script src="js/ui-atmosphere.js?v=20260822-wave2"></script>
 </body>
 

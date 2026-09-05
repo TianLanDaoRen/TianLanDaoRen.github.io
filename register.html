@@ -75,10 +75,9 @@
                     </span>
                 </div>
 
-                <!-- 仅注册时显示的 Turnstile -->
+                <!-- Turnstile 自动校验（interaction-only：无感通过，仅可疑时弹框） -->
                 <div id="turnstile-container" class="flex justify-center pt-2">
-                    <!-- TODO: Cloudflare Turnstile 验证组件 -->
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAADDhFTIqoZVk_a7b" data-theme="light"></div>
+                    <div id="ts-widget" data-sitekey="0x4AAAAAADDhFTIqoZVk_a7b" data-theme="light"></div>
                 </div>
 
                 <!-- 错误提示框 -->
@@ -106,7 +105,7 @@
             </p>
         </div>
     </footer>
-    <script src="js/register.js"></script>
+    <script src="js/register.js?v=20260905-tsauto"></script>
     <script src="js/ui-atmosphere.js?v=20260822-wave2"></script>
 </body>
 
