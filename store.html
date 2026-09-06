@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-cn" data-theme="light">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <meta charset="UTF-8">
+    <title>尊享会员 - 卦灵AI</title>
+    <link rel="icon" href="assets/images/icon.png" />
+    <link rel="stylesheet" href="css/main.css?v=20260905-cdn3" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.24/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/new-ui.css?v=20260816-nui63" />
+    <script src="js/libs/font-awesome.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
+    <script src="js/gualing-crypto-api.js?v=20260816"></script>
+    <script src="js/utils.js?v=20260905-bz2"></script>
+    <script src="js/user-center.js?v=20260905-bz5"></script>
+</head>
+
+<body class="min-h-screen flex flex-col bg-[#fffbf5]">
+    <div class="navbar bg-[#fffbf5]/95 backdrop-blur shadow-sm sticky top-0 z-50 border-b border-[#e6ded5]">
+        <div class="navbar-start">
+            <a href="index.html" class="btn btn-ghost heading-font text-2xl text-[#9e1c26]">
+                <i class="fa-solid fa-arrow-left mr-1 text-sm"></i> 卦灵AI
+            </a>
+        </div>
+        <div class="navbar-end">
+            <!-- UserCenter 会自动渲染这里 -->
+        </div>
+    </div>
+
+    <main class="flex-1 w-full max-w-2xl mx-auto px-4 py-8 pb-24 space-y-6">
+        <div class="text-center">
+            <h1 class="heading-font text-3xl text-[#9e1c26] mb-2">💎 尊享会员</h1>
+            <p class="text-sm text-gray-500 text-font">一次捐赠，永久尊享；法力充盈，方能洞察天机</p>
+        </div>
+
+        <!-- 会员卡 -->
+        <div class="bg-gradient-to-br from-[#9e1c26] to-[#5e0f16] text-white rounded-2xl shadow-2xl p-6 md:p-8 relative overflow-hidden">
+            <div class="absolute -right-6 -top-6 text-[120px] opacity-10 leading-none">💎</div>
+            <div class="flex items-center gap-2 mb-1">
+                <h2 class="heading-font text-2xl">永久会员</h2>
+                <span class="badge bg-[#d4af37] text-white border-none text-xs">限时优惠</span>
+            </div>
+            <div class="flex items-end gap-2 mb-4">
+                <span class="text-4xl font-bold text-[#f3d27a]">¥88</span>
+                <span class="text-sm line-through opacity-60 mb-1">原价 ¥288</span>
+            </div>
+            <ul class="space-y-2 text-sm mb-6">
+                <li class="flex items-center gap-2"><i class="fa-solid fa-gem text-[#f3d27a]"></i> 尊贵标识：钻石头像框＋专属问候，走到哪都发光</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-gift text-[#f3d27a]"></i> 每日签到魔力值 <b class="text-[#f3d27a]">×3 倍</b>（10→30，满勤 30→90）</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-[#f3d27a]"></i> 梅花起卦自选高级模型，解卦更准更细</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-[#f3d27a]"></i> 伯叩起卦自选高级模型，断事更透更深</li>
+                <li class="flex items-center gap-2"><i class="fa-solid fa-infinity text-[#f3d27a]"></i> 以后还有更多会员权益，持续加码</li>
+            </ul>
+            <button id="btn-vip" data-plan="vip" data-price-fen="8800"
+                class="btn w-full bg-[#d4af37] text-white border-none text-lg tracking-widest shadow-lg hover:bg-[#b5952f]">
+                <i class="fa-solid fa-crown mr-1"></i> 捐赠成为永久会员
+            </button>
+        </div>
+
+        <!-- 高级模型 -->
+        <div class="bg-white rounded-2xl border border-[#e6ded5] shadow p-6">
+            <h2 class="heading-font text-xl text-gray-800 mb-2 border-l-4 border-[#9e1c26] pl-2">高级模型，为何更强</h2>
+            <p class="text-sm text-gray-500 leading-relaxed mb-4">
+                会员专享旗舰大模型：理解更深、引经据典更准、断语更细更敢断。
+                同一卦象，高级模型能多看出三层 —— 卦理推演更严密，旺衰喜忌更精确，
+                批文更长更详，不再是两句正确的废话，而是能指导行动的断语。
+            </p>
+            <div class="flex flex-wrap gap-2" id="vip-models">
+                <span class="badge badge-outline border-[#9e1c26] text-[#9e1c26]">muse-spark 极速解卦</span>
+                <span class="badge badge-outline border-[#9e1c26] text-[#9e1c26]">glm-5.3-flash 旗舰详批</span>
+                <span class="badge badge-outline border-[#9e1c26] text-[#9e1c26]">deepseek-v4-pro 深度推演</span>
+            </div>
+        </div>
+
+        <!-- 魔力值 -->
+        <div class="bg-white rounded-2xl border border-[#e6ded5] shadow p-6">
+            <h2 class="heading-font text-xl text-gray-800 mb-1 border-l-4 border-[#d4af37] pl-2">补充魔力值</h2>
+            <p class="text-xs text-gray-400 mb-4">5 点魔力值 = 1 元，按需拿取</p>
+            <div class="grid grid-cols-4 gap-2 mb-4" id="points-grid">
+                <button class="preset-btn btn btn-sm h-auto py-2 flex-col border-[#e6ded5] bg-gray-50 text-[#9e1c26]" data-points="50"><b>50点</b><span class="text-xs">¥10</span></button>
+                <button class="preset-btn btn btn-sm h-auto py-2 flex-col border-[#e6ded5] bg-gray-50 text-[#9e1c26]" data-points="100"><b>100点</b><span class="text-xs">¥20</span></button>
+                <button class="preset-btn btn btn-sm h-auto py-2 flex-col border-[#e6ded5] bg-gray-50 text-[#9e1c26]" data-points="250"><b>250点</b><span class="text-xs">¥50</span></button>
+                <button class="preset-btn btn btn-sm h-auto py-2 flex-col border-[#e6ded5] bg-gray-50 text-[#9e1c26]" data-points="500"><b>500点</b><span class="text-xs">¥100</span></button>
+            </div>
+            <div class="flex gap-2 mb-4">
+                <input type="number" id="custom-points" placeholder="自定义点数（5的倍数）" step="5" min="5"
+                    class="input input-bordered input-sm flex-1 focus:border-[#9e1c26]" />
+                <button id="btn-buy" data-plan="points"
+                    class="btn btn-sm bg-[#9e1c26] text-white border-none px-6"><i class="fa-solid fa-bolt mr-1"></i> 拿取</button>
+            </div>
+            <p class="text-xs text-gray-400">需奉纳：<span id="store-price" class="font-bold text-[#9e1c26]">¥0.00</span></p>
+        </div>
+    </main>
+
+    <div id="store-toast" class="toast toast-center hidden z-[2000]">
+        <div class="alert alert-info text-sm"><span id="store-toast-msg"></span></div>
+    </div>
+
+    <script src="js/store.js?v=20260905-st1"></script>
+    <script src="js/ui-atmosphere.js?v=20260905-taiji1"></script>
+</body>
+
+</html>
