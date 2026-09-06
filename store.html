@@ -34,6 +34,11 @@
         <div id="store-checkout" class="hidden bg-white rounded-2xl border border-[#e6ded5] shadow-2xl p-6 text-center">
             <p class="text-xs text-gray-400 mb-1" id="co-product">商品</p>
             <p class="text-sm text-gray-500">请打开支付宝，按以下金额与备注付款</p>
+            <div class="my-3">
+                <img src="assets/images/zfb-qr.png" alt="支付宝经营收款码"
+                    class="mx-auto w-44 max-w-[200px] h-auto rounded-2xl border border-[#e6ded5] shadow-md" />
+                <p class="text-xs text-gray-400 mt-1">长按识别或扫码付款（本站经营码）</p>
+            </div>
             <p class="my-3"><span class="text-4xl font-bold text-[#9e1c26]" id="co-amount">¥0.00</span></p>
             <div class="bg-gray-50 border border-dashed border-gray-300 rounded-xl py-3 mb-2">
                 <p class="text-xs text-gray-400">付款备注（必填，填错自负）</p>
@@ -44,7 +49,7 @@
             </div>
             <p class="text-xs text-gray-400 mb-4">剩余支付时间 <b id="co-countdown" class="text-[#9e1c26]">10:00</b> · 金额精确到分 · 超时会话自动销毁</p>
             <ol class="text-xs text-gray-500 text-left leading-relaxed mb-4 list-decimal list-inside">
-                <li>打开支付宝，发起一笔<strong>转账</strong>到本站收款账号；</li>
+                <li>打开支付宝<strong>扫上方经营码</strong>（或直接转账到本站账号）；</li>
                 <li>金额必须与上方<strong>一分不差</strong>，多付可认、少付一分都不过；</li>
                 <li>备注必须填写上方 5 位码，错 3 位以上不认；</li>
                 <li>付款后回到本页点"我已支付"，系统自动对账上分。</li>
