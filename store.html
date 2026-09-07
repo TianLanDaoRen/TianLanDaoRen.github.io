@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
     <script src="js/gualing-crypto-api.js?v=20260816"></script>
     <script src="js/utils.js?v=20260905-bz2"></script>
-    <script src="js/user-center.js?v=20260905-bz16"></script>
+    <script src="js/user-center.js?v=20260905-bz17"></script>
 </head>
 
 <body class="min-h-screen flex flex-col bg-[#fffbf5]">
@@ -108,7 +108,7 @@
                 <button class="preset-btn btn btn-sm h-auto py-2 flex-col border-[#e6ded5] bg-gray-50 text-[#9e1c26]" data-points="500"><b>500点</b><span class="text-xs">¥100</span></button>
             </div>
             <div class="flex gap-2 mb-4">
-                <input type="number" id="custom-points" placeholder="自定义点数（5的倍数）" step="5" min="5"
+                <input type="number" id="custom-points" placeholder="自定义点数（5的倍数，最高10000）" step="5" min="5" max="10000"
                     class="input input-bordered input-sm flex-1 focus:border-[#9e1c26]" />
                 <button id="btn-buy" data-plan="points"
                     class="btn btn-sm bg-[#9e1c26] text-white border-none px-6"><i class="fa-solid fa-bolt mr-1"></i> 拿取</button>
@@ -122,7 +122,7 @@
         <div class="alert alert-info text-sm"><span id="store-toast-msg"></span></div>
     </div>
 
-    <script src="js/store.js?v=20260905-st18"></script>
+    <script src="js/store.js?v=20260905-st19"></script>
     <script src="js/ui-atmosphere.js?v=20260905-taiji1"></script>
 </body>
 
