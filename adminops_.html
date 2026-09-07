@@ -17,7 +17,7 @@
     <script src="js/user-center.js?v=20260905-bz8"></script>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
     <script src="js/gualing-birth.js?v=20260905-bz8"></script>
-    <script src="js/adminops.js?v=20260905-adm2"></script>
+    <script src="js/adminops.js?v=20260905-adm3"></script>
 </head>
 
 <body class="min-h-screen">
@@ -46,6 +46,10 @@
             <!-- 概览统计 -->
             <h2 class="font-bold text-lg mb-3"><i class="fa-solid fa-chart-line text-[#9e1c26] mr-2"></i>全站概览</h2>
             <div id="adm-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"></div>
+
+            <!-- 人工待办：孤儿账单＋退款申请 -->
+            <h2 class="font-bold text-lg mb-3"><i class="fa-solid fa-bell text-[#9e1c26] mr-2"></i>人工待办 <span id="adm-todo-badge" class="badge badge-sm bg-[#9e1c26] text-white border-none ml-1 hidden"></span></h2>
+            <div id="adm-todos" class="grid md:grid-cols-2 gap-3 mb-6"><div class="text-sm text-gray-400">加载中…</div></div>
 
             <!-- 数据表 -->
             <div class="flex items-center gap-3 mb-3 flex-wrap">
