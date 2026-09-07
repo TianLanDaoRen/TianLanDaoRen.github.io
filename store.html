@@ -78,7 +78,7 @@
                 <li class="flex items-center gap-2"><i class="fa-solid fa-infinity text-[#f3d27a]"></i> 以后还有更多会员权益，持续加码</li>
             </ul>
             <button id="btn-vip" data-plan="vip" data-price-fen="8800"
-                class="btn w-full bg-[#d4af37] text-white border-none text-lg tracking-widest shadow-lg hover:bg-[#b5952f]">
+                class="btn w-full bg-[#d4af37] text-white border-none text-lg tracking-widest shadow-lg hover:bg-[#b5952f] disabled:opacity-90 disabled:text-white">
                 <i class="fa-solid fa-crown mr-1"></i> 捐赠成为永久会员
             </button>
         </div>
@@ -111,7 +111,7 @@
                 <input type="number" id="custom-points" placeholder="自定义点数（5的倍数，最高10000）" step="5" min="5" max="10000"
                     class="input input-bordered input-sm flex-1 focus:border-[#9e1c26]" />
                 <button id="btn-buy" data-plan="points"
-                    class="btn btn-sm bg-[#9e1c26] text-white border-none px-6"><i class="fa-solid fa-bolt mr-1"></i> 拿取</button>
+                    class="btn btn-sm bg-[#9e1c26] text-white border-none px-6 disabled:opacity-90 disabled:text-white"><i class="fa-solid fa-bolt mr-1"></i> 拿取</button>
             </div>
             <p class="text-xs text-gray-400">需奉纳：<span id="store-price" class="font-bold text-[#9e1c26]">¥0.00</span> <span id="store-discount" class="badge badge-xs bg-red-50 text-red-500 border-red-100 hidden"></span></p>
         </div>
@@ -122,7 +122,7 @@
         <div class="alert alert-info text-sm"><span id="store-toast-msg"></span></div>
     </div>
 
-    <script src="js/store.js?v=20260905-st21"></script>
+    <script src="js/store.js?v=20260905-st22"></script>
     <script src="js/ui-atmosphere.js?v=20260905-taiji1"></script>
 </body>
 
