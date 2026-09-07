@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
     <script src="js/gualing-crypto-api.js?v=20260816"></script>
     <script src="js/utils.js?v=20260905-bz2"></script>
-    <script src="js/user-center.js?v=20260905-bz10"></script>
+    <script src="js/user-center.js?v=20260905-bz11"></script>
 </head>
 
 <body class="min-h-screen flex flex-col bg-[#fffbf5]">
@@ -45,7 +45,8 @@
                 <li>打开支付宝<strong>扫上方经营码</strong>（或直接转账到本站账号）；</li>
                 <li>转账时填写金额必须与上方<strong>完全一致（精确到分）</strong>，无需任何备注；</li>
                 <li>付款后回到本页点"我已支付"，系统自动对账上分；</li>
-                <li>若金额填错导致未能到账，可在【用户中心】-【支付中心】对对应订单申请退款，我们会尽快人工核实处理。</li>
+                <li>若金额填错导致未能到账：<strong>请勿重复付款</strong>，等订单关闭后到【用户中心】-【支付中心】申请退款即可；</li>
+                <li>若需人工协助，可发邮件至 gualing-support@yeastcloud.com，贫道亲自督办。</li>
             </ol>
             <button id="co-paid" class="btn w-full bg-[#9e1c26] text-white border-none" disabled><i class="fa-solid fa-circle-check mr-1"></i> <span id="co-paid-text">我已支付（15s）</span></button>
             <button id="co-back" class="btn btn-ghost btn-sm w-full mt-2 text-gray-400">返回修改</button>
@@ -119,7 +120,7 @@
         <div class="alert alert-info text-sm"><span id="store-toast-msg"></span></div>
     </div>
 
-    <script src="js/store.js?v=20260905-st9"></script>
+    <script src="js/store.js?v=20260905-st10"></script>
     <script src="js/ui-atmosphere.js?v=20260905-taiji1"></script>
 </body>
 
