@@ -33,35 +33,20 @@
         <!-- 收银台（下单后显示） -->
         <div id="store-checkout" class="hidden bg-white rounded-2xl border border-[#e6ded5] shadow-2xl p-6 text-center">
             <p class="text-xs text-gray-400 mb-1" id="co-product">商品</p>
-            <p class="text-sm text-gray-500">请打开支付宝，按以下金额与备注付款</p>
+            <p class="text-sm text-gray-500">请打开支付宝，按以下金额付款</p>
             <div class="my-3">
                 <img src="assets/images/zfb-qr.png" alt="支付宝经营收款码"
                     class="mx-auto w-44 max-w-[200px] h-auto rounded-2xl border border-[#e6ded5] shadow-md" />
                 <p class="text-xs text-gray-400 mt-1">长按识别或扫码付款（本站经营码）</p>
             </div>
             <p class="my-3"><span class="text-4xl font-bold text-[#9e1c26]" id="co-amount">¥0.00</span></p>
-            <div class="bg-gray-50 border border-dashed border-gray-300 rounded-xl py-3 mb-2">
-                <p class="text-xs text-gray-400">付款备注（必填，填错自负）</p>
-                <p class="flex items-center justify-center gap-2">
-                    <span class="text-2xl font-mono font-bold tracking-[0.3em] text-gray-800" id="co-code">-----</span>
-                    <button id="co-copy" class="btn btn-xs btn-ghost text-[#9e1c26]"><i class="fa-solid fa-copy"></i> 复制</button>
-                </p>
-            </div>
-            <p class="text-xs text-gray-400 mb-4">剩余支付时间 <b id="co-countdown" class="text-[#9e1c26]">10:00</b> · 金额精确到分 · 超时会话自动销毁</p>
+            <p class="text-xs text-gray-400 mb-4">剩余支付时间 <b id="co-countdown" class="text-[#9e1c26]">10:00</b> · 金额精确到分 · 无需备注 · 超时会话自动销毁</p>
             <ol class="text-xs text-gray-500 text-left leading-relaxed mb-4 list-decimal list-inside">
                 <li>打开支付宝<strong>扫上方经营码</strong>（或直接转账到本站账号）；</li>
-                <li>金额必须与上方<strong>一分不差</strong>，多付可认、少付一分都不过；</li>
-                <li>备注必须填写上方 5 位码，错 3 位以上不认；</li>
-                <li>付款后回到本页点"我已支付"，系统自动对账上分。</li>
+                <li>转账时填写金额必须与上方<strong>完全一致（精确到分）</strong>，无需任何备注；</li>
+                <li>付款后回到本页点"我已支付"，系统自动对账上分；</li>
+                <li>若金额填错导致未能到账，可在【用户中心】-【支付中心】对对应订单申请退款，我们会尽快人工核实处理。</li>
             </ol>
-            <details class="mb-4 text-left">
-                <summary class="text-xs text-[#9e1c26] cursor-pointer select-none">📖 看不懂？点我看三步图解</summary>
-                <a href="assets/images/zfb-help.png" target="_blank" rel="noopener">
-                    <img src="assets/images/zfb-help.png" alt="支付宝付款三步图解：填金额、填备注、确认付款" loading="lazy"
-                        class="mx-auto mt-2 w-full max-w-[320px] h-auto rounded-xl border border-[#e6ded5] shadow-md" />
-                </a>
-                <p class="text-[11px] text-gray-400 text-center mt-1">点图可放大查看</p>
-            </details>
             <button id="co-paid" class="btn w-full bg-[#9e1c26] text-white border-none" disabled><i class="fa-solid fa-circle-check mr-1"></i> <span id="co-paid-text">我已支付（15s）</span></button>
             <button id="co-back" class="btn btn-ghost btn-sm w-full mt-2 text-gray-400">返回修改</button>
         </div>
@@ -134,7 +119,7 @@
         <div class="alert alert-info text-sm"><span id="store-toast-msg"></span></div>
     </div>
 
-    <script src="js/store.js?v=20260905-st6"></script>
+    <script src="js/store.js?v=20260905-st7"></script>
     <script src="js/ui-atmosphere.js?v=20260905-taiji1"></script>
 </body>
 
