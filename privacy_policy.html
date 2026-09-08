@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <script>function gualingLibFallback(el){el.onerror=null;var l=el.getAttribute("data-local");if(!el.dataset.f){el.dataset.f="1";el.src=el.src.replace("cdn.jsdmirror.com","cdn.jsdelivr.net");}else if(l){el.src=l;}}</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - 天岚道人</title>
@@ -24,8 +25,8 @@
             border-radius: 3px;
         }
     </style>
-    <script src="js/libs/marked.min.js"></script>
-    <script src="js/libs/marked-cjk-patch.js?v=20260816-4"></script>
+    <script src="https://cdn.jsdmirror.com/gh/TianLanDaoRen/gualing-fonts@v1.1.0/libs/marked.min.js" data-local="js/libs/marked.min.js" onerror="gualingLibFallback(this)"></script>
+    <script src="https://cdn.jsdmirror.com/gh/TianLanDaoRen/gualing-fonts@v1.1.0/libs/marked-cjk-patch.js?v=20260816-4" data-local="js/libs/marked-cjk-patch.js?v=20260816-4" onerror="gualingLibFallback(this)"></script>
     <link rel="stylesheet" href="css/new-ui.css?v=20260816-nui63" />
 </head>
 

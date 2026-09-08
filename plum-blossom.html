@@ -2,6 +2,7 @@
 <html lang="zh-cn" class="scroll-smooth" data-theme="light">
 
 <head>
+    <script>function gualingLibFallback(el){el.onerror=null;var l=el.getAttribute("data-local");if(!el.dataset.f){el.dataset.f="1";el.src=el.src.replace("cdn.jsdmirror.com","cdn.jsdelivr.net");}else if(l){el.src=l;}}</script>
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
     <meta charset="UTF-8">
@@ -13,10 +14,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/new-ui.css?v=20260816-nui63" />
     <script src="https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js"></script>
-    <script src="js/libs/marked.min.js"></script>
-    <script src="js/libs/marked-cjk-patch.js?v=20260904-6"></script>
+    <script src="https://cdn.jsdmirror.com/gh/TianLanDaoRen/gualing-fonts@v1.1.0/libs/marked.min.js" data-local="js/libs/marked.min.js" onerror="gualingLibFallback(this)"></script>
+    <script src="https://cdn.jsdmirror.com/gh/TianLanDaoRen/gualing-fonts@v1.1.0/libs/marked-cjk-patch.js?v=20260904-6" data-local="js/libs/marked-cjk-patch.js?v=20260904-6" onerror="gualingLibFallback(this)"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="js/libs/font-awesome.js"></script>
+    <script src="https://cdn.jsdmirror.com/gh/TianLanDaoRen/gualing-fonts@v1.1.0/libs/font-awesome.js" data-local="js/libs/font-awesome.js" onerror="gualingLibFallback(this)"></script>
     <script src="https://cdn.jsdelivr.net/npm/lunar-javascript@1.7.7/lunar.js"></script>
     <script src="js/utils.js?v=20260905-bz2"></script>
     <!-- 引入安全与全局组件 -->
