@@ -90,26 +90,36 @@
 
     <!-- 行编辑弹窗 -->
     <dialog id="adm-modal" class="modal">
-        <div class="modal-box max-w-2xl">
-            <h3 id="adm-modal-title" class="font-bold text-lg mb-4">编辑记录</h3>
+        <div class="modal-box max-w-2xl bg-[#fffdf9] border border-[#e6ded5] p-0 overflow-hidden">
+            <div class="bg-gradient-to-br from-[#9e1c26] to-[#5e0f16] px-6 py-4 relative overflow-hidden">
+                <div class="absolute -right-3 -top-5 text-[72px] opacity-10 leading-none">⚙️</div>
+                <h3 id="adm-modal-title" class="font-bold text-lg text-white heading-font tracking-widest">编辑记录</h3>
+            </div>
+            <div class="p-6">
             <div id="adm-form" class="flex flex-col gap-3 max-h-[60vh] overflow-y-auto"></div>
             <div id="adm-form-err" class="text-sm text-red-500 mt-2 hidden"></div>
             <div class="modal-action">
                 <button id="adm-save" class="btn bg-[#9e1c26] text-white border-none">保存</button>
                 <form method="dialog"><button class="btn">取消</button></form>
             </div>
+            </div>
         </div>
     </dialog>
 
     <!-- 密码重置弹窗 -->
     <dialog id="adm-pwmodal" class="modal">
-        <div class="modal-box max-w-sm">
-            <h3 class="font-bold text-lg mb-4">重置用户密码 <span id="adm-pw-who" class="text-[#9e1c26]"></span></h3>
+        <div class="modal-box max-w-sm bg-[#fffdf9] border border-[#e6ded5] p-0 overflow-hidden">
+            <div class="bg-gradient-to-br from-[#9e1c26] to-[#5e0f16] px-6 py-4 relative overflow-hidden">
+                <div class="absolute -right-3 -top-5 text-[72px] opacity-10 leading-none">⚙️</div>
+                <h3 class="font-bold text-lg text-white heading-font tracking-widest">重置用户密码 <span id="adm-pw-who" class="text-[#f3d27a]"></span></h3>
+            </div>
+            <div class="p-6">
             <input id="adm-pw-new" type="text" placeholder="新密码（6-64位）" class="input input-bordered w-full" />
             <div id="adm-pw-err" class="text-sm text-red-500 mt-2 hidden"></div>
             <div class="modal-action">
                 <button id="adm-pw-save" class="btn bg-[#9e1c26] text-white border-none">重置</button>
                 <form method="dialog"><button class="btn">取消</button></form>
+            </div>
             </div>
         </div>
     </dialog>
