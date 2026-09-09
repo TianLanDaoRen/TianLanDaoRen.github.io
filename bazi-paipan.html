@@ -16,9 +16,9 @@
     <script src="https://cdn.jsdmirror.com/gh/TianLanDaoRen/gualing-assets@v1.2.3/libs/marked-cjk-patch.js?v=20260816-4" data-local="js/libs/marked-cjk-patch.js?v=20260816-4" onerror="gualingLibFallback(this)"></script>
     <script src="https://cdn.jsdmirror.com/gh/TianLanDaoRen/gualing-assets@v1.2.3/libs/font-awesome.js" data-local="js/libs/font-awesome.js" onerror="gualingLibFallback(this)"></script>
     <script src="js/utils.js?v=20260905-bz2"></script>
-    <script src="js/gualing-birth.js?v=20260908-bz21"></script>
+    <script src="js/gualing-birth.js?v=20260908-bz22"></script>
     <script src="js/gualing-crypto-api.js"></script>
-    <script src="js/user-center.js?v=20260908-av19"></script>
+    <script src="js/user-center.js?v=20260908-av20"></script>
     <script src="js/bazi.js?v=20260905-bz2"></script>
     <script src="js/news-carousel.js"></script>
 </head>
@@ -71,12 +71,9 @@
                             <input type="hidden" name="gender" value="男">
                         </div>
 
-                        <!-- 出生时间（问真式滚轮选择器，默认北京时区） -->
+                        <!-- 出生地址＋时间（问真式滚轮选择器，自带标题，默认北京时区） -->
                         <div class="form-control w-full mb-4">
-                            <label class="label">
-                                <span class="label-text font-bold text-gray-600 mb-1 mt-2">出生时间（北京时间）</span>
-                                <span class="birth-alt label-text-alt text-error"></span>
-                            </label>
+                            <span class="birth-alt label-text-alt text-error text-xs"></span>
                             <div id="bazi-birthpicker"></div>
                         </div>
 
