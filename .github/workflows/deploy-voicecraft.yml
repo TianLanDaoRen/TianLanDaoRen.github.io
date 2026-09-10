@@ -1,0 +1,15 @@
+name: deploy-voicecraft
+on:
+  push:
+    branches: [main]
+    paths: ['vercel-voicecraft/**']
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: npm i -g vercel
+      - run: vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        working-directory: vercel-voicecraft
