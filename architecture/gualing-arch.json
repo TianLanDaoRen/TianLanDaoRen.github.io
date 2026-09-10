@@ -654,7 +654,7 @@
     {
       "id": "fb-7",
       "type": "external",
-      "label": "deepseek-v4-flash",
+      "label": "deepseek-flash",
       "sublabel": "deepseek 官方",
       "pos": [
         1740,

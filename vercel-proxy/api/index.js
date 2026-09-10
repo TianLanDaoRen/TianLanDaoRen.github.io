@@ -117,7 +117,7 @@ export default async function handler(req, res) {
                 res.setHeader('Content-Type', 'application/json; charset=utf-8');
                 try {
                     const j = JSON.parse(text);
-                    const THINKING_MODELS = new Set(['deepseek-v4-pro', 'deepseek-v4-flash', 'kimi-k3', 'glm-5.3']);
+                    const THINKING_MODELS = new Set(['deepseek-v4-pro', 'deepseek-flash', 'kimi-k3', 'glm-5.3']);
                     if (j && Array.isArray(j.data)) {
                         j.data.forEach(m => { if (m && THINKING_MODELS.has(m.id)) m.reasoning = true; });
                     }
