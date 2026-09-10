@@ -1,3 +1,4 @@
+// auto-deploy e2e 2026-09-10 (no-op comment)
 // 💡 使用 Vercel Nodejs Runtime，原生支持 Web Standard Fetch 与 SSE 流式传输
 export const config = {
     runtime: 'nodejs',

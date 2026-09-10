@@ -1,3 +1,4 @@
+// auto-deploy e2e 2026-09-10 (no-op comment)
 // 💡 Vercel Node.js Runtime
 export const config = {
   runtime: 'nodejs',
