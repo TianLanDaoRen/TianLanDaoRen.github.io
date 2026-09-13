@@ -15,24 +15,30 @@ function sliceBetween(label, startAnchor, endAnchor) {
     return src.slice(s, e);
 }
 
-// A: 配置常量区（fallback 链 / 三类 key / PROVIDER_REGISTRY / MODEL_TO_PROVIDERS）
-const A = sliceBetween('config', '// 💡【2026-08 全量降级链】', '// =================================================================\n// 通知模块');
-// B: 两个节点类 + appletPool（appletPool 定义位于两类的注释区间内）
-const B = sliceBetween('classes', 'class VirtualWorkerNode {', '// 自动挂载原生 API Key 虚拟节点');
-// C: getBestNode 路由函数
-const C = sliceBetween('getBestNode', '// 💡【智能路由调度】', '    return bestNode;\n}') + '    return bestNode;\n}';
-// D: extractModelName
-const D = sliceBetween('extractModelName', 'function extractModelName', 'return match ? match[1] : pathOrModel;\n}') + 'return match ? match[1] : pathOrModel;\n}';
-// E: 降级起点定位（initFallbackIndex）
-const E = sliceBetween('override', 'function initFallbackIndex', '// 💡【智能路由调度】');
+// 切片改用生产文件里显式埋设的 @slice 标记（2026-09-13 插桩）——
+// 原先按注释文案切片，任何一句注释被改写都会把 harness 打断（这份测试就是这样烂掉两个月的）。
+function slice(label) {
+    return sliceBetween(label, `// @slice:${label}:start`, `// @slice:${label}:end`);
+}
+
+// config：降级链 / 四类 key / PROVIDER_REGISTRY / MODEL_TO_PROVIDERS / 超时与续传常量
+const A = slice('config');
+// classes：VirtualWorkerNode / CompletionWorkerNode
+const B = slice('classes');
+// router：getBestNode
+const C = slice('router');
+// continuation：buildContinuationBody
+const D = slice('continuation');
+// helpers：extractModelName / initFallbackIndex / handleTimeout
+const E = slice('helpers');
 
 const harness = [
     "import { StringDecoder } from 'node:string_decoder';",
-    'function handleIncomingWSMessage() {}', // stub：测试不触发 send/mockWSMessage
+    'function handleIncomingWSMessage() {}', // stub：测试不触发真实分发
     'globalThis.fetch = async () => { throw new Error("fetch not allowed in test"); };',
-    'const appletPool = new Set();', // 生产文件 L288 定义（位于切片区间外，此处手动补齐）
+    'const appletPool = new Set();', // 生产文件中定义在 @slice:classes 之外，此处手动补齐
     A, B, C, D, E,
-    'export { PROVIDER_REGISTRY, MODEL_TO_PROVIDERS, GLOBAL_FALLBACK_MODELS, DEEPSEEK_API_KEYS, OPENCODE_API_KEYS, STABLE_API_KEYS, VirtualWorkerNode, CompletionWorkerNode, getBestNode, extractModelName, appletPool, initFallbackIndex };'
+    'export { PROVIDER_REGISTRY, MODEL_TO_PROVIDERS, GLOBAL_FALLBACK_MODELS, DEEPSEEK_API_KEYS, OPENCODE_API_KEYS, STABLE_API_KEYS, ZHIPU_API_KEYS, VirtualWorkerNode, CompletionWorkerNode, getBestNode, extractModelName, appletPool, initFallbackIndex, buildContinuationBody };'
 ].join('\n');
 
 const harnessPath = path.join(os.tmpdir(), 'relay-router-harness.mjs');
