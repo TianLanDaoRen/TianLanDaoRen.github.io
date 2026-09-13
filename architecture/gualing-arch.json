@@ -961,7 +961,7 @@
     },
     {
       "kind": "security-group",
-      "label": "Vercel Functions — gemini.gualing.top",
+      "label": "Vercel Functions — proxy.gualing.top",
       "wraps": [
         "vp-gemini",
         "vp-opencode",

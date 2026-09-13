@@ -8,7 +8,7 @@ export const config = {
 export const maxDuration = 300;
 
 export default async function handler(req, res) {
-    const hostHeader = req.headers.host || 'gemini.gualing.top';
+    const hostHeader = req.headers.host || 'proxy.gualing.top';
     const url = new URL(req.url, `https://${hostHeader}`);
     const pathname = url.pathname;
 
