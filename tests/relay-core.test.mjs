@@ -5,15 +5,16 @@
 //   · 本文件              —— 运行时**行为**断言：用假 fetch 喂分块数据，驱动真实解析器，
 //                            断言"喂进去什么、吐出来什么"，不依赖任何配置数值
 //
-// 覆盖 2026-09-13 全量审阅发现的三处逻辑漏洞（前两处已修，本文件即其回归护栏）：
+// 覆盖 2026-09-13 全量审阅发现的逻辑漏洞，均已成为本文件的回归护栏：
 //   H1 流式 JSON 扫描器状态失同步：对象跨 chunk 且含嵌套括号时，旧 depth/inString 被重复累加，
-//      导致对象永远合不拢、该请求解析静默停摆（本文件 §1.2/§1.3 即复现该场景）
+//      导致对象永远合不拢、该请求解析静默停摆（§1.2/§1.3 即复现该场景）
 //   M1 completion 通道上游 error 块被 catch 无差别吞掉（[Completion Stream Error] 曾是死代码）
-//   M2 流中途未捕获异常会把客户端挂死 —— 尚未修复，故不在此断言，留待决策
+//   M2 流中途未捕获异常不了结响应，客户端空等至 REQUEST_TIMEOUT(600s)，任务与节点配额双双挂住
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const RELAY = path.resolve(process.argv[2] || '/Users/yunsisanren/Documents/Workspaces/VSCWorkspace/GualingAI/gemini-relay.js');
 const src = fs.readFileSync(RELAY, 'utf8');
@@ -31,8 +32,9 @@ const harness = [
     'globalThis.__relayEmitted = [];',
     'function handleIncomingWSMessage(ws, s) { globalThis.__relayEmitted.push({ nodeId: ws && ws.nodeId, msg: JSON.parse(s) }); }',
     'const appletPool = new Set();',
-    slice('config'), slice('classes'), slice('router'), slice('continuation'), slice('helpers'),
-    'export { VirtualWorkerNode, CompletionWorkerNode, getBestNode, extractModelName, initFallbackIndex, buildContinuationBody, appletPool, GLOBAL_FALLBACK_MODELS };'
+    'const pendingRequests = new Map();', // 生产文件中定义在各 @slice 之外，补齐供兜底收尾函数使用
+    slice('config'), slice('classes'), slice('router'), slice('continuation'), slice('finalize'), slice('helpers'),
+    'export { VirtualWorkerNode, CompletionWorkerNode, getBestNode, extractModelName, initFallbackIndex, buildContinuationBody, finalizeRequestOnException, appletPool, pendingRequests, GLOBAL_FALLBACK_MODELS };'
 ].join('\n');
 
 const harnessPath = path.join(os.tmpdir(), 'relay-core-harness.mjs');
@@ -55,6 +57,22 @@ function installFakeFetch(chunks, { okStatus = true, status = 200 } = {}) {
         body: (async function* () { for (const c of chunks) yield Buffer.from(c, 'utf8'); })()
     });
 }
+
+// —— 假 res：记录写入、可判定了结状态 ——
+function makeRes() {
+    const rec = { wrote: [], status: null, json: null, ended: false };
+    return {
+        rec,
+        res: {
+            get writableEnded() { return rec.ended; },
+            setHeader() { }, flushHeaders() { },
+            write(s) { rec.wrote.push(String(s)); return true; },
+            end() { rec.ended = true; },
+            status(c) { rec.status = c; return { json(b) { rec.json = b; } }; }
+        }
+    };
+}
+function armedTimer() { const h = setTimeout(() => { }, 60000); if (h.unref) h.unref(); return h; }
 
 function batchesOf(emitted, id) { return emitted.filter(e => e.msg.id === id && e.msg.type === 'batch'); }
 function doneOf(emitted, id) { return emitted.find(e => e.msg.id === id && e.msg.done === true); }
@@ -85,12 +103,24 @@ try {
     }
 
     // ============================================================
-    console.log('=== 1. 流式 JSON 扫描器：分块边界不得破坏解析 ===');
+    console.log('=== 0. 全文语法自检（覆盖未被切片的区段：WS 分发器 / 兜底收尾 / 定时器）===');
+    // ============================================================
+    {
+        const tmp = path.join(os.tmpdir(), 'relay-whole-syntax.mjs');
+        fs.writeFileSync(tmp, src);
+        let okSyntax = true, errMsg = '';
+        try { execFileSync(process.execPath, ['--check', tmp], { stdio: 'pipe' }); }
+        catch (e) { okSyntax = false; errMsg = (e.stderr || Buffer.from('')).toString().slice(0, 200); }
+        finally { fs.rmSync(tmp, { force: true }); }
+        ok(okSyntax, okSyntax ? '全文语法通过（node --check 整文件）' : `全文语法失败: ${errMsg}`);
+    }
+
+    // ============================================================
+    console.log('\n=== 1. 流式 JSON 扫描器：分块边界不得破坏解析 ===');
     // ============================================================
     const CH_A = '{"candidates":[{"content":{"parts":[{"text":"甲"}]}}]}';
     const CH_B = '{"candidates":[{"content":{"parts":[{"text":"乙"}]}}],"usageMetadata":{"totalTokenCount":7}}';
 
-    // 1.1 单块内含两个完整对象
     {
         const em = await runVirtual([CH_A + CH_B], 'c1');
         ok(textsOf(em, 'c1').join('') === '甲乙', `单块两对象 → 文本顺序正确 (got ${JSON.stringify(textsOf(em, 'c1').join(''))})`);
@@ -108,17 +138,16 @@ try {
 
     // 1.3 逐字符切块（最坏情况）
     {
-        const cc = Array.from(CH_A + CH_B);
-        const em = await runVirtual(cc, 'c3');
+        const em = await runVirtual(Array.from(CH_A + CH_B), 'c3');
         ok(textsOf(em, 'c3').join('') === '甲乙', `逐字符切块 → 仍解析出甲乙 (got ${JSON.stringify(textsOf(em, 'c3').join(''))})`);
         ok(!!doneOf(em, 'c3'), '逐字符切块后仍正常收尾');
     }
 
-    // 1.4a 字符串值内含花括号与引号，且切点落在字符串中间
+    // 1.4 字符串值内含花括号与引号，且切点落在字符串中间
     {
         const inner = '花括号{"a":1} 与 "引号" 包裹';
         const payload = JSON.stringify({ candidates: [{ content: { parts: [{ text: inner }] } }], usageMetadata: {} });
-        const at = payload.indexOf('花括号') + 3; // 切进该字符串内部
+        const at = payload.indexOf('花括号') + 3;
         const em = await runVirtual([payload.slice(0, at), payload.slice(at)], 'c4');
         ok(textsOf(em, 'c4').join('') === inner, `字符串内的括号/引号不被误判结构 (got ${JSON.stringify(textsOf(em, 'c4').join(''))})`);
     }
@@ -150,7 +179,6 @@ try {
             `error 块上抛为 [Completion Stream Error] (got ${f ? f.msg.error.slice(0, 60) : 'none'})`);
     }
 
-    // 2.2 正常流：reasoning_content → thought，content → 正文，finish_reason + [DONE] → done
     {
         const em = await runCompletion([
             'data: {"choices":[{"delta":{"reasoning_content":"想一下"}}]}\n\n',
@@ -164,7 +192,6 @@ try {
         ok(!!doneOf(em, 'd2t') && !failureOf(em, 'd2t'), 'finish_reason + [DONE] → done:true 无 error');
     }
 
-    // 2.3 零产出且无 finish_reason → 必须抛错换节点，不得伪装成功
     {
         const em = await runCompletion(['data: {"choices":[{"delta":{}}]}\n\n'], 'd3t', 'd3');
         const f = failureOf(em, 'd3t');
@@ -172,7 +199,6 @@ try {
             `零产出断流 → 抛 Stream Truncated 换节点 (got ${f ? f.msg.error.slice(0, 50) : 'none'})`);
     }
 
-    // 2.4 非 2xx → 直接抛 HTTP 状态，不进入流解析
     {
         globalThis.__relayEmitted = [];
         installFakeFetch(['nope'], { okStatus: false, status: 500 });
@@ -230,20 +256,63 @@ try {
         ok(H.getBestNode(ZP_PATH)?.nodeId === 'zp1', 'zhipu 系模型只落 zhipu 节点（不与 deepseek 混用）');
         ok(H.getBestNode(SSE_PATH)?.nodeId === 'g1', 'gemini 模型落 gemini 节点');
 
-        // 负载均衡：同 provider 两节点应轮流（lastUsed 最久者优先）
         ds1.pendingTasks = 0; ds2.pendingTasks = 0;
         ds1.lastUsed = 0; ds2.lastUsed = Date.now();
         ok(H.getBestNode(DS_PATH)?.nodeId === 'ds1', '同负载下取 lastUsed 更久者（轮询语义）');
 
-        // 60s 错误惩罚：刚出错的节点应被 +10 载荷推开
         ds1.lastUsed = 0; ds2.lastUsed = 0;
         ds1.lastErrorTime = Date.now();
         ok(H.getBestNode(DS_PATH)?.nodeId === 'ds2', `刚出错节点被 +10 载荷推开 (got ${H.getBestNode(DS_PATH)?.nodeId})`);
 
-        // 惩罚过期后应重新可用
         ds1.lastErrorTime = Date.now() - 61000;
         ds1.lastUsed = 0; ds2.lastUsed = 0;
         ok(H.getBestNode(DS_PATH) !== null, '惩罚窗口(60s)过期后节点重新可用');
+    }
+
+    // ============================================================
+    console.log('\n=== 5. 异常兜底收尾（M2 回归）===');
+    // ============================================================
+    {
+        // 5.1 流已开始 → 发中断标记并了结，配额与账目立即释放
+        H.pendingRequests.clear();
+        const a = makeRes();
+        const ws1 = { nodeId: 'n1', pendingTasks: 2 };
+        H.pendingRequests.set('x1', {
+            res: a.res, hasStartedStream: true, isSSE: true,
+            timeoutId: armedTimer(), firstChunkTimeoutId: armedTimer()
+        });
+        H.finalizeRequestOnException(ws1, 'x1', new Error('boom'));
+        ok(ws1.pendingTasks === 1, `节点配额被立即释放 (got ${ws1.pendingTasks})`);
+        ok(H.pendingRequests.has('x1') === false, '任务从待办表清除（不再挂到 600s）');
+        ok(a.rec.wrote.some(s => s.includes('stream_interrupted')), 'SSE 流收到中断标记');
+        ok(a.rec.ended === true, '响应被了结（客户端不再空等）');
+
+        // 5.2 流未开始 → 立即 500，而不是空等超时
+        H.pendingRequests.clear();
+        const b = makeRes();
+        const ws2 = { nodeId: 'n2', pendingTasks: 1 };
+        H.pendingRequests.set('x2', {
+            res: b.res, hasStartedStream: false, isSSE: true,
+            timeoutId: armedTimer(), firstChunkTimeoutId: null
+        });
+        H.finalizeRequestOnException(ws2, 'x2', new Error('state machine fail'));
+        ok(b.rec.status === 500 && b.rec.json?.error?.status === 'INTERNAL_ERROR', '未开始流 → 立即回 500 而非空等');
+        ok(H.pendingRequests.has('x2') === false, '任务已清账');
+
+        // 5.3 幂等：对已清账任务二次调用不得重复扣减配额（先人为抬高载荷，否则 0 与 0 无从区分）
+        ws2.pendingTasks = 3;
+        H.finalizeRequestOnException(ws2, 'x2', new Error('again'));
+        ok(ws2.pendingTasks === 3, `对已清账任务不重复扣减配额（幂等）(got ${ws2.pendingTasks})`);
+
+        // 5.4 id 缺失（JSON.parse 阶段就炸）→ 不触碰任何状态
+        const ws3 = { nodeId: 'n3', pendingTasks: 5 };
+        H.finalizeRequestOnException(ws3, null, new Error('no id'));
+        ok(ws3.pendingTasks === 5, 'id 缺失时不动任何状态');
+
+        // 5.5 静态护栏：catch 里确实挂了这个兜底（防日后被删）
+        ok(/catch \(e\) \{[\s\S]{0,900}?finalizeRequestOnException\(ws, taskId, e\);/.test(src),
+            'handleIncomingWSMessage 的 catch 内确实调用兜底收尾（静态护栏）');
+        ok(/let taskId = null;/.test(src), 'taskId 已提到 try 之外（否则 catch 取不到 id）');
     }
 
     console.log(`\n=== 结果: ${passed} passed, ${failed} failed ===`);

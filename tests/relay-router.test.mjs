@@ -143,8 +143,8 @@ try {
     ok(fbChain[0] === 'gemini-3.8-flash', '链首 gemini-3.8-flash（2026-09-03 起主模型入链）');
     ok(fbChain[1] === 'gemini-3.7-flash' && fbChain[2] === 'gemini-3.6-flash', 'gemini 支线 3.8 → 3.7 → 3.6（首级回退位）');
     ok(fbChain[3] === 'muse-spark-1.3-contributor' && fbChain[4] === 'glm-5.3-flash', '新锐支线：muse-spark → glm-5.3-flash');
-    // ⚠️ 2026-09-13 重定基线：数组 [6] 是 deepseek-v4-flash，而源文件 L17 注释写的副线顺序为
-    //    DS4P → gpt → glm-5.3 → kimi-k3 → DS4F（DS4F 在末位）。数组与注释不一致，待云笥裁定。
+    // 2026-09-13 已裁定：副线顺序以 GLOBAL_FALLBACK_MODELS 数组为准（DS4F 紧随 DS4P）。
+    // 源文件 L17 注释曾与此矛盾，同日已改注释对齐数组（只纠文字、不动行为）。
     ok(fbChain[5] === 'deepseek-v4-pro' && fbChain[6] === 'deepseek-v4-flash' && fbChain[7] === 'gpt-5.6-luna' && fbChain[8] === 'glm-5.3' && fbChain[9] === 'kimi-k3', '副线数组实况：DS4P → DS4F → gpt → glm-5.3 → k3');
     ok(fbChain.includes('glm-5.3') && fbChain.includes('deepseek-v4-flash') && fbChain.includes('gpt-5.6-luna'), '付费模型全部入链（含 gpt-5.6-luna）');
     ok(fbChain.indexOf('gpt-5.6-luna') < fbChain.indexOf('glm-5.3') && fbChain.indexOf('glm-5.3') < fbChain.indexOf('kimi-k3'), '用户调序：gpt 在 GLM 前、GLM 在 K3 前');
