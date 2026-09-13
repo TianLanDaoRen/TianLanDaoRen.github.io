@@ -6,7 +6,9 @@
   "scripts": {
     "build": "node build-obfuscate.js",
     "rollback": "node rollback.js",
-    "test:relay": "node tests/relay-router.test.mjs"
+    "test:relay": "npm run test:relay:core && npm run test:relay:router",
+    "test:relay:router": "node tests/relay-router.test.mjs",
+    "test:relay:core": "node tests/relay-core.test.mjs"
   },
   "repository": {
     "type": "git",

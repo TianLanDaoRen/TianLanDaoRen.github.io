@@ -21,3 +21,4 @@ backup/
 !tests/
 tests/*
 !tests/relay-router.test.mjs
+!tests/relay-core.test.mjs
