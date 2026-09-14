@@ -13,3 +13,4 @@ backup/
 
 .vercel
 .env.local
+request.json
