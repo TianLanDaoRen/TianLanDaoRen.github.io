@@ -88,7 +88,9 @@ function partsOf(emitted, id) {
 function textsOf(emitted, id) { return partsOf(emitted, id).map(p => p.text); }
 
 const SSE_PATH = '/v1beta/models/gemini-3.8-flash:streamGenerateContent?alt=sse';
-const DS_PATH = '/v1beta/models/deepseek-v4-pro:streamGenerateContent?alt=sse';
+// 💡 用 canonical id：deepseek-v4-pro 现已下架，只有官方还承载它；
+//    deepseek-flash 才是三 provider（官方 + CC 双通道）共用的那款，路由测试必须用它。
+const DS_PATH = '/v1beta/models/deepseek-flash:streamGenerateContent?alt=sse';
 const ZP_PATH = '/v1beta/models/glm-5.3-flash:streamGenerateContent?alt=sse';
 
 try {
@@ -262,7 +264,7 @@ try {
 
         ds1.lastUsed = 0; ds2.lastUsed = 0;
         ds1.lastErrorTime = Date.now();
-        ok(H.getBestNode(DS_PATH)?.nodeId === 'ds2', `刚出错节点被 +10 载荷推开 (got ${H.getBestNode(DS_PATH)?.nodeId})`);
+        ok(H.getBestNode(DS_PATH)?.nodeId === 'ds2', `刚出错节点被惩罚机制推开（新逻辑走惩罚分层，不再靠 +10 载荷）(got ${H.getBestNode(DS_PATH)?.nodeId})`);
 
         ds1.lastErrorTime = Date.now() - 61000;
         ds1.lastUsed = 0; ds2.lastUsed = 0;
@@ -313,6 +315,59 @@ try {
         ok(/catch \(e\) \{[\s\S]{0,900}?finalizeRequestOnException\(ws, taskId, e\);/.test(src),
             'handleIncomingWSMessage 的 catch 内确实调用兜底收尾（静态护栏）');
         ok(/let taskId = null;/.test(src), 'taskId 已提到 try 之外（否则 catch 取不到 id）');
+    }
+
+    // ============================================================
+    console.log('\n=== 6. 别名层：canonical id → provider 原生 id（2026-09-13 新增）===');
+    // ============================================================
+    {
+        const body = { contents: [{ role: 'user', parts: [{ text: 'x' }] }] };
+        const mk = (provider, baseUrl) => new H.CompletionWorkerNode('t', 'k', baseUrl, 'deepseek-flash', provider);
+
+        const cc = mk('commandcode', 'https://api.commandcode.ai/provider');
+        ok(cc.convertGeminiToCompletion(body, 'deepseek-flash').model === 'deepseek/deepseek-v4.1-flash',
+            'CC: deepseek-flash → deepseek/deepseek-v4.1-flash');
+        ok(cc.convertGeminiToCompletion(body, 'glm-5.3-flash').model === 'z-ai/glm-5.3-flash',
+            'CC: glm-5.3-flash → z-ai/glm-5.3-flash（前缀带连字符，最易写错的一处）');
+        ok(cc.convertGeminiToCompletion(body, 'gpt-5.6-luna').model === 'gpt-5.6-luna',
+            'CC: gpt-5.6-luna 恒等（官方清单里它就是无前缀）');
+        ok(cc.convertGeminiToCompletion(body, 'unknown-model-xyz').model === 'unknown-model-xyz',
+            'CC: 未配别名的模型原样透传（别名表是可选白名单，不是全量映射）');
+        ok(cc.convertGeminiToCompletion(body, undefined).model !== undefined, 'CC: 不传模型时走 defaultModel 且不炸');
+
+        const ds = mk('deepseek-official', 'https://api.deepseek.com');
+        ok(ds.convertGeminiToCompletion(body, 'deepseek-flash').model === 'deepseek-flash',
+            'DeepSeek 官方：无 aliases → canonical 即原生，行为零变化');
+        const zp = mk('zhipu-official', 'https://open.bigmodel.cn/api/paas/v4');
+        ok(zp.convertGeminiToCompletion(body, 'glm-5.3-flash').model === 'glm-5.3-flash',
+            '智谱官方：同上，未被别名层波及');
+    }
+
+    // ============================================================
+    console.log('\n=== 7. 优先级分层：CC 未炸就绝不轮到官方（2026-09-13 新增）===');
+    // ============================================================
+    {
+        H.appletPool.clear();
+        const cc = new H.CompletionWorkerNode('ccA', 'k', 'https://api.commandcode.ai/provider', 'deepseek-flash', 'commandcode');
+        const off = new H.CompletionWorkerNode('offA', 'k', 'https://api.deepseek.com', 'deepseek-flash', 'deepseek-official');
+        off.priority = 1;   // 官方直连 = 备胎档
+        H.appletPool.add(cc); H.appletPool.add(off);
+
+        cc.pendingTasks = 99;   // 故意把 CC 压到极忙
+        ok(H.getBestNode(DS_PATH)?.nodeId === 'ccA', '优先级优先于负载：CC 再多在途任务也不溢出到官方（省真金白银）');
+
+        cc.lastErrorTime = Date.now();
+        ok(H.getBestNode(DS_PATH)?.nodeId === 'offA', 'CC 进 60s 惩罚窗 → 官方自动接管（无需人工干预）');
+
+        cc.lastErrorTime = Date.now() - 61000;
+        ok(H.getBestNode(DS_PATH)?.nodeId === 'ccA', '惩罚窗过期 → CC 自动夺回');
+
+        cc.lastErrorTime = Date.now(); off.lastErrorTime = Date.now();
+        ok(H.getBestNode(DS_PATH)?.nodeId === 'ccA', '两层都在惩罚窗内时退回惩罚层内挑，仍按优先级取 CC（绝不返回 null）');
+        ok(H.getBestNode(DS_PATH) !== null, '全池被惩罚时仍返回节点（不允许 null 打断在途请求）');
+
+        H.appletPool.clear();
+        ok(H.getBestNode(DS_PATH) === null, '真空池才返回 null');
     }
 
     console.log(`\n=== 结果: ${passed} passed, ${failed} failed ===`);

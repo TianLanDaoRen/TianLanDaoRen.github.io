@@ -183,6 +183,87 @@ export default async function handler(req, res) {
     }
 
     // =================================================================
+    // 2.6. Command Code 代理 (/commandcode-proxy/* → https://api.commandcode.ai/*)
+    //   💡 2026-09-13 新增：北京 ECS 直连 api.commandcode.ai 实测 8/10 有抖动（约 20% 超时），
+    //      本路由供 relay 的 `commandcode-proxy` provider 兜底——与直连同批模型、同 key。
+    //      与 opencode 路由的关键区别：Command Code 用 Bearer 鉴权，且**不需要** x-opencode-session。
+    //      路径原样透传（含 query），故 relay 侧 baseUrl 写成 .../commandcode-proxy/provider 即可。
+    // =================================================================
+    if (pathname.startsWith('/commandcode-proxy')) {
+        const ccPath = req.url.replace(/^\/commandcode-proxy/, '');
+        const ccTarget = `https://api.commandcode.ai${ccPath}`;
+
+        const ccHeaders = { 'Content-Type': 'application/json' };
+        if (req.headers['authorization']) {
+            ccHeaders['Authorization'] = req.headers['authorization'];
+        }
+
+        let ccBody = undefined;
+        if (req.method === 'POST') {
+            ccBody = typeof req.body === 'object' ? JSON.stringify(req.body) : req.body;
+        }
+
+        try {
+            const ccRes = await fetch(ccTarget, {
+                method: req.method,
+                headers: ccHeaders,
+                body: ccBody,
+                redirect: 'follow'
+            });
+
+            // SSE 流式规范化：遇到 [DONE] 立即截断结束（与 opencode 通路同构）
+            const ccCt = ccRes.headers.get('content-type') || '';
+            if (req.method === 'POST' && ccRes.ok && ccCt.includes('text/event-stream')) {
+                res.writeHead(200, {
+                    'Content-Type': 'text/event-stream; charset=utf-8',
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive',
+                    'X-Accel-Buffering': 'no'
+                });
+
+                const ccDecoder = new TextDecoder();
+                let ccBuffer = '';
+                let ccFinished = false;
+
+                for await (const chunk of ccRes.body) {
+                    ccBuffer += ccDecoder.decode(chunk, { stream: true });
+                    let idx;
+                    while ((idx = ccBuffer.indexOf('\n')) >= 0) {
+                        const line = ccBuffer.slice(0, idx + 1);
+                        ccBuffer = ccBuffer.slice(idx + 1);
+                        if (line.trim() === 'data: [DONE]') {
+                            res.write(line);
+                            ccFinished = true;
+                            res.end();
+                            return;
+                        }
+                        res.write(line);
+                    }
+                }
+
+                if (ccBuffer && !ccFinished) res.write(ccBuffer);
+                if (!ccFinished) res.end();
+                return;
+            }
+
+            const ccData = await ccRes.arrayBuffer();
+            res.status(ccRes.status);
+            ccRes.headers.forEach((v, k) => {
+                if (!['content-encoding', 'content-length'].includes(k.toLowerCase())) {
+                    res.setHeader(k, v);
+                }
+            });
+            return res.send(Buffer.from(ccData));
+
+        } catch (err) {
+            const cause = err.cause ? ` (${err.cause.message || err.cause})` : '';
+            return res.status(502).json({
+                error: { code: 502, message: `CommandCode Proxy Error: ${err.message}${cause}`, status: "BAD_GATEWAY" }
+            });
+        }
+    }
+
+    // =================================================================
     // 3. 处理 Gemini API 代理请求
     // =================================================================
 
