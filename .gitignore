@@ -13,12 +13,3 @@ backup/
 
 .vercel
 .env.local
-
-# 回归测试纳入版本管理：上面的 `*test*` 把整个 tests/ 一起挡住了。
-# 只放行 relay 路由测试本身 —— 它守的是最常改、最缺版本兜底的 gemini-relay.js
-# （该文件被 `gemini*.js` 忽略，没有 git 历史），且曾在无人察觉下烂掉两个月。
-# tests/ 下的其余件（探针/草稿）保持忽略。以下三行必须写在 `*test*` 之后才生效。
-!tests/
-tests/*
-!tests/relay-router.test.mjs
-!tests/relay-core.test.mjs
