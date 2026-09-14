@@ -5,7 +5,8 @@
   "main": "gemini-relay.js",
   "scripts": {
     "build": "node build-obfuscate.js",
-    "rollback": "node rollback.js"
+    "rollback": "node rollback.js",
+    "purge:cf": "bash scripts/purge-cf.sh"
   },
   "repository": {
     "type": "git",
